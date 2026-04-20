@@ -145,8 +145,22 @@
             v-model="draft"
             @keydown.enter.prevent="send"
             @input="broadcastTyping"
-            placeholder="Escribe un mensaje…"
+            @paste="onPaste"
+            placeholder="Escribe un mensaje… (pega una imagen con Ctrl+V)"
           />
+          <!-- Hidden file input; triggered by the paperclip button so the UI
+               stays clean like WhatsApp Web. -->
+          <input
+            ref="fileInputRef"
+            type="file"
+            accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip"
+            style="display:none"
+            @change="onFilePicked"
+          />
+          <button @click="fileInputRef?.click()" class="btn btn-ghost" :disabled="mediaSending" :title="mediaSending ? 'Enviando…' : 'Adjuntar imagen, video o documento'">
+            <i v-show="!mediaSending" data-lucide="paperclip" style="width:16px;height:16px"></i>
+            <span v-show="mediaSending" class="mini-spinner"></span>
+          </button>
           <button @click="showTemplates = true" class="btn btn-ghost" title="Insertar plantilla">
             <i data-lucide="layout-template" style="width:16px;height:16px"></i>
           </button>
@@ -372,6 +386,64 @@ function setPeerTyping(convId, active) {
 // Outbound typing throttle — hit the backend at most every 2s while we're
 // actively typing. Keeps the other end's "escribiendo…" indicator alive.
 let lastPresenceSent = 0
+const fileInputRef = ref(null)
+const mediaSending = ref(false)
+async function uploadFile(file) {
+  if (!file || !activeConv.value) return
+  if (file.size > 16 * 1024 * 1024) {
+    alert('El archivo supera 16 MB; WhatsApp no lo aceptará.')
+    return
+  }
+  mediaSending.value = true
+  try {
+    const fd = new FormData()
+    fd.append('conversation_id', activeConv.value.id)
+    fd.append('caption', draft.value || '')
+    fd.append('file', file)
+    const { data } = await api.post('/chat/send-media', fd, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+    pushMessageIfNew(data)
+    if (activeConv.value) {
+      activeConv.value.last_message = data.body
+      activeConv.value.last_message_at = data.timestamp
+    }
+    draft.value = ''
+    await nextTick()
+    scrollBottom()
+  } catch (e) {
+    alert(e.response?.data?.detail || 'Error al enviar archivo')
+  } finally {
+    mediaSending.value = false
+  }
+}
+
+async function onFilePicked(ev) {
+  const file = ev.target.files && ev.target.files[0]
+  ev.target.value = ''
+  if (file) await uploadFile(file)
+}
+
+// Clipboard paste — if the user pastes an image (screenshot, copied from
+// another chat, etc.) send it as a media attachment instead of dropping a
+// base64 data-URL string into the input.
+function onPaste(ev) {
+  const items = ev.clipboardData && ev.clipboardData.items
+  if (!items) return
+  for (const it of items) {
+    if (it.kind === 'file') {
+      const blob = it.getAsFile()
+      if (blob) {
+        ev.preventDefault()
+        const ext = (blob.type.split('/')[1] || 'bin').split('+')[0]
+        const file = new File([blob], blob.name || `pegado-${Date.now()}.${ext}`, { type: blob.type })
+        uploadFile(file)
+        return
+      }
+    }
+  }
+}
+
 function broadcastTyping() {
   const now = Date.now()
   if (!activeConv.value || now - lastPresenceSent < 2000) return
@@ -538,13 +610,22 @@ async function selectConv(c) {
   refreshIcons()
 }
 
+// Insert a message into the active thread only if its DB id isn't already
+// there. Prevents the send-then-broadcast double-append: /send returns the
+// saved row and the same row also arrives via WebSocket echo.
+function pushMessageIfNew(m) {
+  if (!m || !activeConv.value || m.conversation_id !== activeConv.value.id) return
+  if (messages.value.some(x => x.id === m.id)) return
+  messages.value.push(m)
+}
+
 async function send() {
   if (!draft.value || !activeConv.value) return
   const text = draft.value
   draft.value = ''
   try {
     const { data } = await api.post('/chat/send', { conversation_id: activeConv.value.id, text })
-    messages.value.push(data)
+    pushMessageIfNew(data)
     activeConv.value.last_message = text
     await nextTick()
     scrollBottom()
@@ -738,7 +819,7 @@ function connectWs() {
     try {
       const m = JSON.parse(ev.data)
       if (m.type === 'message' && activeConv.value?.id === m.conversation_id) {
-        messages.value.push(m.message)
+        pushMessageIfNew(m.message)
         nextTick(scrollBottom)
       }
       // bump conversations list

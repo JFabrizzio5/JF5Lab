@@ -8,7 +8,7 @@ import secrets
 from datetime import datetime
 from typing import Set, Dict
 import base64
-from fastapi import APIRouter, Depends, HTTPException, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, WebSocket, WebSocketDisconnect
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
@@ -377,8 +377,12 @@ async def _perform_sync_chats(s: models.EvolutionSession, user: models.User, db:
                     _resolve_author_label(db, user.workspace_id, author_phone, push)
                     if author_phone else push
                 )
+                # Scope dedup to THIS conversation so a duplicate conv in a
+                # different workspace (seed/admin leftover) doesn't block the
+                # current user from importing their own copy of the message.
                 existing_msg = db.query(models.Message).filter(
-                    models.Message.evolution_message_id == mid
+                    models.Message.evolution_message_id == mid,
+                    models.Message.conversation_id == conv.id,
                 ).first()
                 if existing_msg:
                     # Backfill fields that may have been added after the original
@@ -424,7 +428,47 @@ async def _perform_sync_chats(s: models.EvolutionSession, user: models.User, db:
                     conv.last_message_at = ts
         db.commit()
 
-    return {"imported": imported, "updated": updated, "contacts_imported": crm_imported, "messages_imported": messages_imported}
+    # Auto-merge duplicates created across earlier sessions / JID shapes.
+    # Group this user's conversations by normalized phone key; whichever has
+    # the most messages wins, everything else gets merged into it.
+    merged = 0
+    by_key: dict[str, list[models.Conversation]] = {}
+    for cv in db.query(models.Conversation).filter(
+        models.Conversation.workspace_id == user.workspace_id,
+        models.Conversation.assigned_to == user.id,
+    ).all():
+        k = _phone_key(cv.contact_phone or "")
+        if not k:
+            continue
+        by_key.setdefault(k, []).append(cv)
+    for k, group in by_key.items():
+        if len(group) < 2:
+            continue
+        # Rank: most messages, then most recent, then numeric id.
+        def _score(c: models.Conversation) -> tuple:
+            cnt = db.query(models.Message).filter(models.Message.conversation_id == c.id).count()
+            ts = c.last_message_at or datetime.min
+            return (cnt, ts.timestamp() if ts != datetime.min else 0, -c.id)
+        group.sort(key=_score, reverse=True)
+        winner = group[0]
+        for loser in group[1:]:
+            # Preserve the losing jid so future inbound with that shape still
+            # lands in the winner.
+            if loser.remote_jid and loser.remote_jid.endswith("@lid") and not winner.lid_jid:
+                winner.lid_jid = loser.remote_jid
+            db.query(models.Message).filter(
+                models.Message.conversation_id == loser.id
+            ).update({"conversation_id": winner.id}, synchronize_session=False)
+            if loser.last_message_at and (not winner.last_message_at or loser.last_message_at > winner.last_message_at):
+                winner.last_message = loser.last_message
+                winner.last_message_at = loser.last_message_at
+            winner.unread = (winner.unread or 0) + (loser.unread or 0)
+            db.delete(loser)
+            merged += 1
+    if merged:
+        db.commit()
+
+    return {"imported": imported, "updated": updated, "contacts_imported": crm_imported, "messages_imported": messages_imported, "merged": merged}
 
 
 @router.post("/sessions/{session_id}/sync-chats")
@@ -645,10 +689,26 @@ async def get_message_media(msg_id: int, token: str | None = None, db: Session =
         session = await _pick_active_session(user.id, db)
     if not session:
         raise HTTPException(400, "Sin sesión WhatsApp activa")
+    # Rebuild the Baileys key Evolution needs to locate the ciphertext.
+    # The original jid may have been a @lid that we later promoted to
+    # @s.whatsapp.net — fall back to the stored lid_jid in that case.
+    key_jid = conv.lid_jid or conv.remote_jid or ""
+    key = {"id": m.evolution_message_id, "remoteJid": key_jid, "fromMe": bool(m.from_me)}
     try:
-        data = await evolution_client.fetch_media_base64(session.instance_name, m.evolution_message_id)
-    except Exception as e:
-        raise HTTPException(502, f"Error descargando media: {e}")
+        data = await evolution_client.fetch_media_base64(session.instance_name, key)
+    except Exception as first_err:
+        # Try the promoted PN jid if the lid one failed (or vice versa).
+        alt_jid = conv.remote_jid if key_jid == conv.lid_jid else (conv.lid_jid or "")
+        if alt_jid and alt_jid != key_jid:
+            try:
+                data = await evolution_client.fetch_media_base64(
+                    session.instance_name,
+                    {"id": m.evolution_message_id, "remoteJid": alt_jid, "fromMe": bool(m.from_me)},
+                )
+            except Exception as e:
+                raise HTTPException(502, f"Error descargando media: {e}")
+        else:
+            raise HTTPException(502, f"Error descargando media: {first_err}")
     b64 = data.get("base64") or ""
     mime = data.get("mimetype") or "application/octet-stream"
     try:
@@ -658,6 +718,89 @@ async def get_message_media(msg_id: int, token: str | None = None, db: Session =
     return Response(content=raw, media_type=mime, headers={
         "Cache-Control": "private, max-age=3600",
     })
+
+
+@router.post("/send-media")
+async def send_media_msg(
+    conversation_id: int = Form(...),
+    caption: str = Form(""),
+    file: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    user: models.User = Depends(get_current_user),
+):
+    """Upload + forward a file to WhatsApp via Evolution v2. Derives mediatype
+    from the upload's MIME so images/videos/audios/documents all work through
+    the same endpoint."""
+    conv = db.query(models.Conversation).filter(
+        models.Conversation.id == conversation_id,
+        models.Conversation.workspace_id == user.workspace_id,
+    ).first()
+    if not conv:
+        raise HTTPException(404, "Conversación no encontrada")
+    session = db.query(models.EvolutionSession).filter(
+        models.EvolutionSession.id == conv.session_id
+    ).first() if conv.session_id else None
+    if not session:
+        session = await _pick_active_session(user.id, db)
+    if not session:
+        raise HTTPException(400, "Sesión WhatsApp no conectada")
+
+    data = await file.read()
+    if not data:
+        raise HTTPException(400, "Archivo vacío")
+    mimetype = file.content_type or "application/octet-stream"
+    b64 = base64.b64encode(data).decode()
+
+    if mimetype.startswith("image/"):
+        mediatype = "image"
+    elif mimetype.startswith("video/"):
+        mediatype = "video"
+    elif mimetype.startswith("audio/"):
+        mediatype = "audio"
+    else:
+        mediatype = "document"
+
+    number = await _resolve_send_number(session, conv, db)
+    if not number and conv.remote_jid:
+        number = conv.remote_jid
+    if not number:
+        raise HTTPException(400, "No pude determinar destino")
+
+    try:
+        if mediatype == "audio":
+            # Voice notes use a dedicated endpoint so WhatsApp renders them
+            # as PTT instead of a regular audio attachment.
+            res = await evolution_client.send_audio(session.instance_name, number, b64)
+        else:
+            res = await evolution_client.send_media(
+                session.instance_name, number,
+                media=b64, caption=caption, media_type=mediatype,
+                file_name=file.filename or "", mimetype=mimetype,
+            )
+    except Exception as e:
+        raise HTTPException(502, str(e))
+
+    body_preview = caption or f"[{mediatype.capitalize()}]"
+    m = models.Message(
+        conversation_id=conv.id,
+        direction="outbound",
+        body=body_preview,
+        media_type=mediatype,
+        from_me=True,
+        author_name=user.name,
+        evolution_message_id=(res.get("key") or {}).get("id"),
+        timestamp=datetime.utcnow(),
+    )
+    db.add(m)
+    conv.last_message = body_preview
+    conv.last_message_at = datetime.utcnow()
+    db.commit()
+    db.refresh(m)
+    await manager.broadcast(
+        user.workspace_id,
+        {"type": "message", "message": _msg_out(m, db, user.workspace_id), "conversation_id": conv.id},
+    )
+    return _msg_out(m, db, user.workspace_id)
 
 
 @router.post("/presence")
@@ -791,12 +934,21 @@ async def start_conversation(payload: StartConvIn, db: Session = Depends(get_db)
 
     remote_jid = f"{phone}@s.whatsapp.net"
 
-    # Find existing conversation or create a new one
-    conv = db.query(models.Conversation).filter(
-        models.Conversation.session_id == session.id,
-        models.Conversation.remote_jid == remote_jid,
-    ).first()
-    if not conv:
+    # Find existing conversation (any session, same phone) or create one.
+    # Searching workspace-wide avoids creating a fresh @s.whatsapp.net thread
+    # next to the historical @lid one for the same contact.
+    pkey = _phone_key(phone)
+    conv = _find_matching_conv(db, None, session, remote_jid, pkey)
+    if conv:
+        # Re-adopt any orphaned row + upgrade jid to the canonical PN form.
+        if conv.session_id != session.id:
+            conv.session_id = session.id
+        if remote_jid.endswith("@s.whatsapp.net") and conv.remote_jid.endswith("@lid"):
+            if not conv.lid_jid:
+                conv.lid_jid = conv.remote_jid
+            conv.remote_jid = remote_jid
+            conv.contact_phone = phone
+    else:
         conv = models.Conversation(
             workspace_id=user.workspace_id,
             session_id=session.id,
@@ -1201,6 +1353,25 @@ async def evolution_webhook(token: str, body: dict):
                 _resolve_author_label(db, session.workspace_id, author_phone, push_name)
                 if author_phone else push_name
             )
+            # Skip duplicates: Evolution can fire MESSAGES_UPSERT for the same
+            # message across history sync + regular delivery. Scoped to the
+            # conversation so duplicate convs in other workspaces don't
+            # swallow the insert.
+            mid = key.get("id") or ""
+            if mid and db.query(models.Message).filter(
+                models.Message.evolution_message_id == mid,
+                models.Message.conversation_id == conv.id,
+            ).first():
+                return {"ok": True, "dedup": True}
+
+            # Use the real message timestamp (Evolution sends epoch seconds) so
+            # out-of-order backfills don't poison the conversation preview.
+            ts_raw = data.get("messageTimestamp")
+            try:
+                ts = datetime.utcfromtimestamp(int(ts_raw)) if ts_raw else datetime.utcnow()
+            except Exception:
+                ts = datetime.utcnow()
+
             m = models.Message(
                 conversation_id=conv.id,
                 direction="outbound" if from_me else "inbound",
@@ -1209,12 +1380,16 @@ async def evolution_webhook(token: str, body: dict):
                 from_me=from_me,
                 author_name=author_label,
                 author_phone=author_phone or None,
-                evolution_message_id=key.get("id"),
-                timestamp=datetime.utcnow(),
+                evolution_message_id=mid or None,
+                timestamp=ts,
             )
             db.add(m)
-            conv.last_message = body_text
-            conv.last_message_at = datetime.utcnow()
+            # Only bump the chat-list preview if this message is actually
+            # newer than whatever's already shown. Otherwise a retro-delivery
+            # would make the list show an older message as the "latest."
+            if body_text and (not conv.last_message_at or ts >= conv.last_message_at):
+                conv.last_message = body_text
+                conv.last_message_at = ts
             if not from_me:
                 conv.unread = (conv.unread or 0) + 1
             db.commit()
@@ -1305,8 +1480,6 @@ async def evolution_webhook(token: str, body: dict):
                 remote_jid = key.get("remoteJid") or ""
                 if not mid or not remote_jid:
                     continue
-                if db.query(models.Message).filter(models.Message.evolution_message_id == mid).first():
-                    continue
                 phone = remote_jid.split("@")[0]
                 pkey = _phone_key(phone)
                 conv = _find_matching_conv(db, None, session, remote_jid, pkey)
@@ -1320,6 +1493,13 @@ async def evolution_webhook(token: str, body: dict):
                         assigned_to=session.user_id,
                     )
                     db.add(conv); db.flush()
+                # Dedup scoped to this conversation so other workspaces' copies
+                # of the same msg don't block our insert.
+                if db.query(models.Message).filter(
+                    models.Message.evolution_message_id == mid,
+                    models.Message.conversation_id == conv.id,
+                ).first():
+                    continue
                 from_me = bool(key.get("fromMe"))
                 msg_content = m.get("message") or {}
                 body_text, media_type = _extract_body(msg_content)

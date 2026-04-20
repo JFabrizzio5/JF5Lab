@@ -162,20 +162,44 @@ async def send_text(instance_name: str, number: str, text: str) -> dict:
         return r.json()
 
 
-async def send_media(instance_name: str, number: str, media_url: str, caption: str = "", media_type: str = "image") -> dict:
-    """v2 flat payload — `mediatype` + `media` + `caption` at the top level."""
+async def send_media(
+    instance_name: str,
+    number: str,
+    media: str,
+    caption: str = "",
+    media_type: str = "image",
+    file_name: str = "",
+    mimetype: str = "",
+) -> dict:
+    """Send image/video/document via Evolution v2. `media` can be a URL or a
+    raw base64 payload — v2 accepts both via the same `media` field."""
     url = f"{EVOLUTION_URL}/message/sendMedia/{instance_name}"
     payload = {
         "number": number,
         "mediatype": media_type,
-        "media": media_url,
+        "media": media,
         "caption": caption,
         "delay": 500,
     }
-    async with httpx.AsyncClient(timeout=60) as client:
+    if file_name:
+        payload["fileName"] = file_name
+    if mimetype:
+        payload["mimetype"] = mimetype
+    async with httpx.AsyncClient(timeout=120) as client:
         r = await client.post(url, json=payload, headers=_headers())
         if r.status_code >= 400:
             raise RuntimeError(f"Evolution sendMedia {r.status_code}: {r.text[:300]}")
+        return r.json()
+
+
+async def send_audio(instance_name: str, number: str, audio_b64: str) -> dict:
+    """Voice note via v2's dedicated whatsapp-audio endpoint (PTT)."""
+    url = f"{EVOLUTION_URL}/message/sendWhatsAppAudio/{instance_name}"
+    payload = {"number": number, "audio": audio_b64, "delay": 500}
+    async with httpx.AsyncClient(timeout=120) as client:
+        r = await client.post(url, json=payload, headers=_headers())
+        if r.status_code >= 400:
+            raise RuntimeError(f"Evolution sendAudio {r.status_code}: {r.text[:300]}")
         return r.json()
 
 
@@ -271,11 +295,13 @@ async def fetch_messages(instance_name: str, remote_jid: str, limit: int = 50) -
         return []
 
 
-async def fetch_media_base64(instance_name: str, evolution_message_id: str) -> dict:
+async def fetch_media_base64(instance_name: str, key: dict, convert_to_mp4: bool = False) -> dict:
     """Decrypt + return the media attached to a WhatsApp message.
-    Evolution v2 returns `{mediaType, fileName, mimetype, base64, buffer}`."""
+    Evolution v2 needs the full key object (`id`, `remoteJid`, `fromMe`) —
+    passing just the id returns 404. Returns
+    `{mediaType, fileName, mimetype, base64, buffer}`."""
     url = f"{EVOLUTION_URL}/chat/getBase64FromMediaMessage/{instance_name}"
-    payload = {"message": {"key": {"id": evolution_message_id}}, "convertToMp4": False}
+    payload = {"message": {"key": key}, "convertToMp4": convert_to_mp4}
     async with httpx.AsyncClient(timeout=60) as client:
         r = await client.post(url, json=payload, headers=_headers())
         if r.status_code >= 400:
