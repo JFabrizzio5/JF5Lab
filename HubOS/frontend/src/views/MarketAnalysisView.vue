@@ -10,6 +10,8 @@
         </router-link>
         <nav aria-label="Índice" class="toc">
           <a href="#tesis">Tesis</a>
+          <a href="#equipo">Equipo</a>
+          <a href="#caja">Caja $130k</a>
           <a href="#timeline">Timeline</a>
           <a href="#productos">Productos</a>
           <a href="#consultoria">Consultoría</a>
@@ -22,7 +24,7 @@
     <main id="main" class="wrap" role="main">
       <!-- HERO -->
       <section class="hero" aria-labelledby="h1">
-        <p class="kicker">Plan de negocio · $10,000 MXN · 24 meses</p>
+        <p class="kicker">Plan de negocio · Caja $130,000 MXN · Equipo de 2 + 5 freelancers · 12 meses</p>
         <h1 id="h1">
           Cómo llegar a <em class="serif">tu primer millón</em><br/>
           de pesos vendiendo software +<br/>
@@ -41,11 +43,15 @@
           </div>
           <div>
             <dt>Plazo</dt>
-            <dd>24 meses</dd>
+            <dd>9-12 meses</dd>
           </div>
           <div>
-            <dt>Capital</dt>
-            <dd>$10,000 MXN</dd>
+            <dt>Caja inicial</dt>
+            <dd>$130,000 MXN</dd>
+          </div>
+          <div>
+            <dt>Equipo</dt>
+            <dd>Tú + socio + 5 FL</dd>
           </div>
         </div>
       </section>
@@ -90,6 +96,203 @@
             de consultoría = 1 cliente recurrente software gratis.</strong>
             Eso es el hack.
           </p>
+        </div>
+      </section>
+
+      <!-- EQUIPO -->
+      <section id="equipo" class="block alt" aria-labelledby="eq-h">
+        <p class="eyebrow">Tu equipo real</p>
+        <h2 id="eq-h">No estás solo. Eso cambia todo.</h2>
+        <p class="sub">
+          <strong>Socio (30-40%)</strong> que hace cold calls + sales +
+          relaciones, y <strong>5 freelancers a $1,000 MXN por tarea chica</strong>.
+          Esto no es un solopreneur más — es una micro-agencia. Aquí cómo
+          repartir el trabajo para que cada quien haga lo que mejor hace.
+        </p>
+
+        <!-- Roles -->
+        <div class="roles-grid">
+          <article class="role role-you">
+            <div class="role-head">
+              <div class="role-emoji">👨‍💻</div>
+              <div>
+                <h3>Tú · 60-70%</h3>
+                <p class="role-tag">Construcción + estrategia</p>
+              </div>
+            </div>
+            <ul>
+              <li><strong>Código + producto</strong> — HubOS, NegocioOS, RentaCore.</li>
+              <li><strong>Entregas técnicas</strong> de consultoría (setup, integraciones, CFDI, pagos).</li>
+              <li><strong>Roadmap</strong> + priorización + decisiones de producto.</li>
+              <li><strong>Cierre de deals grandes</strong> donde el cliente quiere hablar con "el técnico".</li>
+              <li><strong>Coordinación</strong> de los 5 freelancers.</li>
+            </ul>
+          </article>
+
+          <article class="role role-partner">
+            <div class="role-head">
+              <div class="role-emoji">📞</div>
+              <div>
+                <h3>Socio · 30-40%</h3>
+                <p class="role-tag">Ventas + llamadas + relaciones</p>
+              </div>
+            </div>
+            <ul>
+              <li><strong>Cold calls</strong> a PyMEs del pipeline (30-50/día).</li>
+              <li><strong>Discovery calls</strong> y demos con leads entrantes.</li>
+              <li><strong>Seguimiento</strong> hasta cerrar + cobranza recurrente.</li>
+              <li><strong>Networking</strong> presencial: cámaras, coworks, eventos.</li>
+              <li><strong>Onboarding</strong> inicial de clientes nuevos (kickoff call).</li>
+            </ul>
+          </article>
+        </div>
+
+        <!-- Freelancers -->
+        <div class="freelancers">
+          <h3>🧰 5 freelancers · $1,000 MXN por tarea chica</h3>
+          <p class="freelancers-sub">
+            Tareas que tardan 2-6 horas. Usa Trello/Notion como board,
+            brief de 5-10 líneas por tarea. Pagas por entregable, no por hora.
+            <strong>Si una tarea pasa de 8 hrs</strong> no era tarea chica —
+            ajusta alcance o sube precio.
+          </p>
+          <div class="freelancers-grid">
+            <div class="fl">
+              <div class="fl-num">#1</div>
+              <h4>Frontend junior</h4>
+              <p>Landing pages, ajustes CSS, páginas de precios, forms nuevos, íconos Lucide. Mides por página entregada.</p>
+              <div class="fl-ex">Ej: "nueva landing Precios HubOS con 3 tiers" = 1 tarea = $1k.</div>
+            </div>
+            <div class="fl">
+              <div class="fl-num">#2</div>
+              <h4>Backend / scripts</h4>
+              <p>Integraciones sencillas (Stripe webhook, Mercado Pago, CFDI), scripts de migración, seed data, reportes SQL.</p>
+              <div class="fl-ex">Ej: "script que exporta contactos a CSV" = 1 tarea.</div>
+            </div>
+            <div class="fl">
+              <div class="fl-num">#3</div>
+              <h4>Content + copy</h4>
+              <p>Posts LinkedIn, videos cortos (guion + edición), artículos blog 500 palabras, scripts de WhatsApp para templates.</p>
+              <div class="fl-ex">Ej: "4 posts + 2 videos cortos esta semana" = 2-3 tareas.</div>
+            </div>
+            <div class="fl">
+              <div class="fl-num">#4</div>
+              <h4>QA + docs</h4>
+              <p>Probar flujos nuevos antes de release, documentar en Notion, responder tickets soporte básicos vía guión.</p>
+              <div class="fl-ex">Ej: "smoke test release v0.9 checklist 20 puntos" = 1 tarea.</div>
+            </div>
+            <div class="fl">
+              <div class="fl-num">#5</div>
+              <h4>Diseño visual</h4>
+              <p>Banners, infografías, pitch decks PDF, mockups Figma, assets para redes sociales.</p>
+              <div class="fl-ex">Ej: "pitch deck 8 slides estilo Notion" = 1 tarea.</div>
+            </div>
+          </div>
+          <p class="freelancers-note">
+            <strong>Presupuesto típico:</strong> 4-6 tareas/semana = <strong>$16,000-24,000 MXN/mes</strong>.
+            Entra en la bolsa de reinversión (20%). Escalas tareas cuando sube MRR, no antes.
+          </p>
+        </div>
+
+        <!-- Cómo cambian los números con equipo -->
+        <div class="team-impact">
+          <h3>📈 Cómo cambia la matemática con equipo</h3>
+          <div class="ti-grid">
+            <div class="ti">
+              <dt>Capacidad ventas</dt>
+              <dd>Solo: 30 DMs/sem<br/><strong class="pos">Con socio: 150+ DMs + 30 calls/sem</strong></dd>
+            </div>
+            <div class="ti">
+              <dt>Velocidad código</dt>
+              <dd>Solo: 1 feature/sem<br/><strong class="pos">Con freelancers: 3-4 features/sem</strong></dd>
+            </div>
+            <div class="ti">
+              <dt>Timeline a $1M</dt>
+              <dd>Solo: 24 meses<br/><strong class="pos">Con equipo: 12-15 meses</strong></dd>
+            </div>
+            <div class="ti">
+              <dt>Tu % neto</dt>
+              <dd>Solo: 100% de $800k<br/><strong>Con equipo: 65% de $1.5M = $975k</strong></dd>
+            </div>
+          </div>
+          <p class="ti-note">
+            <strong>La paradoja clave:</strong> aunque cedes 35%, el negocio crece 2×
+            porque el socio vende todo el día mientras tú construyes. En neto te
+            quedas con más dinero + menos horas + menos estrés de ventas.
+          </p>
+        </div>
+      </section>
+
+      <!-- CAJA $130k -->
+      <section id="caja" class="block" aria-labelledby="caja-h">
+        <p class="eyebrow">Tu munición · $130,000 MXN en caja</p>
+        <h2 id="caja-h">Cómo repartir los $130k para no quemarlos en 2 meses.</h2>
+        <p class="sub">
+          $130k te dan <strong>6-8 meses de runway</strong> si los administras
+          bien. Se dividen en 4 bolsas. Cada bolsa tiene un trabajo específico —
+          si mezclas bolsas terminas sin caja y sin clientes.
+        </p>
+
+        <div class="caja-grid">
+          <article class="caja-pot pot-ads">
+            <div class="pot-pct">35%</div>
+            <div class="pot-amount">$45,500 MXN</div>
+            <h3>📣 Ads + adquisición</h3>
+            <p>Meta/Google Ads a lo largo de 6 meses: $6-8k/mes. Con socio cerrando a 8-12% de leads, esto trae <strong>40-60 clientes software</strong> y 10-15 leads consultoría grandes.</p>
+            <ul>
+              <li>Meta Ads: $4k/mes targeting PyME CDMX/GDL/MTY.</li>
+              <li>LinkedIn Sales Navigator socio: $1,500 MXN/mes.</li>
+              <li>TikTok Ads experimento: $1k/mes (solo si video orgánico pega).</li>
+            </ul>
+          </article>
+
+          <article class="caja-pot pot-fl">
+            <div class="pot-pct">25%</div>
+            <div class="pot-amount">$32,500 MXN</div>
+            <h3>🧰 Freelancers</h3>
+            <p>5 tareas/semana × $1k = $20k/mes. Budget cubre <strong>1.6 meses intensivos</strong> — suficiente para armar landings, pitch decks, integraciones CFDI/MP, contenido orgánico.</p>
+            <ul>
+              <li>Semana 1-4: 6-8 tareas/sem (setup inicial pesado).</li>
+              <li>Semana 5+: 3-4 tareas/sem (mantenimiento) cubierto con MRR entrante.</li>
+              <li>Prioridad: landing + Mercado Pago + CFDI en mes 1.</li>
+            </ul>
+          </article>
+
+          <article class="caja-pot pot-tools">
+            <div class="pot-pct">15%</div>
+            <div class="pot-amount">$19,500 MXN</div>
+            <h3>⚙️ Infra + herramientas</h3>
+            <p>Hosting, APIs, suscripciones pro. Cubre <strong>6 meses</strong>.</p>
+            <ul>
+              <li>VPS/Cloud ($1,500/mes), Postgres managed, Redis.</li>
+              <li>Evolution API self-host = $0 extra (ya lo corres).</li>
+              <li>Finkok CFDI (~$0.30/factura) + Mercado Pago fees.</li>
+              <li>Notion team, Airtable, calendly, Loom, Figma.</li>
+            </ul>
+          </article>
+
+          <article class="caja-pot pot-runway">
+            <div class="pot-pct">25%</div>
+            <div class="pot-amount">$32,500 MXN</div>
+            <h3>🛡️ Runway + emergencias</h3>
+            <p>Intocable. Cubre <strong>3 meses de vida personal mínima</strong> si un cliente no paga o hay imprevisto. Viven en CETES 28d (10% anual).</p>
+            <ul>
+              <li>Gastos personales minimalistas: $10k/mes.</li>
+              <li>Impuestos RESICO apartados cada mes.</li>
+              <li>Solo tocar si ingreso cae &gt;40% dos meses seguidos.</li>
+            </ul>
+          </article>
+        </div>
+
+        <div class="caja-rules">
+          <h3>🔥 Reglas de la caja</h3>
+          <ol>
+            <li><strong>Mes 3 breakeven operativo.</strong> MRR + consultoría deben cubrir ads + freelancers + infra. Si no llegas, para ads y revisa funnel.</li>
+            <li><strong>Nunca toques el 25% runway</strong> salvo emergencia real. Es oxígeno, no combustible.</li>
+            <li><strong>Socio no cobra salario los primeros 3 meses.</strong> Comparte equity 30-40% y se paga del % de ingresos (split mensual).</li>
+            <li><strong>Freelancers pagan con ingresos del mes, no caja</strong> desde mes 4. La caja es solo para los primeros 90 días.</li>
+            <li><strong>Si mes 6 no facturan $80k+ combinados</strong>, el modelo no está funcionando — pivota antes de quemar más.</li>
+          </ol>
         </div>
       </section>
 
@@ -515,71 +718,73 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 
+// Milestones ajustados a equipo real: tu socio vende (30% split), 5 freelancers
+// paralelizan código. Cifras = BRUTO del negocio (antes de repartir al socio).
 const milestones = [
   {
-    mes: 'Mes 1-2', title: 'Cash inmediato', goal: 'Sobrevivir sin quemar los $10k.',
-    acum: '$60,000 MXN',
-    consult: '2 clientes consultoría × $30k promedio = $60k. Enfoque: setup WhatsApp Business + CRM para PyMEs que ya te pidan.',
-    software: '0 clientes pagos todavía. Estás puliendo HubOS + onboarding con los 2 clientes consult.',
+    mes: 'Mes 1-2', title: 'Tracción inmediata', goal: 'Socio llena pipeline, tú entregas.',
+    acum: '$120,000 MXN',
+    consult: 'Socio hace 150 DMs/sem + 30 cold calls. Cierra 4 clientes × $30k promedio = $120k.',
+    software: '0 pagos. HubOS instalado gratis en los 4 como parte del proyecto.',
     actions: [
-      'Publica 3 videos en LinkedIn mostrando antes/después de HubOS en PyME real.',
-      'Envía 30 DMs/semana a dueños de negocios en CDMX (comercio local, clínicas, inmobiliarias).',
-      'Cobra $30-40k por proyecto "llave en mano". Incluye HubOS gratis 3 meses.',
+      'Socio arma script de cold call + tracking en Notion/Airtable.',
+      'Freelance #3 genera 8 posts LinkedIn + 4 videos cortos.',
+      'Tú cierras llamadas técnicas cuando socio agenda demos.',
     ],
   },
   {
-    mes: 'Mes 3-4', title: 'Primer MRR', goal: 'Convertir clientes consult → software.',
-    acum: '$160,000 MXN',
-    consult: '2 más × $35k = $70k.',
-    software: 'Los 4 de consultoría convierten tras prueba gratis. 4 × $499 = ~$2k MRR.',
+    mes: 'Mes 3-4', title: 'Primer MRR real', goal: 'Convertir consult → recurrente.',
+    acum: '$340,000 MXN',
+    consult: '5 proyectos mes 3-4 × $35k = $175k.',
+    software: 'Los 9 de consultoría pasan a pago. 9 × $499 = $4.5k MRR. Ads Meta traen 5 más = 14 clientes.',
     actions: [
-      'Lanza landing de HubOS con precios públicos. 3 planes: $199/$399/$699 MXN.',
-      'Integra Mercado Pago recurrente. Sin eso no cobras en MX.',
-      'Meta Ads $2k/mes targeting "dueños PyME CDMX".',
+      'Freelance #1 arma landing de precios pública. Freelance #2 integra Mercado Pago recurrente.',
+      'Socio lanza outbound LinkedIn Sales Navigator targeting CEO PyME CDMX.',
+      'Tú construyes la integración CFDI 4.0 (Finkok) — desbloquea NegocioOS.',
     ],
   },
   {
-    mes: 'Mes 5-8', title: 'Bundle SuiteOperativa', goal: 'Upsell a los que ya tienes.',
-    acum: '$380,000 MXN',
-    consult: '3 proyectos/mes × $40k = $120k mensuales brutos.',
-    software: '15-20 clientes totales × promedio $550 = ~$10k MRR.',
+    mes: 'Mes 5-8', title: 'Bundle + escala ventas', goal: 'Upsell a los que ya tienes.',
+    acum: '$760,000 MXN',
+    consult: '5-6 proyectos/mes × $40k = $200-240k/mes. Socio maneja todo el funnel.',
+    software: '35-45 clientes × promedio $600 = ~$24k MRR. Bundle SuiteOperativa $999 convirtiendo 40%.',
     actions: [
-      'Integra NegocioOS (POS + CFDI 4.0) como addon de HubOS.',
-      'Sube precio paquete a $999/mes. Los clientes nuevos pagan más.',
-      'Contrata 1 freelance VA para agendar ventas (tú solo cierras).',
+      'Freelance #5 arma pitch deck + demo video por vertical (clínicas, inmobiliarias, retail).',
+      'Socio prueba webinars mensuales — 100 asistentes, cierra 8-12.',
+      'Tú lanza NegocioOS con RAG + CFDI. Freelance #4 hace QA antes de release.',
     ],
   },
   {
-    mes: 'Mes 9-12', title: 'RentaCore MVP', goal: 'Entrar al segundo vertical.',
-    acum: '$700,000 MXN',
-    consult: '3-4 proyectos/mes = $140k/mes brutos.',
-    software: '35-45 clientes activos = ~$25k MRR. Churn <5%.',
+    mes: 'Mes 9-12', title: 'RentaCore + primer $1M', goal: 'Segundo vertical + meta cumplida.',
+    acum: '$1,350,000 MXN',
+    consult: 'Migra 3 clientes a retainer $25k/mes = $75k fijo. 3 nuevos proyectos = $120k. Total ~$195k/mes.',
+    software: '80-110 clientes × $650 promedio = ~$60k MRR. Churn <4%.',
     actions: [
-      'Fusiona RentaFacil + RentaMe + SalonOS → RentaCore. Lanzamiento vertical salones XV años CDMX.',
-      'SEO local: 100 landings por ciudad/tipo venue.',
-      'Caso de éxito en video: cliente con $X aumento de reservas.',
+      'Freelances #1+#2 fusionan RentaFacil+RentaMe+SalonOS → RentaCore MVP.',
+      'Socio ataca vertical salones XV años CDMX (mercado caliente, $1.2B).',
+      'Tú cierras primer deal enterprise ($50-80k MXN) usando pitch deck premium.',
     ],
   },
   {
-    mes: 'Mes 13-18', title: 'Escala horizontal', goal: 'Convertir consultoría en contratos anuales.',
-    acum: '$1,050,000 MXN',
-    consult: 'Cambia a retainer: 4 clientes × $25k/mes = $100k/mes fijo.',
-    software: '80-120 clientes × promedio $650 = ~$55k MRR.',
+    mes: 'Mes 13-18', title: 'Automatizar + soltar', goal: 'Bajar horas tuyas, subir máquina.',
+    acum: '$2,300,000 MXN',
+    consult: '5 retainers × $25k = $125k fijo/mes. Socio maneja 90% del trato directo.',
+    software: '150-200 clientes × $700 promedio = ~$120k MRR.',
     actions: [
-      'Transforma 4 clientes consult en retainers anuales con SLA + HubOS.',
-      'Publica curso grabado "Cómo escalar tu PyME con WhatsApp" → lead magnet.',
-      'Primera contratación full-time: dev junior $18-22k/mes para soporte.',
+      'Primera contratación FT: dev junior $22k/mes (reemplaza 2 freelancers fijos).',
+      'Socio contrata 1 SDR comisionista (15% + base $12k) para outbound volumen.',
+      'Tú te concentras en producto + estrategia. Dejas de cerrar deals chicos.',
     ],
   },
   {
-    mes: 'Mes 19-24', title: 'MRR > Consultoría', goal: 'Libertad — el software paga más que tú cobras hora.',
-    acum: '$1,800,000+ MXN',
-    consult: 'Rechazas 50% de proyectos. Solo tomas retainers premium.',
-    software: '200+ clientes × $700 = $140k MRR. Este es el flywheel.',
+    mes: 'Mes 19-24', title: 'MRR > consultoría', goal: 'Libertad real — opcional vender o escalar.',
+    acum: '$3,500,000+ MXN',
+    consult: 'Rechazan 60% proyectos. Solo retainers premium + enterprise.',
+    software: '300+ clientes × $750 = $225k MRR. Flywheel funcionando solo.',
     actions: [
-      'Contratar sales closer comisionista (15% + base $15k).',
-      'Primer round pre-seed opcional ($2-5M MXN) para acelerar.',
-      'Plantear sucesión: si te atropella un camión, el negocio sigue.',
+      'Decisión: ¿levantar pre-seed $3-5M MXN o crecer con caja propia? Si ventas siguen fuertes, no levantar.',
+      'Socio explora expansión GDL/MTY con network propia.',
+      'Tú evalúas: construir producto #4 o vender el negocio. Año 2 vale $8-15M MXN a múltiplo 3-5× MRR anual.',
     ],
   },
 ]
@@ -711,7 +916,7 @@ onMounted(refreshIcons)
 .lead { font-size: 1.1rem; color: var(--text2); max-width: 680px; margin-bottom: 2.5rem; }
 .lead strong { color: var(--text); }
 
-.hero-big { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.hero-big { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
 .hero-big > div { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.4rem; }
 .hero-big dt { font-size: .7rem; text-transform: uppercase; letter-spacing: .1em; color: var(--text3); margin-bottom: .3rem; }
 .hero-big dd { font-family: 'Fraunces', serif; font-size: 1.7rem; font-weight: 600; color: var(--text); }
@@ -808,6 +1013,64 @@ onMounted(refreshIcons)
 .cm-grid dt { font-size: .72rem; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .3rem; }
 .cm-grid dd { font-size: 1rem; font-weight: 600; color: var(--text); }
 .cm-grid .pos { color: #34d399; font-size: 1.05rem; }
+
+/* EQUIPO */
+.roles-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem; }
+@media (max-width: 780px) { .roles-grid { grid-template-columns: 1fr; } }
+.role { padding: 1.6rem 1.8rem; border-radius: 14px; border: 1px solid var(--border); }
+.role-you { background: linear-gradient(135deg, rgba(99,102,241,.08), transparent); border-color: rgba(99,102,241,.3); }
+.role-partner { background: linear-gradient(135deg, rgba(245,158,11,.08), transparent); border-color: rgba(245,158,11,.3); }
+.role-head { display: flex; gap: 1rem; align-items: center; margin-bottom: 1rem; }
+.role-emoji { font-size: 2.2rem; line-height: 1; }
+.role h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 600; }
+.role-tag { color: var(--text3); font-size: .85rem; font-style: italic; }
+.role ul { padding-left: 1.2rem; color: var(--text2); font-size: .9rem; }
+.role ul li { margin-bottom: .4rem; }
+.role ul li strong { color: var(--text); }
+
+.freelancers { padding: 1.8rem 2rem; border-radius: 14px; background: var(--bg2); border: 1px solid var(--border); margin-bottom: 1.5rem; }
+.freelancers h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 600; margin-bottom: .5rem; }
+.freelancers-sub { color: var(--text2); font-size: .92rem; margin-bottom: 1.2rem; }
+.freelancers-sub strong { color: var(--text); }
+.freelancers-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem; margin-bottom: 1.1rem; }
+.fl { padding: 1.1rem; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; position: relative; }
+.fl-num { position: absolute; top: .7rem; right: .9rem; font-family: 'Fraunces', serif; font-size: 1.3rem; opacity: .3; font-weight: 700; }
+.fl h4 { font-size: .95rem; font-weight: 700; margin-bottom: .3rem; }
+.fl p { color: var(--text2); font-size: .82rem; line-height: 1.5; margin-bottom: .5rem; }
+.fl-ex { font-size: .75rem; color: var(--text3); padding: .4rem .55rem; background: rgba(255,255,255,.03); border-left: 2px solid var(--primary); border-radius: 4px; font-style: italic; }
+.freelancers-note { color: var(--text2); font-size: .88rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+.freelancers-note strong { color: var(--text); }
+
+.team-impact { padding: 1.8rem 2rem; border-radius: 14px; background: linear-gradient(135deg, rgba(16,185,129,.05), transparent), var(--bg2); border: 1px solid rgba(16,185,129,.25); }
+.team-impact h3 { font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem; }
+.ti-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: .8rem; margin-bottom: 1rem; }
+.ti { padding: .9rem 1rem; background: rgba(255,255,255,.03); border-radius: 10px; }
+.ti dt { font-size: .7rem; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: .3rem; }
+.ti dd { font-size: .9rem; color: var(--text2); line-height: 1.5; }
+.ti dd .pos { color: #34d399; }
+.ti dd strong { color: var(--text); }
+.ti-note { color: var(--text2); font-size: .9rem; }
+.ti-note strong { color: var(--text); }
+
+/* CAJA */
+.caja-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+.caja-pot { padding: 1.6rem; border-radius: 14px; border: 1px solid var(--border); background: var(--bg); position: relative; overflow: hidden; }
+.pot-ads { border-color: rgba(99,102,241,.35); background: linear-gradient(135deg, rgba(99,102,241,.08), transparent); }
+.pot-fl { border-color: rgba(34,211,238,.35); background: linear-gradient(135deg, rgba(34,211,238,.08), transparent); }
+.pot-tools { border-color: rgba(245,158,11,.3); background: linear-gradient(135deg, rgba(245,158,11,.08), transparent); }
+.pot-runway { border-color: rgba(16,185,129,.3); background: linear-gradient(135deg, rgba(16,185,129,.08), transparent); }
+.pot-pct { position: absolute; top: .9rem; right: 1.2rem; font-family: 'Fraunces', serif; font-size: 2.2rem; font-weight: 700; opacity: .25; line-height: 1; }
+.pot-amount { font-family: 'Fraunces', serif; font-size: 1.5rem; font-weight: 700; color: var(--text); margin-bottom: .5rem; }
+.caja-pot h3 { font-family: 'Fraunces', serif; font-size: 1.1rem; font-weight: 600; margin-bottom: .5rem; }
+.caja-pot > p { color: var(--text2); font-size: .88rem; margin-bottom: .8rem; line-height: 1.55; }
+.caja-pot > p strong { color: var(--text); }
+.caja-pot ul { padding-left: 1.2rem; color: var(--text2); font-size: .82rem; }
+.caja-pot ul li { margin-bottom: .3rem; }
+
+.caja-rules { padding: 1.8rem 2rem; border-radius: 14px; background: rgba(239,68,68,.04); border: 1px solid rgba(239,68,68,.25); }
+.caja-rules h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 600; margin-bottom: .9rem; }
+.caja-rules ol { padding-left: 1.3rem; color: var(--text2); font-size: .92rem; line-height: 1.65; display: flex; flex-direction: column; gap: .7rem; }
+.caja-rules ol li strong { color: var(--text); }
 
 /* VIVIR */
 .vivir-split { padding: 1.8rem 2rem; border-radius: 14px; background: var(--bg2); border: 1px solid var(--border); margin-bottom: 1.2rem; }
