@@ -1,0 +1,9 @@
+services:
+  hub:
+    image: nginx:alpine
+    container_name: cometax_hub
+    restart: unless-stopped
+    ports:
+      - "8888:80"
+    volumes:
+      - ./index.html:/usr/share/nginx/html/index.html:ro

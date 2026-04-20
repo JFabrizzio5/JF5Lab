@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat /root/CometaXMicroservices/Rankit-.Net-/FortniteReplayService/*.csproj)",
+      "Bash(docker network ls *)",
+      "Bash(curl -s ifconfig.me)",
+      "Bash(curl -s icanhazip.com)",
+      "Bash(curl -s api.ipify.org)",
+      "Bash(curl -s -4 ifconfig.me)",
+      "Bash(curl -s -4 icanhazip.com)",
+      "Bash(docker compose build *)",
+      "Bash(docker compose up *)",
+      "Bash(curl -s http://localhost:8012/health)",
+      "Bash(curl -s http://localhost:3001)"
+    ]
+  }
+}

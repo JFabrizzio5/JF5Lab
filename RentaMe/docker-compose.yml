@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  rentame_postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: rentame_db
+      POSTGRES_USER: rentame_user
+      POSTGRES_PASSWORD: rentame_pass
+    volumes:
+      - rentame_pg_data:/var/lib/postgresql/data
+    networks:
+      - rentame_net
+    restart: unless-stopped
+
+  rentame_backend:
+    build: ./backend
+    ports:
+      - "8070:8070"
+    environment:
+      DB_HOST: rentame_postgres
+      DB_PORT: "5432"
+      DB_NAME: rentame_db
+      DB_USER: rentame_user
+      DB_PASS: rentame_pass
+      STRIPE_SECRET_KEY: ""
+      STRIPE_CLIENT_ID: ""
+      PLATFORM_DOMAIN: "http://localhost:3030"
+    depends_on:
+      - rentame_postgres
+    networks:
+      - rentame_net
+    restart: unless-stopped
+
+  rentame_frontend:
+    build: ./frontend
+    ports:
+      - "3030:3030"
+    depends_on:
+      - rentame_backend
+    networks:
+      - rentame_net
+    restart: unless-stopped
+
+networks:
+  rentame_net:
+    driver: bridge
+
+volumes:
+  rentame_pg_data:

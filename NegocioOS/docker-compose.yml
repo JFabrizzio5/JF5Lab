@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  negocio_postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: negocio_db
+      POSTGRES_USER: negocio_user
+      POSTGRES_PASSWORD: negocio_pass
+    volumes:
+      - negocio_pg_data:/var/lib/postgresql/data
+    networks: [negocio_net]
+
+  negocio_backend:
+    build: ./backend
+    ports: ["8041:8041"]
+    environment:
+      DB_HOST: negocio_postgres
+      DB_PORT: 5432
+      DB_NAME: negocio_db
+      DB_USER: negocio_user
+      DB_PASS: negocio_pass
+      ANTHROPIC_API_KEY: ""
+    depends_on: [negocio_postgres]
+    networks: [negocio_net]
+
+  negocio_frontend:
+    build: ./frontend
+    ports: ["3015:3015"]
+    depends_on: [negocio_backend]
+    networks: [negocio_net]
+
+networks:
+  negocio_net:
+
+volumes:
+  negocio_pg_data:

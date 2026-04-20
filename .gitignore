@@ -1,0 +1,28 @@
+# Heavy / generated
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.coverage
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Docker data
+*_data/
+postgres-init/*.sh
+
+# Secrets
+.env
+*.env.local
+
+# Logs
+*.log
+logs/

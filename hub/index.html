@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CometaX Hub · Servidor jktic</title>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --bg-2: #111827;
+      --card: #1e293b;
+      --card-hover: #273449;
+      --border: #334155;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --accent: #818cf8;
+      --accent-2: #c084fc;
+      --ok: #22c55e;
+      --warn: #f59e0b;
+      --bad: #ef4444;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: radial-gradient(ellipse at top, #1e1b4b 0%, var(--bg) 60%);
+      color: var(--text); min-height: 100vh;
+    }
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 28px 48px; border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+    }
+    .logo { display: flex; align-items: center; gap: 14px; }
+    .logo-mark {
+      width: 40px; height: 40px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid; place-items: center; font-weight: 800; color: #0a0e1a;
+    }
+    .logo h1 { margin: 0; font-size: 20px; letter-spacing: 0.5px; }
+    .logo p  { margin: 0; font-size: 12px; color: var(--muted); }
+    .meta { font-size: 13px; color: var(--muted); text-align: right; }
+    .meta code { background: var(--card); padding: 2px 8px; border-radius: 6px; color: var(--accent); }
+
+    .hero { padding: 72px 48px 32px; text-align: center; max-width: 980px; margin: 0 auto; }
+    .hero h2 {
+      font-size: 54px; line-height: 1.05; margin: 0;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .hero p { font-size: 19px; color: var(--muted); margin-top: 20px; }
+
+    .filters {
+      display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;
+      margin: 32px auto 24px; max-width: 1200px; padding: 0 48px;
+    }
+    .chip {
+      padding: 8px 16px; border: 1px solid var(--border);
+      background: var(--card); border-radius: 999px;
+      color: var(--muted); font-size: 13px; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .chip:hover { color: var(--text); border-color: var(--accent); }
+    .chip.active { background: var(--accent); color: #0a0e1a; border-color: var(--accent); font-weight: 600; }
+
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px; padding: 0 48px 48px; max-width: 1400px; margin: 0 auto;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 22px;
+      display: flex; flex-direction: column; gap: 12px;
+      transition: all 0.2s; position: relative; overflow: hidden;
+    }
+    .card::before {
+      content: ""; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: var(--cat-color, var(--accent));
+    }
+    .card:hover { background: var(--card-hover); transform: translateY(-2px); border-color: var(--accent); }
+    .card-head { display: flex; justify-content: space-between; align-items: start; }
+    .card-title { font-size: 18px; font-weight: 700; margin: 0; display: flex; align-items: center; gap: 10px; }
+    .emoji { font-size: 22px; }
+    .badge {
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .badge-ok { background: rgba(34,197,94,0.15); color: var(--ok); }
+    .badge-warn { background: rgba(245,158,11,0.15); color: var(--warn); }
+    .badge-off { background: rgba(239,68,68,0.15); color: var(--bad); }
+    .desc { color: var(--muted); font-size: 14px; margin: 0; line-height: 1.5; }
+    .stack { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tag {
+      font-size: 11px; padding: 3px 8px; background: rgba(129,140,248,0.1);
+      color: var(--accent); border-radius: 4px;
+    }
+    .actions { display: flex; gap: 8px; margin-top: auto; padding-top: 8px; }
+    .btn {
+      flex: 1; text-align: center; padding: 9px 12px; border-radius: 8px;
+      text-decoration: none; font-size: 13px; font-weight: 600;
+      transition: all 0.15s; border: 1px solid var(--border);
+    }
+    .btn-primary {
+      background: var(--accent); color: #0a0e1a; border-color: var(--accent);
+    }
+    .btn-primary:hover { background: var(--accent-2); border-color: var(--accent-2); }
+    .btn-ghost { background: transparent; color: var(--muted); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--accent); }
+    .ports { font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); }
+    .ports strong { color: var(--text); }
+
+    footer {
+      text-align: center; padding: 32px 24px; color: var(--muted);
+      border-top: 1px solid var(--border); font-size: 13px;
+    }
+    footer a { color: var(--accent); text-decoration: none; }
+    @media (max-width: 640px) {
+      header, .hero, .filters, .grid { padding-left: 20px; padding-right: 20px; }
+      .hero h2 { font-size: 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">C</div>
+    <div>
+      <h1>CometaX Hub</h1>
+      <p>Panel global de proyectos · 62.72.3.139</p>
+    </div>
+  </div>
+  <div class="meta">
+    <div>Servidor: <code id="host">62.72.3.139</code></div>
+    <div id="clock"></div>
+  </div>
+</header>
+
+<section class="hero">
+  <h2>Tus proyectos, un solo lugar</h2>
+  <p>Todas las aplicaciones, servicios y microservicios desplegados en este servidor.</p>
+</section>
+
+<div class="filters">
+  <button class="chip active" data-cat="all">Todos</button>
+  <button class="chip" data-cat="app">Aplicaciones</button>
+  <button class="chip" data-cat="api">APIs</button>
+  <button class="chip" data-cat="infra">Infraestructura</button>
+  <button class="chip" data-cat="tool">Herramientas</button>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<footer>
+  Generado <span id="gen-date"></span> · CometaX Microservices ·
+  <a href="https://github.com/" target="_blank">repositorios</a>
+</footer>
+
+<script>
+  const HOST = location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+    ? 'localhost' : (location.hostname || '62.72.3.139');
+
+  const projects = [
+    {
+      emoji: "🛎️", name: "ServiLink", cat: "app",
+      desc: "Marketplace de servicios profesionales (tipo Rappi de freelancers). Chat, reservas, suscripciones.",
+      stack: ["FastAPI", "Vue 3", "PostgreSQL"],
+      color: "#6366f1",
+      frontend: 3005, backend: 8020,
+      path: "/ServiLink"
+    },
+    {
+      emoji: "🎓", name: "EduLink", cat: "app",
+      desc: "Plataforma educativa con cursos, tutores y calendario de clases.",
+      stack: ["FastAPI", "Vue 3", "PostgreSQL"],
+      color: "#10b981",
+      frontend: 3010, backend: 8030,
+      path: "/EduLink"
+    },
+    {
+      emoji: "🏪", name: "NegocioOS", cat: "app",
+      desc: "POS + ERP pequeño negocio: inventario, ventas, clientes, reportes, RAG.",
+      stack: ["FastAPI", "Vue 3", "PostgreSQL"],
+      color: "#f59e0b",
+      frontend: 3015, backend: 8041,
+      path: "/NegocioOS"
+    },
+    {
+      emoji: "💅", name: "SalonOS", cat: "app",
+      desc: "Gestión de salones y venues: eventos, espacios, calendario, chat.",
+      stack: ["FastAPI", "Vue 3", "PostgreSQL"],
+      color: "#ec4899",
+      frontend: 3020, backend: 8050,
+      path: "/SalonOS"
+    },
+    {
+      emoji: "🎤", name: "ConventionOS", cat: "app",
+      desc: "Organización de convenciones: stands, speakers, tickets, torneos.",
+      stack: ["FastAPI", "Vue 3", "PostgreSQL"],
+      color: "#8b5cf6",
+      frontend: 3025, backend: 8060,
+      path: "/ConventionOS"
+    },
+    {
+      emoji: "🏠", name: "RentaMe", cat: "app",
+      desc: "Plataforma de alquileres con vendors públicos, items, disponibilidad y reservas.",
+      stack: ["FastAPI", "Vue 3", "PostgreSQL"],
+      color: "#06b6d4",
+      frontend: 3030, backend: 8070,
+      path: "/RentaMe"
+    },
+    {
+      emoji: "🏘️", name: "RentaFacil", cat: "app",
+      desc: "Admin inmobiliario: propiedades, inquilinos, contratos, pagos.",
+      stack: ["FastAPI", "Vue 3", "PostgreSQL"],
+      color: "#84cc16",
+      frontend: 3002, backend: 8000,
+      path: "/RentaFacil"
+    },
+    {
+      emoji: "📚", name: "Tokenizate (Editorial)", cat: "app",
+      desc: "Plataforma editorial: editores, revisiones, planes de contenido.",
+      stack: ["FastAPI", "React", "MySQL"],
+      color: "#a855f7",
+      frontend: 3001, backend: 8012,
+      path: "/Tokenizate"
+    },
+    {
+      emoji: "📈", name: "Rankit Visibility (Py)", cat: "api",
+      desc: "Microservicio FastAPI para tracking de visibilidad/ranking Rankit.",
+      stack: ["FastAPI", "SQLAlchemy", "WebSocket"],
+      color: "#f97316",
+      frontend: null, backend: null,
+      path: "/RanKiT-visibility-tracker-Python"
+    },
+    {
+      emoji: "🎮", name: "Fortnite Replay API", cat: "api",
+      desc: "Servicio .NET para análisis de replays Fortnite.",
+      stack: [".NET", "C#"],
+      color: "#0ea5e9",
+      frontend: null, backend: 5138,
+      path: "/Rankit-.Net-"
+    },
+    {
+      emoji: "🧩", name: "CometaX Framework", cat: "tool",
+      desc: "Microservicios core, wrapper y templates. IAM + newsletter + colaboradores.",
+      stack: ["FastAPI", "Templates"],
+      color: "#c084fc",
+      frontend: null, backend: null,
+      path: "/CometaXMicroservices",
+      docs: true
+    },
+    {
+      emoji: "🎨", name: "Awesome Design MD", cat: "tool",
+      desc: "Extensiones y colección de design docs en markdown.",
+      stack: ["Docs"],
+      color: "#f43f5e",
+      frontend: null, backend: null,
+      path: "/Extensiones/awesome-design-md",
+      docs: true
+    },
+    {
+      emoji: "🗄️", name: "PostgreSQL / MySQL / Mongo", cat: "infra",
+      desc: "Bases de datos compartidas y por proyecto. Puertos expuestos para herramientas locales.",
+      stack: ["Postgres", "MySQL:3307", "Mongo:27017"],
+      color: "#64748b",
+      frontend: null, backend: null,
+      infra: true
+    },
+  ];
+
+  function buildCard(p) {
+    const statusClass = p.frontend || p.backend ? 'badge-ok' : (p.infra ? 'badge-warn' : 'badge-off');
+    const statusText = p.frontend || p.backend ? 'ACTIVO' : (p.infra ? 'INFRA' : 'DOCS');
+
+    const frontUrl = p.frontend ? `http://${HOST}:${p.frontend}` : null;
+    const backUrl = p.backend ? `http://${HOST}:${p.backend}/docs` : null;
+
+    const actions = [];
+    if (frontUrl) actions.push(`<a class="btn btn-primary" href="${frontUrl}" target="_blank">Abrir app</a>`);
+    if (backUrl)  actions.push(`<a class="btn btn-ghost" href="${backUrl}" target="_blank">API docs</a>`);
+    if (!frontUrl && !backUrl) actions.push(`<span class="btn btn-ghost" style="cursor:default">Sin UI web</span>`);
+
+    const portsLine = [
+      p.frontend ? `Frontend <strong>:${p.frontend}</strong>` : null,
+      p.backend  ? `API <strong>:${p.backend}</strong>` : null,
+    ].filter(Boolean).join(" · ");
+
+    return `
+      <article class="card" data-cat="${p.cat}" style="--cat-color: ${p.color}">
+        <div class="card-head">
+          <h3 class="card-title"><span class="emoji">${p.emoji}</span>${p.name}</h3>
+          <span class="badge ${statusClass}">${statusText}</span>
+        </div>
+        <p class="desc">${p.desc}</p>
+        <div class="stack">${p.stack.map(s => `<span class="tag">${s}</span>`).join("")}</div>
+        ${portsLine ? `<div class="ports">${portsLine}</div>` : ''}
+        <div class="actions">${actions.join("")}</div>
+      </article>
+    `;
+  }
+
+  const grid = document.getElementById('grid');
+  grid.innerHTML = projects.map(buildCard).join("");
+
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const cat = chip.dataset.cat;
+      document.querySelectorAll('.card').forEach(c => {
+        c.style.display = (cat === 'all' || c.dataset.cat === cat) ? '' : 'none';
+      });
+    });
+  });
+
+  document.getElementById('host').textContent = HOST;
+  const pad = n => String(n).padStart(2, '0');
+  function tick() {
+    const d = new Date();
+    document.getElementById('clock').textContent =
+      `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+  tick(); setInterval(tick, 1000);
+  document.getElementById('gen-date').textContent = new Date().toLocaleDateString('es');
+</script>
+</body>
+</html>

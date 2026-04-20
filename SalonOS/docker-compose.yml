@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  salonos_postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: salonos_db
+      POSTGRES_USER: salonos_user
+      POSTGRES_PASSWORD: salonos_pass
+    volumes:
+      - salonos_pg_data:/var/lib/postgresql/data
+    networks:
+      - salonos_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U salonos_user -d salonos_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  salonos_backend:
+    build: ./backend
+    ports:
+      - "8050:8050"
+    environment:
+      DB_HOST: salonos_postgres
+      DB_PORT: "5432"
+      DB_NAME: salonos_db
+      DB_USER: salonos_user
+      DB_PASS: salonos_pass
+      STRIPE_SECRET_KEY: ""
+      STRIPE_CLIENT_ID: ""
+      PLATFORM_DOMAIN: "http://localhost:3020"
+    depends_on:
+      salonos_postgres:
+        condition: service_healthy
+    networks:
+      - salonos_net
+
+  salonos_frontend:
+    build: ./frontend
+    ports:
+      - "3020:3020"
+    depends_on:
+      - salonos_backend
+    networks:
+      - salonos_net
+
+networks:
+  salonos_net:
+    driver: bridge
+
+volumes:
+  salonos_pg_data:

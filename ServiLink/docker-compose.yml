@@ -1,0 +1,52 @@
+services:
+  servilink_postgres:
+    image: postgres:15-alpine
+    container_name: servilink_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: servilink
+      POSTGRES_USER: servilink
+      POSTGRES_PASSWORD: servilink2024
+    volumes:
+      - servilink_pgdata:/var/lib/postgresql/data
+    networks:
+      - servilink_net
+
+  servilink_backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: servilink_backend
+    restart: unless-stopped
+    ports:
+      - "8020:8020"
+    depends_on:
+      - servilink_postgres
+    environment:
+      DB_HOST: servilink_postgres
+      DB_PORT: "5432"
+      DB_NAME: servilink
+      DB_USER: servilink
+      DB_PASS: servilink2024
+    networks:
+      - servilink_net
+
+  servilink_frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: servilink_frontend
+    restart: unless-stopped
+    ports:
+      - "3005:3005"
+    depends_on:
+      - servilink_backend
+    networks:
+      - servilink_net
+
+volumes:
+  servilink_pgdata:
+
+networks:
+  servilink_net:
+    driver: bridge

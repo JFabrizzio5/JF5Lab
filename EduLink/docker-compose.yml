@@ -1,0 +1,35 @@
+version: '3.8'
+services:
+  edulink_postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: edulink_db
+      POSTGRES_USER: edulink_user
+      POSTGRES_PASSWORD: edulink_pass
+    volumes:
+      - edulink_pg_data:/var/lib/postgresql/data
+    networks: [edulink_net]
+
+  edulink_backend:
+    build: ./backend
+    ports: ["8030:8030"]
+    environment:
+      DB_HOST: edulink_postgres
+      DB_PORT: 5432
+      DB_NAME: edulink_db
+      DB_USER: edulink_user
+      DB_PASS: edulink_pass
+    depends_on: [edulink_postgres]
+    networks: [edulink_net]
+
+  edulink_frontend:
+    build: ./frontend
+    ports: ["3010:3010"]
+    depends_on: [edulink_backend]
+    networks: [edulink_net]
+
+networks:
+  edulink_net:
+
+volumes:
+  edulink_pg_data:

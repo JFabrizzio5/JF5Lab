@@ -1,0 +1,161 @@
+version: '3.8'
+
+services:
+  hubos_postgres:
+    image: postgres:15-alpine
+    container_name: hubos_postgres
+    environment:
+      POSTGRES_DB: hubos_db
+      POSTGRES_USER: hubos_user
+      POSTGRES_PASSWORD: hubos_pass
+      # Evolution v2 requires its own schema — bootstrap script creates it.
+      POSTGRES_MULTIPLE_DATABASES: evolution_db
+    volumes:
+      - hubos_pg_data:/var/lib/postgresql/data
+      - ./postgres-init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - hubos_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U hubos_user -d hubos_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  hubos_redis:
+    image: redis:7-alpine
+    container_name: hubos_redis
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - hubos_redis_data:/data
+    networks:
+      - hubos_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  hubos_evolution:
+    # Evolution API v2.3.7 — uses Baileys v7 with LID↔PN mapping support.
+    # v2 requires Postgres + Redis (unlike v1.8 which could run standalone).
+    image: evoapicloud/evolution-api:v2.3.7
+    container_name: hubos_evolution
+    ports: ["8080:8080"]
+    environment:
+      SERVER_PORT: "8080"
+      SERVER_URL: "http://hubos_evolution:8080"
+      AUTHENTICATION_API_KEY: "${EVOLUTION_API_KEY:-hubos_evo_key_change_me}"
+      AUTHENTICATION_EXPOSE_IN_FETCH_INSTANCES: "true"
+
+      # --- Database (v2 mandatory) ---
+      DATABASE_PROVIDER: "postgresql"
+      DATABASE_CONNECTION_URI: "postgresql://hubos_user:hubos_pass@hubos_postgres:5432/evolution_db?schema=public"
+      DATABASE_CONNECTION_CLIENT_NAME: "evolution_hubos"
+      DATABASE_SAVE_DATA_INSTANCE: "true"
+      DATABASE_SAVE_DATA_NEW_MESSAGE: "true"
+      DATABASE_SAVE_MESSAGE_UPDATE: "true"
+      DATABASE_SAVE_DATA_CONTACTS: "true"
+      DATABASE_SAVE_DATA_CHATS: "true"
+      DATABASE_SAVE_DATA_LABELS: "false"
+      DATABASE_SAVE_DATA_HISTORIC: "true"
+      DATABASE_SAVE_IS_ON_WHATSAPP: "true"
+      DATABASE_SAVE_IS_ON_WHATSAPP_DAYS: "7"
+
+      # --- Redis cache (v2 mandatory) ---
+      CACHE_REDIS_ENABLED: "true"
+      CACHE_REDIS_URI: "redis://hubos_redis:6379/6"
+      CACHE_REDIS_TTL: "604800"
+      CACHE_REDIS_PREFIX_KEY: "evolution_hubos"
+      CACHE_REDIS_SAVE_INSTANCES: "false"
+      CACHE_LOCAL_ENABLED: "false"
+
+      # --- Misc ---
+      LANGUAGE: "es"
+      DEL_INSTANCE: "false"
+      QRCODE_LIMIT: "30"
+      LOG_LEVEL: "ERROR,WARN,INFO,WEBHOOKS"
+      LOG_COLOR: "true"
+      LOG_BAILEYS: "error"
+
+      # --- Webhook globals ---
+      # Webhooks are configured per-instance at create time; global flags still
+      # need to be "true" for the events we care about so they bubble up.
+      WEBHOOK_GLOBAL_ENABLED: "false"
+      WEBHOOK_EVENTS_APPLICATION_STARTUP: "false"
+      WEBHOOK_EVENTS_QRCODE_UPDATED: "true"
+      WEBHOOK_EVENTS_MESSAGES_SET: "true"
+      WEBHOOK_EVENTS_MESSAGES_UPSERT: "true"
+      WEBHOOK_EVENTS_MESSAGES_UPDATE: "false"
+      WEBHOOK_EVENTS_MESSAGES_DELETE: "false"
+      WEBHOOK_EVENTS_SEND_MESSAGE: "false"
+      WEBHOOK_EVENTS_CONTACTS_SET: "true"
+      WEBHOOK_EVENTS_CONTACTS_UPSERT: "true"
+      WEBHOOK_EVENTS_CONTACTS_UPDATE: "false"
+      WEBHOOK_EVENTS_PRESENCE_UPDATE: "true"
+      WEBHOOK_EVENTS_CHATS_SET: "true"
+      WEBHOOK_EVENTS_CHATS_UPSERT: "true"
+      WEBHOOK_EVENTS_CHATS_UPDATE: "false"
+      WEBHOOK_EVENTS_CHATS_DELETE: "false"
+      WEBHOOK_EVENTS_GROUPS_UPSERT: "false"
+      WEBHOOK_EVENTS_GROUPS_UPDATE: "false"
+      WEBHOOK_EVENTS_GROUP_PARTICIPANTS_UPDATE: "false"
+      WEBHOOK_EVENTS_CONNECTION_UPDATE: "true"
+      WEBHOOK_EVENTS_CALL: "false"
+      WEBHOOK_EVENTS_NEW_JWT_TOKEN: "false"
+      WEBHOOK_EVENTS_TYPEBOT_START: "false"
+      WEBHOOK_EVENTS_TYPEBOT_CHANGE_STATUS: "false"
+      CONFIG_SESSION_PHONE_CLIENT: "HubOS"
+      CONFIG_SESSION_PHONE_NAME: "Chrome"
+    volumes:
+      - hubos_evolution_data:/evolution/instances
+    depends_on:
+      hubos_postgres:
+        condition: service_healthy
+      hubos_redis:
+        condition: service_healthy
+    networks:
+      - hubos_net
+    restart: unless-stopped
+
+  hubos_backend:
+    build: ./backend
+    container_name: hubos_backend
+    ports: ["8075:8075"]
+    environment:
+      DB_HOST: hubos_postgres
+      DB_PORT: "5432"
+      DB_NAME: hubos_db
+      DB_USER: hubos_user
+      DB_PASS: hubos_pass
+      JWT_SECRET: "${JWT_SECRET:-hubos_jwt_change_me}"
+      EVOLUTION_API_URL: "http://hubos_evolution:8080"
+      EVOLUTION_API_KEY: "${EVOLUTION_API_KEY:-hubos_evo_key_change_me}"
+      EVOLUTION_WEBHOOK_BASE: "http://backend.hubos.local:8075"
+      EVOLUTION_API_VERSION: "v2"
+      SESSION_IDLE_MINUTES: "20"
+    depends_on:
+      hubos_postgres:
+        condition: service_healthy
+      hubos_evolution:
+        condition: service_started
+    networks:
+      hubos_net:
+        aliases:
+          - backend.hubos.local
+
+  hubos_frontend:
+    build: ./frontend
+    container_name: hubos_frontend
+    ports: ["3035:3035"]
+    depends_on: [hubos_backend]
+    networks:
+      - hubos_net
+
+networks:
+  hubos_net:
+    driver: bridge
+
+volumes:
+  hubos_pg_data:
+  hubos_evolution_data:
+  hubos_redis_data:

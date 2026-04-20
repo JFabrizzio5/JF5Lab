@@ -1,0 +1,59 @@
+services:
+
+  editorial_mysql:
+    image: mysql:8.4
+    container_name: editorial_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    volumes:
+      - editorial_mysql_data:/var/lib/mysql
+    ports:
+      - "3308:3306"
+    networks:
+      - editorial_net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  editorial_backend:
+    build: ./backend
+    container_name: editorial_backend
+    restart: always
+    ports:
+      - "8012:8012"
+    env_file:
+      - .env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DB_HOST=editorial_mysql
+      - DB_PORT=3306
+    networks:
+      - editorial_net
+    depends_on:
+      editorial_mysql:
+        condition: service_healthy
+
+  editorial_frontend:
+    build: ./frontend
+    container_name: editorial_frontend
+    restart: always
+    ports:
+      - "3001:3001"
+    networks:
+      - editorial_net
+    depends_on:
+      - editorial_backend
+
+networks:
+  editorial_net:
+    driver: bridge
+
+volumes:
+  editorial_mysql_data:
