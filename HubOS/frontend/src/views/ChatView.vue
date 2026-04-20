@@ -59,7 +59,13 @@
     </aside>
 
     <!-- Messages panel -->
-    <section class="messages-panel">
+    <section
+      class="messages-panel"
+      :class="{ 'drop-target': dragOver }"
+      @dragover.prevent="onDragOver"
+      @dragleave.prevent="onDragLeave"
+      @drop.prevent="onDrop"
+    >
       <div v-if="!activeConv" class="placeholder">
         <i data-lucide="message-circle" style="width:48px;height:48px;color:var(--text3)"></i>
         <p>Selecciona una conversación.</p>
@@ -140,19 +146,44 @@
             </div>
           </div>
         </div>
+        <!-- Staging tray: files queued for send. Shown between messages and
+             composer. User confirms with the send button — nothing goes out
+             automatically on drop/paste/pick. -->
+        <div v-if="pendingFiles.length" class="pending-tray">
+          <div v-for="(p, i) in pendingFiles" :key="p.uid" class="pending-item">
+            <img v-if="p.previewUrl" :src="p.previewUrl" class="pending-thumb" />
+            <div v-else class="pending-thumb pending-thumb-doc">
+              <i data-lucide="file" style="width:22px;height:22px"></i>
+            </div>
+            <div class="pending-meta">
+              <div class="pending-name">{{ p.file.name }}</div>
+              <div class="pending-size">{{ humanSize(p.file.size) }}</div>
+            </div>
+            <button class="pending-x" @click="removePending(i)" title="Quitar">
+              <i data-lucide="x" style="width:14px;height:14px"></i>
+            </button>
+          </div>
+        </div>
+
+        <div v-if="dragOver" class="drop-overlay">
+          <i data-lucide="upload-cloud" style="width:48px;height:48px"></i>
+          <div>Suelta archivos aquí</div>
+        </div>
+
         <div class="composer">
           <input
             v-model="draft"
             @keydown.enter.prevent="send"
             @input="broadcastTyping"
             @paste="onPaste"
-            placeholder="Escribe un mensaje… (pega una imagen con Ctrl+V)"
+            :placeholder="pendingFiles.length ? 'Escribe un pie de foto opcional…' : 'Escribe un mensaje… (pega o arrastra una imagen)'"
           />
           <!-- Hidden file input; triggered by the paperclip button so the UI
                stays clean like WhatsApp Web. -->
           <input
             ref="fileInputRef"
             type="file"
+            multiple
             accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.zip"
             style="display:none"
             @change="onFilePicked"
@@ -164,8 +195,9 @@
           <button @click="showTemplates = true" class="btn btn-ghost" title="Insertar plantilla">
             <i data-lucide="layout-template" style="width:16px;height:16px"></i>
           </button>
-          <button @click="send" class="btn btn-primary" :disabled="!draft">
-            <i data-lucide="send" style="width:16px;height:16px"></i>
+          <button @click="send" class="btn btn-primary" :disabled="!canSend">
+            <i v-show="!mediaSending" data-lucide="send" style="width:16px;height:16px"></i>
+            <span v-show="mediaSending" class="mini-spinner"></span>
           </button>
         </div>
       </template>
@@ -388,60 +420,95 @@ function setPeerTyping(convId, active) {
 let lastPresenceSent = 0
 const fileInputRef = ref(null)
 const mediaSending = ref(false)
-async function uploadFile(file) {
-  if (!file || !activeConv.value) return
+// Files staged for send — not uploaded until the user hits the send button.
+// Drop / paste / file-pick all flow through here so nothing leaves the
+// browser without confirmation.
+const pendingFiles = ref([])
+const dragOver = ref(false)
+let dragCounter = 0
+let uidCounter = 0
+function humanSize(b) {
+  if (b < 1024) return `${b} B`
+  if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`
+  return `${(b / 1024 / 1024).toFixed(1)} MB`
+}
+function stageFile(file) {
+  if (!file) return
   if (file.size > 16 * 1024 * 1024) {
-    alert('El archivo supera 16 MB; WhatsApp no lo aceptará.')
+    alert(`${file.name}: supera 16 MB (límite WhatsApp).`)
     return
   }
-  mediaSending.value = true
-  try {
-    const fd = new FormData()
-    fd.append('conversation_id', activeConv.value.id)
-    fd.append('caption', draft.value || '')
-    fd.append('file', file)
-    const { data } = await api.post('/chat/send-media', fd, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-    })
-    pushMessageIfNew(data)
-    if (activeConv.value) {
-      activeConv.value.last_message = data.body
-      activeConv.value.last_message_at = data.timestamp
-    }
-    draft.value = ''
-    await nextTick()
-    scrollBottom()
-  } catch (e) {
-    alert(e.response?.data?.detail || 'Error al enviar archivo')
-  } finally {
-    mediaSending.value = false
+  const previewUrl = file.type.startsWith('image/') || file.type.startsWith('video/')
+    ? URL.createObjectURL(file) : null
+  pendingFiles.value.push({ uid: ++uidCounter, file, previewUrl })
+}
+function removePending(i) {
+  const [removed] = pendingFiles.value.splice(i, 1)
+  if (removed?.previewUrl) URL.revokeObjectURL(removed.previewUrl)
+}
+function clearPending() {
+  for (const p of pendingFiles.value) if (p.previewUrl) URL.revokeObjectURL(p.previewUrl)
+  pendingFiles.value = []
+}
+
+async function uploadOnePending(file, caption) {
+  const fd = new FormData()
+  fd.append('conversation_id', activeConv.value.id)
+  fd.append('caption', caption || '')
+  fd.append('file', file)
+  const { data } = await api.post('/chat/send-media', fd, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  pushMessageIfNew(data)
+  if (activeConv.value) {
+    activeConv.value.last_message = data.body
+    activeConv.value.last_message_at = data.timestamp
   }
 }
 
 async function onFilePicked(ev) {
-  const file = ev.target.files && ev.target.files[0]
+  const files = Array.from(ev.target.files || [])
   ev.target.value = ''
-  if (file) await uploadFile(file)
+  files.forEach(stageFile)
 }
 
-// Clipboard paste — if the user pastes an image (screenshot, copied from
-// another chat, etc.) send it as a media attachment instead of dropping a
-// base64 data-URL string into the input.
+// Clipboard paste — stage for review instead of sending immediately.
 function onPaste(ev) {
   const items = ev.clipboardData && ev.clipboardData.items
   if (!items) return
+  let handled = false
   for (const it of items) {
     if (it.kind === 'file') {
       const blob = it.getAsFile()
       if (blob) {
-        ev.preventDefault()
         const ext = (blob.type.split('/')[1] || 'bin').split('+')[0]
         const file = new File([blob], blob.name || `pegado-${Date.now()}.${ext}`, { type: blob.type })
-        uploadFile(file)
-        return
+        stageFile(file)
+        handled = true
       }
     }
   }
+  if (handled) ev.preventDefault()
+}
+
+// Drag & drop from the OS. The counter pattern handles the fact that
+// dragenter/leave fire on child elements; we only hide the overlay when the
+// last entered element is left.
+function onDragOver(ev) {
+  if (!ev.dataTransfer?.types?.includes('Files')) return
+  ev.dataTransfer.dropEffect = 'copy'
+  dragCounter++
+  dragOver.value = true
+}
+function onDragLeave() {
+  dragCounter = Math.max(0, dragCounter - 1)
+  if (dragCounter === 0) dragOver.value = false
+}
+function onDrop(ev) {
+  dragCounter = 0
+  dragOver.value = false
+  const files = Array.from(ev.dataTransfer?.files || [])
+  files.forEach(stageFile)
 }
 
 function broadcastTyping() {
@@ -619,9 +686,36 @@ function pushMessageIfNew(m) {
   messages.value.push(m)
 }
 
+const canSend = computed(() =>
+  !!activeConv.value && !mediaSending.value && (!!draft.value || pendingFiles.value.length > 0)
+)
+
 async function send() {
-  if (!draft.value || !activeConv.value) return
+  if (!canSend.value) return
   const text = draft.value
+  // Files + optional caption first; whichever attachment is "primary" (the
+  // first) carries the caption so WhatsApp shows it as a caption, not a
+  // trailing text message.
+  if (pendingFiles.value.length) {
+    const files = pendingFiles.value.slice()
+    mediaSending.value = true
+    draft.value = ''
+    try {
+      for (let i = 0; i < files.length; i++) {
+        await uploadOnePending(files[i].file, i === 0 ? text : '')
+      }
+      clearPending()
+      await nextTick()
+      scrollBottom()
+    } catch (e) {
+      alert(e.response?.data?.detail || 'Error al enviar archivo')
+      draft.value = text   // restore so user can retry
+    } finally {
+      mediaSending.value = false
+    }
+    return
+  }
+  if (!text) return
   draft.value = ''
   try {
     const { data } = await api.post('/chat/send', { conversation_id: activeConv.value.id, text })
@@ -1106,6 +1200,74 @@ onUnmounted(() => {
   0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
   30% { transform: translateY(-4px); opacity: 1; }
 }
+
+/* Drag + drop */
+.messages-panel { position: relative; }
+.drop-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  background: rgba(99, 102, 241, 0.18);
+  border: 3px dashed var(--primary);
+  border-radius: 12px;
+  color: var(--primary);
+  font-weight: 600;
+  pointer-events: none;
+  z-index: 20;
+}
+.messages-panel.drop-target .msgs { filter: brightness(0.85); }
+
+/* Staging tray */
+.pending-tray {
+  display: flex;
+  gap: 0.6rem;
+  overflow-x: auto;
+  padding: 0.6rem 1rem;
+  background: var(--bg2);
+  border-top: 1px solid var(--border);
+}
+.pending-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.4rem 0.5rem;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  min-width: 180px;
+  max-width: 260px;
+}
+.pending-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: var(--bg);
+  flex-shrink: 0;
+}
+.pending-thumb-doc {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text2);
+}
+.pending-meta { flex: 1; min-width: 0; }
+.pending-name { font-size: 0.8rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pending-size { font-size: 0.7rem; color: var(--text3); }
+.pending-x {
+  background: transparent;
+  border: none;
+  color: var(--text2);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+}
+.pending-x:hover { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
 
 .composer {
   display: flex;
