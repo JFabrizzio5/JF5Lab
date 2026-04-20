@@ -1,420 +1,610 @@
 <template>
   <div class="landing">
+    <!-- Skip-to-content for keyboard / screen-reader users. Hidden until
+         focused; WCAG 2.1 requires a bypass for repeated nav blocks. -->
+    <a href="#main" class="skip-link">Saltar al contenido</a>
+
+    <!-- Scroll progress bar — visual cue of how deep the reader is. -->
+    <div class="scroll-progress" :style="{ transform: `scaleX(${scrollPct})` }" aria-hidden="true"></div>
+
     <!-- NAV -->
-    <nav class="nav">
+    <header class="nav" role="banner">
       <div class="nav-inner">
-        <div class="logo">
-          <div class="logo-mark"><i data-lucide="layers"></i></div>
-          <span>HubOS</span>
-        </div>
-        <div class="nav-links hidden md:flex">
+        <a href="#main" class="logo" aria-label="HubOS — ir al inicio">
+          <span class="logo-mark"><i data-lucide="layers"></i></span>
+          <span class="logo-word">HubOS</span>
+        </a>
+
+        <nav class="nav-links" aria-label="Secciones">
           <a href="#features">Features</a>
+          <a href="#workflow">Cómo funciona</a>
           <a href="#modules">Módulos</a>
           <a href="#stack">Stack</a>
           <a href="#pricing">Precios</a>
-        </div>
+        </nav>
+
         <div class="nav-cta">
           <router-link to="/login" class="link-muted">Ingresar</router-link>
           <router-link to="/register" class="btn btn-primary btn-sm">Empezar gratis</router-link>
         </div>
+
+        <button
+          class="nav-burger"
+          :aria-expanded="menuOpen"
+          aria-controls="mobile-menu"
+          aria-label="Abrir menú"
+          @click="menuOpen = !menuOpen"
+        >
+          <i :data-lucide="menuOpen ? 'x' : 'menu'"></i>
+        </button>
       </div>
-    </nav>
 
-    <!-- HERO -->
-    <section class="hero" @mousemove="onMove" @mouseleave="resetTilt">
-      <div class="bg-grid"></div>
-      <div class="bg-orb orb-a" :style="orbStyle(0.02, 0.015)"></div>
-      <div class="bg-orb orb-b" :style="orbStyle(-0.018, 0.022)"></div>
-      <div class="bg-orb orb-c" :style="orbStyle(0.03, -0.02)"></div>
+      <!-- Mobile drawer -->
+      <div
+        id="mobile-menu"
+        class="mobile-menu"
+        :class="{ open: menuOpen }"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menú de navegación"
+      >
+        <a href="#features" @click="menuOpen = false">Features</a>
+        <a href="#workflow" @click="menuOpen = false">Cómo funciona</a>
+        <a href="#modules" @click="menuOpen = false">Módulos</a>
+        <a href="#stack" @click="menuOpen = false">Stack</a>
+        <a href="#pricing" @click="menuOpen = false">Precios</a>
+        <div class="mobile-cta">
+          <router-link to="/login" class="btn btn-ghost" @click="menuOpen = false">Ingresar</router-link>
+          <router-link to="/register" class="btn btn-primary" @click="menuOpen = false">Empezar gratis</router-link>
+        </div>
+      </div>
+    </header>
 
-      <div class="hero-inner">
-        <div class="hero-text" :style="textParallax">
-          <div class="pill">
-            <i data-lucide="sparkles" style="width:14px;height:14px"></i>
-            <span>Un solo hub para todo tu go-to-market</span>
-          </div>
-          <h1 class="hero-title">
-            <span class="grad-text">CRM, CMS y WhatsApp</span><br />
-            en un solo lugar.
-          </h1>
-          <p class="hero-sub">
-            Gestiona clientes, contenidos y conversaciones de WhatsApp con sesiones independientes
-            por agente. Todo con bloques reutilizables para soporte, presentaciones y documentación.
-          </p>
-          <div class="hero-cta">
-            <router-link to="/register" class="btn btn-primary">
-              <i data-lucide="rocket" style="width:16px;height:16px"></i>
-              Crear workspace
-            </router-link>
-            <a href="#modules" class="btn btn-ghost">
-              <i data-lucide="play" style="width:16px;height:16px"></i>
-              Ver módulos
-            </a>
-          </div>
-          <div class="trust-row">
-            <div class="trust-item">
-              <i data-lucide="shield-check" style="width:16px;height:16px;color:#22d3ee"></i>
-              <span>Multi-tenant</span>
-            </div>
-            <div class="trust-item">
-              <i data-lucide="zap" style="width:16px;height:16px;color:#f59e0b"></i>
-              <span>Evolution API</span>
-            </div>
-            <div class="trust-item">
-              <i data-lucide="blocks" style="width:16px;height:16px;color:#10b981"></i>
-              <span>Block-based</span>
-            </div>
-          </div>
+    <main id="main" role="main">
+      <!-- HERO -->
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero-bg" aria-hidden="true">
+          <div class="bg-grid"></div>
+          <div class="bg-orb orb-a"></div>
+          <div class="bg-orb orb-b"></div>
         </div>
 
-        <!-- 3D PARALLAX SHOWCASE -->
-        <div class="hero-3d" :style="sceneStyle">
-          <div class="scene">
-            <!-- back layers -->
-            <div class="ring ring-1" :style="layer(0.02, 0.01)"></div>
-            <div class="ring ring-2" :style="layer(-0.03, 0.02)"></div>
+        <div class="hero-inner">
+          <div class="hero-text">
+            <div class="pill" role="note">
+              <i data-lucide="sparkles" aria-hidden="true"></i>
+              <span>Nuevo · WhatsApp con Baileys v7 + LID↔PN</span>
+            </div>
+            <h1 id="hero-title" class="hero-title">
+              Tu <em class="serif-accent">workspace</em> de clientes,
+              contenido y conversaciones.
+            </h1>
+            <p class="hero-sub">
+              Un solo hub para CRM, CMS, WhatsApp multi-sesión y plantillas.
+              Piensa bloques reutilizables. Siente Notion. Trabaja como equipo.
+            </p>
 
-            <!-- glow -->
-            <div class="product-glow" :style="layer(0.01, 0.01)"></div>
+            <div class="hero-cta">
+              <router-link to="/register" class="btn btn-primary btn-lg">
+                Crear workspace gratis
+                <i data-lucide="arrow-right" aria-hidden="true"></i>
+              </router-link>
+              <a href="#workflow" class="btn btn-ghost btn-lg">
+                Ver cómo funciona
+              </a>
+            </div>
 
-            <!-- product: stylized 3D can rendered purely in CSS -->
-            <div class="can-wrap" :style="productTilt">
-              <div class="can">
-                <div class="can-top">
-                  <div class="can-lid"></div>
-                  <div class="can-tab"></div>
+            <dl class="stats">
+              <div class="stat">
+                <dt>Sesiones WhatsApp</dt>
+                <dd>Ilimitadas</dd>
+              </div>
+              <div class="stat">
+                <dt>Historial sync</dt>
+                <dd>Nativo</dd>
+              </div>
+              <div class="stat">
+                <dt>Multi-tenant</dt>
+                <dd>Por diseño</dd>
+              </div>
+            </dl>
+          </div>
+
+          <!-- App mockup — intentionally simple, static, accessible. No
+               parallax on reduced-motion clients. -->
+          <aside class="hero-mock" aria-label="Vista previa de la interfaz">
+            <div class="mock" :class="{ tilt: allowMotion }">
+              <div class="mock-chrome">
+                <span class="dot d-r"></span>
+                <span class="dot d-y"></span>
+                <span class="dot d-g"></span>
+                <div class="mock-url">hubos.app / chat</div>
+              </div>
+              <div class="mock-body">
+                <div class="mock-sidebar">
+                  <div class="mock-s-head">Sesiones</div>
+                  <div class="mock-s-item active">
+                    <span class="pulse"></span> Soporte
+                  </div>
+                  <div class="mock-s-item">Ventas</div>
+                  <div class="mock-s-item">Admin</div>
                 </div>
-                <div class="can-body">
-                  <div class="can-shine"></div>
-                  <div class="can-stripe-top"></div>
-                  <div class="can-stripe-bot"></div>
-                  <div class="can-label">
-                    <div class="label-brand">HubOS</div>
-                    <div class="label-sub">Customer OS</div>
-                    <div class="label-barcode"></div>
+                <div class="mock-convs">
+                  <div class="mock-conv active">
+                    <div class="mock-avatar" style="--c:#a5b4fc">J</div>
+                    <div>
+                      <div class="mock-n">Joseph F.</div>
+                      <div class="mock-p">Va q va, muchas gracias 👌</div>
+                    </div>
+                    <span class="mock-badge">2</span>
+                  </div>
+                  <div class="mock-conv">
+                    <div class="mock-avatar" style="--c:#22d3ee">L</div>
+                    <div>
+                      <div class="mock-n">Luis F.</div>
+                      <div class="mock-p">Perfecto amigo</div>
+                    </div>
+                  </div>
+                  <div class="mock-conv">
+                    <div class="mock-avatar" style="--c:#10b981">E</div>
+                    <div>
+                      <div class="mock-n">Elisandra</div>
+                      <div class="mock-p">[Imagen]</div>
+                    </div>
+                  </div>
+                  <div class="mock-conv">
+                    <div class="mock-avatar" style="--c:#f59e0b">B</div>
+                    <div>
+                      <div class="mock-n">Bryan 🍒</div>
+                      <div class="mock-p">Listo, lo reviso.</div>
+                    </div>
                   </div>
                 </div>
-                <div class="can-bottom"></div>
-              </div>
-              <div class="can-shadow"></div>
-            </div>
-
-            <!-- floating module cards -->
-            <div class="float-card card-crm" :style="layer(-0.04, 0.03)">
-              <i data-lucide="users" style="width:16px;height:16px;color:#818cf8"></i>
-              <div>
-                <div class="fc-title">Contactos</div>
-                <div class="fc-num">12,430</div>
+                <div class="mock-chat">
+                  <div class="mock-bubble in">Hola! ¿Tienen el reporte de abril?</div>
+                  <div class="mock-bubble out">Sí, te lo mando ahora 🚀</div>
+                  <div class="mock-bubble in short">👍</div>
+                  <div class="mock-typing">
+                    <span></span><span></span><span></span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="float-card card-chat" :style="layer(0.05, -0.03)">
-              <i data-lucide="message-circle" style="width:16px;height:16px;color:#22d3ee"></i>
-              <div>
-                <div class="fc-title">Chats activos</div>
-                <div class="fc-num">89</div>
-              </div>
-            </div>
-            <div class="float-card card-deal" :style="layer(-0.03, -0.04)">
-              <i data-lucide="trending-up" style="width:16px;height:16px;color:#10b981"></i>
-              <div>
-                <div class="fc-title">Deals ganados</div>
-                <div class="fc-num">$1.2M</div>
-              </div>
-            </div>
-
-            <!-- sparkles / particles -->
-            <span v-for="i in 14" :key="i" class="sparkle" :style="sparkleStyle(i)"></span>
-          </div>
+          </aside>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- FEATURES -->
-    <section id="features" class="section">
-      <div class="container">
-        <div class="section-head">
-          <div class="tag">Features</div>
-          <h2>Un motor, cuatro superpoderes.</h2>
-          <p>Patrón consistente: todo es modular, todo es extensible, todo habla con todo.</p>
+      <!-- FEATURES — Notion-style block list -->
+      <section id="features" class="block" aria-labelledby="features-title">
+        <div class="block-head">
+          <span class="eyebrow">01 · Features</span>
+          <h2 id="features-title">Un motor, <em class="serif-accent">cuatro superpoderes</em>.</h2>
+          <p>Patrón consistente: modular, extensible, todo habla con todo.</p>
         </div>
 
-        <div class="grid-4">
-          <div class="feature">
-            <div class="f-icon" style="background:linear-gradient(135deg,#6366f1,#818cf8)">
-              <i data-lucide="users" style="color:white"></i>
-            </div>
+        <div class="feature-grid">
+          <article class="feature">
+            <div class="f-emoji" aria-hidden="true">👥</div>
             <h3>CRM</h3>
-            <p>Contactos, deals en kanban, pipelines configurables, propietarios y tags.</p>
-          </div>
-          <div class="feature">
-            <div class="f-icon" style="background:linear-gradient(135deg,#06b6d4,#22d3ee)">
-              <i data-lucide="file-text" style="color:white"></i>
-            </div>
+            <p>Contactos, deals en kanban, pipelines configurables, owners, tags.</p>
+          </article>
+          <article class="feature">
+            <div class="f-emoji" aria-hidden="true">📄</div>
             <h3>CMS</h3>
-            <p>Páginas y posts en bloques. Publicación pública por slug vía API pública.</p>
-          </div>
-          <div class="feature">
-            <div class="f-icon" style="background:linear-gradient(135deg,#10b981,#34d399)">
-              <i data-lucide="message-circle" style="color:white"></i>
-            </div>
+            <p>Páginas y posts en bloques. Publicación pública por slug vía API.</p>
+          </article>
+          <article class="feature">
+            <div class="f-emoji" aria-hidden="true">💬</div>
             <h3>WhatsApp</h3>
-            <p>Evolution API multi-sesión. Cada agente tiene su propio número y sus propios chats.</p>
-          </div>
-          <div class="feature">
-            <div class="f-icon" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)">
-              <i data-lucide="layout-template" style="color:#0b1d23"></i>
-            </div>
+            <p>Evolution v2 + Baileys v7. Multi-sesión, LID↔PN, grupos, media inline.</p>
+          </article>
+          <article class="feature">
+            <div class="f-emoji" aria-hidden="true">🧩</div>
             <h3>Templates</h3>
-            <p>Constructor de plantillas con variables para soporte, presentaciones y docs técnicas.</p>
-          </div>
+            <p>Plantillas con variables para soporte, presentaciones y docs técnicas.</p>
+          </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- MODULES -->
-    <section id="modules" class="section dark">
-      <div class="container">
-        <div class="section-head">
-          <div class="tag">Módulos</div>
-          <h2>Cada pieza encaja en tu flujo.</h2>
+      <!-- WORKFLOW — 3 numbered steps -->
+      <section id="workflow" class="block alt" aria-labelledby="workflow-title">
+        <div class="block-head">
+          <span class="eyebrow">02 · Cómo funciona</span>
+          <h2 id="workflow-title">De cero a <em class="serif-accent">cerrando deals</em> en 3 pasos.</h2>
         </div>
 
-        <div class="grid-3">
-          <div class="mod-card">
-            <i data-lucide="kanban" style="color:#818cf8"></i>
+        <ol class="steps">
+          <li class="step">
+            <div class="step-num">1</div>
+            <h3>Crea tu workspace</h3>
+            <p>Un email basta. Cada workspace es su propio tenant, aislado por JWT + workspace_id.</p>
+          </li>
+          <li class="step">
+            <div class="step-num">2</div>
+            <h3>Conecta WhatsApp</h3>
+            <p>Escanea un QR. Sincroniza historial completo, contactos y grupos como WhatsApp Web.</p>
+          </li>
+          <li class="step">
+            <div class="step-num">3</div>
+            <h3>Trabaja en equipo</h3>
+            <p>Cada agente tiene su número. Deals en kanban, chat compartido, plantillas al alcance.</p>
+          </li>
+        </ol>
+      </section>
+
+      <!-- MODULES -->
+      <section id="modules" class="block" aria-labelledby="modules-title">
+        <div class="block-head">
+          <span class="eyebrow">03 · Módulos</span>
+          <h2 id="modules-title">Cada pieza encaja en tu flujo.</h2>
+        </div>
+
+        <div class="mod-grid">
+          <article class="mod">
+            <i data-lucide="kanban" aria-hidden="true"></i>
             <h3>Deals kanban</h3>
-            <p>Arrastra y suelta, pipelines personalizados, forecast al instante.</p>
-          </div>
-          <div class="mod-card">
-            <i data-lucide="share-2" style="color:#22d3ee"></i>
+            <p>Drag & drop, pipelines personalizables, forecast al instante.</p>
+          </article>
+          <article class="mod">
+            <i data-lucide="share-2" aria-hidden="true"></i>
             <h3>Webhooks Evolution</h3>
-            <p>Entrantes y salientes. Conversación + mensajes sincronizados en Postgres.</p>
-          </div>
-          <div class="mod-card">
-            <i data-lucide="variable" style="color:#10b981"></i>
+            <p>Entrantes y salientes. Conversación + mensajes sincronizados.</p>
+          </article>
+          <article class="mod">
+            <i data-lucide="variable" aria-hidden="true"></i>
             <h3>Variables de plantilla</h3>
-            <p>Tokens <code v-pre>{{variable}}</code> renderizados al vuelo con el API.</p>
-          </div>
-          <div class="mod-card">
-            <i data-lucide="globe" style="color:#f59e0b"></i>
-            <h3>Endpoints públicos</h3>
-            <p>Expon tu CMS por workspace slug + contenido slug, zero auth.</p>
-          </div>
-          <div class="mod-card">
-            <i data-lucide="lock" style="color:#f472b6"></i>
+            <p>Tokens <code v-pre>{{variable}}</code> renderizados por API.</p>
+          </article>
+          <article class="mod">
+            <i data-lucide="globe" aria-hidden="true"></i>
+            <h3>CMS público</h3>
+            <p>Exponé tu CMS por slug, zero auth, cacheable.</p>
+          </article>
+          <article class="mod">
+            <i data-lucide="shield-check" aria-hidden="true"></i>
             <h3>Workspace isolation</h3>
-            <p>Tenant-safe. JWT acarrea el workspace_id en cada llamada.</p>
-          </div>
-          <div class="mod-card">
-            <i data-lucide="radio" style="color:#a78bfa"></i>
+            <p>Tenant-safe. JWT acarrea workspace_id en cada request.</p>
+          </article>
+          <article class="mod">
+            <i data-lucide="radio" aria-hidden="true"></i>
             <h3>WebSockets</h3>
             <p>Eventos de chat en tiempo real al navegador del agente.</p>
-          </div>
+          </article>
+          <article class="mod">
+            <i data-lucide="image" aria-hidden="true"></i>
+            <h3>Media inline</h3>
+            <p>Imágenes, audios, videos y PDFs, con drag & drop y paste.</p>
+          </article>
+          <article class="mod">
+            <i data-lucide="users-round" aria-hidden="true"></i>
+            <h3>Grupos con autor</h3>
+            <p>Atribución por participante vía mapping LID↔PN persistente.</p>
+          </article>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- STACK -->
-    <section id="stack" class="section">
-      <div class="container stack-wrap">
-        <div class="stack-left">
-          <div class="tag">Stack</div>
-          <h2>Siguiendo el patrón CometaX.</h2>
-          <p>FastAPI + SQLAlchemy + PostgreSQL en el backend. Vue 3 + Vite + Pinia en el frontend. Nginx sirve todo como build estático.</p>
-          <ul class="stack-list">
-            <li><i data-lucide="check" style="width:14px;height:14px;color:#10b981"></i> Docker-compose listo para levantar</li>
-            <li><i data-lucide="check" style="width:14px;height:14px;color:#10b981"></i> Puertos no colisionan con otros proyectos</li>
-            <li><i data-lucide="check" style="width:14px;height:14px;color:#10b981"></i> Patrón de módulos idéntico al de RentaFacil/SalonOS</li>
-          </ul>
-        </div>
-        <div class="stack-right">
-          <pre class="code-block"><code>services:
+      <!-- STACK -->
+      <section id="stack" class="block alt" aria-labelledby="stack-title">
+        <div class="stack-wrap">
+          <div class="stack-left">
+            <span class="eyebrow">04 · Stack</span>
+            <h2 id="stack-title">Siguiendo el patrón <em class="serif-accent">CometaX</em>.</h2>
+            <p>FastAPI + SQLAlchemy + PostgreSQL en el backend. Vue 3 + Vite + Pinia en el frontend. Evolution API v2 + Redis para WhatsApp. Nginx sirve todo.</p>
+            <ul class="checklist">
+              <li><i data-lucide="check" aria-hidden="true"></i> Docker-compose listo para levantar</li>
+              <li><i data-lucide="check" aria-hidden="true"></i> Puertos no colisionan con otros proyectos CometaX</li>
+              <li><i data-lucide="check" aria-hidden="true"></i> Patrón idéntico al resto del monorepo</li>
+              <li><i data-lucide="check" aria-hidden="true"></i> Migraciones idempotentes al boot</li>
+            </ul>
+          </div>
+          <div class="stack-right">
+            <figure class="code">
+              <figcaption>docker-compose.yml</figcaption>
+              <pre><code>services:
   hubos_postgres:
     image: postgres:15-alpine
+  hubos_redis:
+    image: redis:7-alpine
+  hubos_evolution:
+    image: evoapicloud/evolution-api:v2.3.7
   hubos_backend:
-    ports: ["8070:8070"]
-    env: EVOLUTION_API_URL, JWT_SECRET
+    build: ./backend
+    ports: ["8075:8075"]
   hubos_frontend:
+    build: ./frontend
     ports: ["3035:3035"]</code></pre>
+            </figure>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- CTA -->
-    <section id="pricing" class="section">
-      <div class="container cta-card">
-        <h2>Empieza en 30 segundos.</h2>
-        <p>Crea tu workspace, conecta tu primer número de WhatsApp y empieza a cerrar.</p>
-        <router-link to="/register" class="btn btn-primary">
-          <i data-lucide="rocket" style="width:16px;height:16px"></i>
-          Crear workspace
-        </router-link>
-      </div>
-    </section>
-
-    <footer class="footer">
-      <div class="container footer-inner">
-        <div class="logo">
-          <div class="logo-mark"><i data-lucide="layers"></i></div>
-          <span>HubOS</span>
+      <!-- CTA / Pricing -->
+      <section id="pricing" class="block" aria-labelledby="pricing-title">
+        <div class="cta-card">
+          <span class="eyebrow">05 · Empezar</span>
+          <h2 id="pricing-title">
+            Empieza en <em class="serif-accent">30 segundos</em>.
+          </h2>
+          <p>Crea tu workspace, conecta tu primer número y empieza a cerrar.</p>
+          <div class="cta-row">
+            <router-link to="/register" class="btn btn-primary btn-lg">
+              Crear workspace gratis
+              <i data-lucide="arrow-right" aria-hidden="true"></i>
+            </router-link>
+            <router-link to="/login" class="btn btn-ghost btn-lg">
+              Ya tengo cuenta
+            </router-link>
+          </div>
         </div>
-        <div class="footer-links">
+      </section>
+    </main>
+
+    <footer class="footer" role="contentinfo">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <div class="logo">
+            <span class="logo-mark"><i data-lucide="layers"></i></span>
+            <span class="logo-word">HubOS</span>
+          </div>
+          <p>Un solo hub para CRM, CMS, WhatsApp y plantillas.</p>
+        </div>
+
+        <nav aria-label="Producto">
+          <h4>Producto</h4>
           <a href="#features">Features</a>
           <a href="#modules">Módulos</a>
+          <a href="#pricing">Precios</a>
+        </nav>
+        <nav aria-label="Recursos">
+          <h4>Recursos</h4>
           <a href="#stack">Stack</a>
-        </div>
-        <div class="footer-copy">© 2026 HubOS · Built on CometaX</div>
+          <a href="#workflow">Cómo funciona</a>
+          <router-link to="/register">Registro</router-link>
+        </nav>
+        <nav aria-label="Legal">
+          <h4>Legal</h4>
+          <a href="#">Términos</a>
+          <a href="#">Privacidad</a>
+        </nav>
       </div>
+      <div class="footer-copy">© 2026 HubOS · Built on CometaX</div>
     </footer>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
-const mx = ref(0)  // mouse x (-1 … 1)
-const my = ref(0)
-let rafId = null
+const menuOpen = ref(false)
+const scrollPct = ref(0)
 
-function onMove(e) {
-  const r = e.currentTarget.getBoundingClientRect()
-  const nx = ((e.clientX - r.left) / r.width) * 2 - 1
-  const ny = ((e.clientY - r.top) / r.height) * 2 - 1
-  if (rafId) cancelAnimationFrame(rafId)
-  rafId = requestAnimationFrame(() => {
-    mx.value = nx
-    my.value = ny
-  })
-}
-function resetTilt() {
-  mx.value = 0
-  my.value = 0
+// Respect OS-level reduced-motion preference. If the user has asked the
+// system to minimize motion, we skip the tilt/parallax on the mockup.
+const allowMotion = ref(
+  typeof window !== 'undefined'
+    ? !window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    : true,
+)
+
+function onScroll() {
+  const h = document.documentElement
+  const max = h.scrollHeight - h.clientHeight
+  scrollPct.value = max > 0 ? Math.min(1, h.scrollTop / max) : 0
 }
 
-const sceneStyle = computed(() => ({
-  perspective: '1400px',
-}))
-const productTilt = computed(() => ({
-  transform: `rotateY(${mx.value * 12}deg) rotateX(${-my.value * 10}deg) translateZ(40px)`,
-}))
-const textParallax = computed(() => ({
-  transform: `translate3d(${mx.value * -8}px, ${my.value * -4}px, 0)`,
-}))
-
-function layer(strengthX, strengthY) {
-  return {
-    transform: `translate3d(${mx.value * strengthX * 100}px, ${my.value * strengthY * 100}px, 0)`,
-  }
-}
-function orbStyle(sx, sy) {
-  return { transform: `translate3d(${mx.value * sx * 200}px, ${my.value * sy * 200}px, 0)` }
-}
-function sparkleStyle(i) {
-  const sx = (i * 37) % 100
-  const sy = (i * 53) % 100
-  const d = ((i * 73) % 40) + 20
-  return {
-    left: `${sx}%`,
-    top: `${sy}%`,
-    animationDelay: `${(i * 0.3) % 4}s`,
-    transform: `translate3d(${mx.value * (i % 5) * 4}px, ${my.value * (i % 5) * 4}px, 0)`,
-    width: `${3 + (i % 3)}px`,
-    height: `${3 + (i % 3)}px`,
-    '--dur': `${d / 10}s`,
-  }
+function onEsc(e) {
+  if (e.key === 'Escape') menuOpen.value = false
 }
 
 function refreshIcons() { if (window.lucide) window.lucide.createIcons() }
-onMounted(refreshIcons)
-onUnmounted(() => { if (rafId) cancelAnimationFrame(rafId) })
+
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('keydown', onEsc)
+  refreshIcons()
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('keydown', onEsc)
+})
 </script>
 
 <style scoped>
+/* =============================================================
+   Notion-flavored landing — minimalist dark, typography-first.
+   Serif display accents, generous whitespace, subtle hover.
+   ============================================================= */
+
 .landing {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  line-height: 1.55;
 }
 
-/* NAV */
+/* Skip link — visible only on keyboard focus. */
+.skip-link {
+  position: absolute;
+  left: 0.5rem;
+  top: -40px;
+  padding: 0.5rem 0.9rem;
+  background: var(--primary);
+  color: white;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  z-index: 100;
+  transition: top 0.2s;
+}
+.skip-link:focus { top: 0.5rem; }
+
+/* Global keyboard focus ring — visible on any tabable element. */
+.landing :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* Scroll progress bar */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, #818cf8, #22d3ee);
+  transform-origin: left center;
+  transform: scaleX(0);
+  z-index: 60;
+  transition: transform 0.08s linear;
+}
+
+/* Reusable serif accent — Notion-style elegance without going full serif. */
+.serif-accent {
+  font-family: 'Fraunces', 'Georgia', serif;
+  font-style: italic;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* ---------- NAV ---------- */
 .nav {
   position: sticky;
   top: 0;
-  z-index: 50;
-  backdrop-filter: blur(16px);
-  background: rgba(9, 9, 15, 0.72);
+  z-index: 40;
+  backdrop-filter: blur(14px);
+  background: rgba(9, 9, 15, 0.78);
   border-bottom: 1px solid var(--border);
 }
 .nav-inner {
-  max-width: 1200px;
+  max-width: 1120px;
   margin: 0 auto;
   padding: 0.85rem 1.5rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
+  gap: 1.5rem;
 }
-.logo { display: flex; align-items: center; gap: 0.55rem; font-weight: 800; font-size: 1rem; letter-spacing: -0.3px; }
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: -0.2px;
+  color: var(--text);
+}
 .logo-mark {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   border-radius: 8px;
   background: linear-gradient(135deg, var(--primary), var(--accent));
   color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.logo-mark :deep(svg) { width: 16px; height: 16px; }
+.nav-links {
   display: flex;
+  gap: 1.5rem;
+  font-size: 0.88rem;
+  color: var(--text2);
+  font-weight: 500;
+  margin-left: auto;
+}
+.nav-links a { transition: color 0.15s; }
+.nav-links a:hover { color: var(--text); }
+.nav-cta {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.link-muted { color: var(--text2); font-size: 0.88rem; font-weight: 500; }
+.link-muted:hover { color: var(--text); }
+.nav-burger {
+  display: none;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
   align-items: center;
   justify-content: center;
 }
-.logo-mark i, .logo-mark :deep(svg) { width: 18px; height: 18px; }
-.nav-links { display: flex; gap: 1.5rem; font-size: 0.85rem; color: var(--text2); font-weight: 500; }
-.nav-links a:hover { color: var(--text); }
-.nav-cta { display: flex; align-items: center; gap: 0.8rem; }
-.link-muted { color: var(--text2); font-size: 0.85rem; font-weight: 500; }
-.link-muted:hover { color: var(--text); }
+.nav-burger :deep(svg) { width: 18px; height: 18px; }
 
-/* HERO */
+.mobile-menu {
+  display: none;
+  flex-direction: column;
+  padding: 1rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+  gap: 0.2rem;
+}
+.mobile-menu a {
+  padding: 0.75rem 0;
+  font-size: 1rem;
+  color: var(--text2);
+  border-bottom: 1px solid var(--border);
+}
+.mobile-menu a:hover { color: var(--text); }
+.mobile-cta {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+.mobile-cta .btn { flex: 1; justify-content: center; }
+
+@media (max-width: 860px) {
+  .nav-links, .nav-cta { display: none; }
+  .nav-burger { display: inline-flex; margin-left: auto; }
+  .mobile-menu.open { display: flex; }
+}
+
+/* ---------- HERO ---------- */
 .hero {
   position: relative;
-  min-height: 92vh;
-  padding: 4rem 1.5rem 6rem;
+  padding: 5rem 1.5rem 6rem;
   overflow: hidden;
   isolation: isolate;
+}
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
 }
 .bg-grid {
   position: absolute;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 48px 48px;
-  mask-image: radial-gradient(circle at 60% 40%, black 0%, transparent 75%);
-  z-index: -1;
+  mask-image: radial-gradient(circle at 55% 40%, black 0%, transparent 70%);
 }
 .bg-orb {
   position: absolute;
   border-radius: 50%;
-  filter: blur(90px);
-  opacity: 0.55;
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-  z-index: -1;
+  filter: blur(100px);
+  opacity: 0.35;
 }
-.orb-a { width: 460px; height: 460px; background: #6366f1; top: -80px; left: -80px; }
-.orb-b { width: 360px; height: 360px; background: #06b6d4; bottom: -60px; right: -40px; }
-.orb-c { width: 280px; height: 280px; background: #f472b6; top: 40%; left: 40%; opacity: 0.35; }
+.orb-a { width: 460px; height: 460px; background: #6366f1; top: -120px; left: -120px; }
+.orb-b { width: 360px; height: 360px; background: #06b6d4; bottom: -80px; right: -60px; }
 
 .hero-inner {
-  max-width: 1200px;
+  max-width: 1120px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.15fr 1fr;
-  gap: 3rem;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 4rem;
   align-items: center;
 }
 @media (max-width: 960px) {
-  .hero-inner { grid-template-columns: 1fr; }
+  .hero-inner { grid-template-columns: 1fr; gap: 2.5rem; }
 }
 
-.hero-text { transition: transform 0.3s cubic-bezier(0.2,0.8,0.2,1); }
 .pill {
   display: inline-flex;
   align-items: center;
@@ -422,358 +612,545 @@ onUnmounted(() => { if (rafId) cancelAnimationFrame(rafId) })
   padding: 0.35rem 0.85rem;
   border: 1px solid var(--border);
   border-radius: 999px;
-  background: rgba(255,255,255,0.02);
+  background: rgba(255, 255, 255, 0.03);
   font-size: 0.78rem;
   color: var(--text2);
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
 }
+.pill :deep(svg) { width: 14px; height: 14px; color: #fbbf24; }
+
 .hero-title {
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: clamp(2.4rem, 5vw, 4.2rem);
-  font-weight: 800;
-  line-height: 1.02;
-  letter-spacing: -0.04em;
-  margin-bottom: 1.25rem;
-}
-.grad-text {
-  background: linear-gradient(120deg, #a5b4fc 0%, #22d3ee 50%, #818cf8 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-family: 'Fraunces', 'Inter', serif;
+  font-size: clamp(2.3rem, 5.2vw, 4rem);
+  font-weight: 600;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  color: var(--text);
 }
 .hero-sub {
   color: var(--text2);
-  font-size: 1.05rem;
+  font-size: 1.08rem;
   max-width: 540px;
   line-height: 1.6;
   margin-bottom: 2rem;
 }
-.hero-cta { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 2rem; }
-.trust-row { display: flex; gap: 1.5rem; color: var(--text3); font-size: 0.8rem; flex-wrap: wrap; }
-.trust-item { display: inline-flex; align-items: center; gap: 0.4rem; }
+.hero-cta {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 2.5rem;
+}
+.btn-lg {
+  padding: 0.85rem 1.4rem;
+  font-size: 0.95rem;
+  border-radius: 10px;
+}
+.btn-lg :deep(svg) { width: 16px; height: 16px; }
 
-/* 3D scene */
-.hero-3d {
+.stats {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border);
+}
+.stat dt {
+  font-size: 0.72rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 600;
+}
+.stat dd {
+  font-family: 'Fraunces', serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-top: 0.2rem;
+}
+
+/* ---------- Mockup ---------- */
+.hero-mock { display: flex; justify-content: center; align-items: center; }
+.mock {
+  width: 100%;
+  max-width: 520px;
+  border-radius: 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  box-shadow:
+    0 30px 70px -20px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+  overflow: hidden;
+  transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.mock.tilt:hover {
+  transform: perspective(1200px) rotateX(3deg) rotateY(-4deg);
+}
+.mock-chrome {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.6rem 0.9rem;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+}
+.dot { width: 10px; height: 10px; border-radius: 50%; }
+.d-r { background: #ef4444; }
+.d-y { background: #f59e0b; }
+.d-g { background: #10b981; }
+.mock-url {
+  margin-left: 0.6rem;
+  font-size: 0.72rem;
+  color: var(--text3);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 0.25rem 0.6rem;
+  flex: 1;
+  text-align: center;
+}
+
+.mock-body {
+  display: grid;
+  grid-template-columns: 96px 160px 1fr;
+  height: 320px;
+}
+.mock-sidebar {
+  background: var(--bg);
+  border-right: 1px solid var(--border);
+  padding: 0.8rem 0.55rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.mock-s-head {
+  font-size: 0.62rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.4rem;
+  padding-left: 0.3rem;
+}
+.mock-s-item {
+  font-size: 0.72rem;
+  color: var(--text2);
+  padding: 0.35rem 0.5rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.mock-s-item.active {
+  background: rgba(99, 102, 241, 0.12);
+  color: #a5b4fc;
+  font-weight: 600;
+}
+.pulse {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.mock-convs {
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  padding: 0.6rem 0.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  overflow: hidden;
+}
+.mock-conv {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.5rem;
+  border-radius: 8px;
   position: relative;
-  height: 520px;
+}
+.mock-conv.active { background: rgba(255, 255, 255, 0.04); }
+.mock-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--c, var(--primary));
+  color: #0b0b14;
+  font-weight: 800;
+  font-size: 0.7rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
 }
-.scene {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-}
-
-.ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.06);
-  pointer-events: none;
-  transition: transform 0.3s cubic-bezier(0.2,0.8,0.2,1);
-}
-.ring-1 { width: 440px; height: 440px; transform: translate(-50%, -50%); border-color: rgba(99,102,241,0.18); }
-.ring-2 { width: 320px; height: 320px; transform: translate(-50%, -50%); border-color: rgba(34,211,238,0.16); }
-.product-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 260px;
-  height: 260px;
-  background: radial-gradient(circle, rgba(99,102,241,0.5) 0%, transparent 70%);
-  transform: translate(-50%, -50%);
-  filter: blur(30px);
-  pointer-events: none;
-}
-
-/* soda can — pure CSS */
-.can-wrap {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 200px;
-  height: 340px;
-  transition: transform 0.25s cubic-bezier(0.2,0.8,0.2,1);
-  transform-style: preserve-3d;
-}
-.can {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  filter: drop-shadow(0 30px 40px rgba(0,0,0,0.5));
-}
-.can-top {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 24px;
-  background: linear-gradient(to bottom,
-    #e5e7eb 0%, #94a3b8 20%, #64748b 50%, #475569 90%);
-  border-radius: 100px / 12px;
-  z-index: 3;
-}
-.can-lid {
-  position: absolute;
-  inset: 3px 6px;
-  background: radial-gradient(ellipse at 30% 30%, #cbd5e1 0%, #475569 70%);
-  border-radius: 50%;
-}
-.can-tab {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 10px;
-  background: linear-gradient(to bottom, #94a3b8, #475569);
-  border-radius: 8px / 4px;
-  border: 1px solid #334155;
-}
-.can-body {
-  position: absolute;
-  top: 18px;
-  left: 0;
-  right: 0;
-  bottom: 18px;
-  background: linear-gradient(90deg,
-    #3730a3 0%,
-    #4f46e5 20%,
-    #6366f1 40%,
-    #818cf8 50%,
-    #6366f1 60%,
-    #4f46e5 80%,
-    #3730a3 100%
-  );
-  border-radius: 6px;
-  overflow: hidden;
-  z-index: 2;
-}
-.can-shine {
-  position: absolute;
-  top: 0;
-  left: 15%;
-  width: 12px;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.05));
-  filter: blur(2px);
-}
-.can-stripe-top {
-  position: absolute;
-  top: 12%;
-  left: 0;
-  right: 0;
-  height: 8px;
-  background: linear-gradient(90deg, rgba(34,211,238,0.85), rgba(34,211,238,0.4));
-}
-.can-stripe-bot {
-  position: absolute;
-  bottom: 12%;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, rgba(34,211,238,0.6), rgba(34,211,238,0.2));
-}
-.can-label {
-  position: absolute;
-  top: 30%;
-  left: 0;
-  right: 0;
-  text-align: center;
-  color: white;
-  padding: 0 1rem;
-}
-.label-brand {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.4rem;
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-}
-.label-sub {
+.mock-n { font-size: 0.72rem; font-weight: 600; color: var(--text); }
+.mock-p {
   font-size: 0.65rem;
-  font-weight: 600;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: #c7d2fe;
-  margin-top: 0.3rem;
+  color: var(--text3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100px;
 }
-.label-barcode {
-  margin: 0.9rem auto 0;
-  width: 60px;
-  height: 22px;
-  background: repeating-linear-gradient(90deg, white 0 2px, transparent 2px 4px);
-  opacity: 0.9;
-}
-.can-bottom {
+.mock-badge {
   position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 200px;
-  height: 24px;
-  background: linear-gradient(to top,
-    #1e293b 0%, #334155 40%, #64748b 80%);
-  border-radius: 100px / 12px;
-  z-index: 3;
-}
-.can-shadow {
-  position: absolute;
-  left: 50%;
-  bottom: -34px;
-  transform: translateX(-50%);
-  width: 220px;
-  height: 36px;
-  background: radial-gradient(ellipse, rgba(99,102,241,0.5) 0%, transparent 65%);
-  filter: blur(16px);
-}
-
-/* floating cards */
-.float-card {
-  position: absolute;
-  padding: 0.7rem 0.9rem;
-  background: rgba(30, 30, 46, 0.85);
-  backdrop-filter: blur(12px);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 0.65rem;
-  min-width: 150px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-  transition: transform 0.3s cubic-bezier(0.2,0.8,0.2,1);
-}
-.fc-title { font-size: 0.7rem; color: var(--text3); font-weight: 500; }
-.fc-num { font-size: 1rem; font-weight: 700; color: var(--text); line-height: 1.15; }
-.card-crm { top: 10%; left: 2%; }
-.card-chat { top: 30%; right: 2%; }
-.card-deal { bottom: 10%; left: 10%; }
-
-/* sparkles */
-.sparkle {
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-  box-shadow: 0 0 8px rgba(255,255,255,0.6);
-  animation: twinkle var(--dur, 3s) ease-in-out infinite;
-  pointer-events: none;
-  opacity: 0.45;
-}
-@keyframes twinkle {
-  0%, 100% { opacity: 0.2; transform: scale(1); }
-  50% { opacity: 0.9; transform: scale(1.5); }
-}
-
-/* SECTIONS */
-.section {
-  padding: 6rem 1.5rem;
-  position: relative;
-}
-.section.dark { background: var(--bg2); }
-.container { max-width: 1200px; margin: 0 auto; }
-
-.section-head { text-align: center; margin-bottom: 3.5rem; }
-.tag {
-  display: inline-block;
-  padding: 0.3rem 0.85rem;
-  background: rgba(99,102,241,0.15);
-  color: #a5b4fc;
-  border-radius: 999px;
-  font-size: 0.7rem;
+  right: 0.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--primary);
+  color: white;
+  font-size: 0.6rem;
+  padding: 1px 6px;
+  border-radius: 10px;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 1rem;
 }
-.section-head h2 {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1.7rem, 3.5vw, 2.6rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
+
+.mock-chat {
+  padding: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  justify-content: flex-end;
+  background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.05), transparent);
+}
+.mock-bubble {
+  max-width: 78%;
+  padding: 0.5rem 0.7rem;
+  border-radius: 10px;
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+.mock-bubble.short { padding: 0.3rem 0.6rem; font-size: 1rem; }
+.mock-bubble.in {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  align-self: flex-start;
+}
+.mock-bubble.out {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: white;
+  align-self: flex-end;
+}
+.mock-typing {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.45rem 0.7rem;
+  display: inline-flex;
+  gap: 3px;
+  align-self: flex-start;
+  width: fit-content;
+}
+.mock-typing span {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--text2);
+  opacity: 0.5;
+  animation: typing 1.2s infinite ease-in-out;
+}
+.mock-typing span:nth-child(2) { animation-delay: 0.15s; }
+.mock-typing span:nth-child(3) { animation-delay: 0.3s; }
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+
+@media (max-width: 680px) {
+  .mock-body { grid-template-columns: 0 140px 1fr; }
+  .mock-sidebar { display: none; }
+}
+
+/* ---------- Blocks (sections) ---------- */
+.block {
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 5rem 1.5rem;
+  scroll-margin-top: 80px;
+}
+.block.alt {
+  max-width: none;
+  background: var(--bg2);
+  margin: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.block.alt > * { max-width: 1120px; margin-inline: auto; }
+
+.block-head { margin-bottom: 3rem; max-width: 720px; }
+.eyebrow {
+  display: inline-block;
+  font-size: 0.72rem;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 600;
   margin-bottom: 0.8rem;
 }
-.section-head p { color: var(--text2); max-width: 600px; margin: 0 auto; font-size: 1rem; }
+.block-head h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  margin-bottom: 0.8rem;
+  color: var(--text);
+}
+.block-head p {
+  color: var(--text2);
+  font-size: 1.02rem;
+  line-height: 1.6;
+}
 
-.grid-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
-.grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
-
+/* ---------- Features ---------- */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
 .feature {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.02);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 1.6rem;
-  transition: all 0.25s;
+  transition: border-color 0.2s, background 0.2s;
 }
-.feature:hover { transform: translateY(-4px); border-color: rgba(99,102,241,0.3); }
-.f-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1rem;
+.feature:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+  background: rgba(99, 102, 241, 0.05);
 }
-.feature h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.4rem; }
-.feature p { color: var(--text2); font-size: 0.9rem; line-height: 1.55; }
+.f-emoji {
+  font-size: 1.8rem;
+  margin-bottom: 0.8rem;
+  line-height: 1;
+}
+.feature h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+  color: var(--text);
+}
+.feature p {
+  color: var(--text2);
+  font-size: 0.88rem;
+  line-height: 1.55;
+}
 
-.mod-card {
-  background: rgba(255,255,255,0.02);
+/* ---------- Workflow steps ---------- */
+.steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding: 0;
+  margin: 0;
+}
+@media (max-width: 780px) {
+  .steps { grid-template-columns: 1fr; }
+}
+.step {
+  background: var(--bg);
   border: 1px solid var(--border);
   border-radius: 14px;
-  padding: 1.5rem;
-  transition: all 0.2s;
+  padding: 1.8rem;
+  position: relative;
 }
-.mod-card:hover { border-color: rgba(99,102,241,0.3); background: rgba(99,102,241,0.05); }
-.mod-card i, .mod-card :deep(svg) { width: 22px; height: 22px; margin-bottom: 0.8rem; }
-.mod-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 0.4rem; }
-.mod-card p { color: var(--text2); font-size: 0.87rem; line-height: 1.5; }
-.mod-card code {
-  background: rgba(255,255,255,0.06);
-  padding: 1px 6px;
+.step-num {
+  font-family: 'Fraunces', serif;
+  font-size: 2.4rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #a5b4fc, #22d3ee);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: 0.8rem;
+}
+.step h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.4rem; }
+.step p { color: var(--text2); font-size: 0.9rem; line-height: 1.55; }
+
+/* ---------- Modules ---------- */
+.mod-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1rem;
+}
+.mod {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.3rem;
+  transition: border-color 0.2s, background 0.2s;
+}
+.mod:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  background: rgba(99, 102, 241, 0.04);
+}
+.mod :deep(svg) {
+  width: 20px;
+  height: 20px;
+  color: #a5b4fc;
+  margin-bottom: 0.6rem;
+}
+.mod h3 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.25rem; }
+.mod p { color: var(--text2); font-size: 0.82rem; line-height: 1.55; }
+.mod code {
+  background: rgba(255, 255, 255, 0.06);
+  padding: 1px 5px;
   border-radius: 4px;
-  font-size: 0.78rem;
+  font-size: 0.76rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-/* STACK */
-.stack-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
-@media (max-width: 860px) { .stack-wrap { grid-template-columns: 1fr; } }
-.stack-left h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; margin: 0.8rem 0 1rem; letter-spacing: -0.03em; }
-.stack-left p { color: var(--text2); margin-bottom: 1.25rem; line-height: 1.6; }
-.stack-list { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; font-size: 0.9rem; color: var(--text2); }
-.stack-list li { display: flex; align-items: center; gap: 0.55rem; }
-.code-block {
+/* ---------- Stack ---------- */
+.stack-wrap {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+@media (max-width: 860px) {
+  .stack-wrap { grid-template-columns: 1fr; }
+}
+.stack-left h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.8rem, 3.2vw, 2.4rem);
+  font-weight: 600;
+  margin: 0.8rem 0 1rem;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
+}
+.stack-left > p {
+  color: var(--text2);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.checklist {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  font-size: 0.92rem;
+  color: var(--text2);
+  padding: 0;
+  margin: 0;
+}
+.checklist li {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+.checklist :deep(svg) { width: 15px; height: 15px; color: var(--success); flex-shrink: 0; }
+
+.code {
   background: #0b0b14;
   border: 1px solid var(--border);
   border-radius: 12px;
-  padding: 1.2rem;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+}
+.code figcaption {
+  background: var(--bg3);
+  padding: 0.55rem 1rem;
+  font-size: 0.75rem;
+  color: var(--text3);
+  border-bottom: 1px solid var(--border);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+.code pre {
+  padding: 1.1rem 1.2rem;
+  margin: 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.82rem;
   color: #cbd5e1;
   overflow-x: auto;
+  line-height: 1.55;
 }
-.code-block code { font-family: inherit; }
 
-/* CTA */
+/* ---------- CTA ---------- */
 .cta-card {
+  max-width: 820px;
+  margin: 0 auto;
   text-align: center;
-  background: radial-gradient(circle at 50% 0%, rgba(99,102,241,0.2) 0%, transparent 70%), var(--surface);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.22) 0%, transparent 70%),
+    var(--bg2);
   border: 1px solid var(--border);
   border-radius: 20px;
-  padding: 3.5rem 2rem;
+  padding: 4rem 2rem;
 }
-.cta-card h2 { font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 800; letter-spacing: -0.03em; margin-bottom: 0.6rem; }
-.cta-card p { color: var(--text2); margin-bottom: 1.5rem; }
+.cta-card .eyebrow { margin-bottom: 1.2rem; }
+.cta-card h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin-bottom: 0.8rem;
+}
+.cta-card p { color: var(--text2); margin-bottom: 1.8rem; font-size: 1rem; }
+.cta-row { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
 
-/* FOOTER */
-.footer { border-top: 1px solid var(--border); padding: 2rem 1.5rem; }
-.footer-inner { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-.footer-links { display: flex; gap: 1.5rem; font-size: 0.85rem; color: var(--text2); }
-.footer-copy { color: var(--text3); font-size: 0.8rem; }
+/* ---------- Footer ---------- */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 3rem 1.5rem 2rem;
+  background: var(--bg);
+}
+.footer-inner {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 2rem;
+}
+@media (max-width: 680px) {
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+.footer-brand p {
+  color: var(--text3);
+  font-size: 0.85rem;
+  margin-top: 0.6rem;
+  max-width: 240px;
+  line-height: 1.5;
+}
+.footer h4 {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+}
+.footer nav { display: flex; flex-direction: column; gap: 0.5rem; }
+.footer nav a {
+  color: var(--text2);
+  font-size: 0.88rem;
+  transition: color 0.15s;
+}
+.footer nav a:hover { color: var(--text); }
+.footer-copy {
+  max-width: 1120px;
+  margin: 2.5rem auto 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  color: var(--text3);
+  font-size: 0.8rem;
+}
+
+/* ---------- Motion preferences ---------- */
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  .mock.tilt:hover { transform: none; }
+}
 </style>
