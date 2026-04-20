@@ -359,6 +359,7 @@
           <h4>Recursos</h4>
           <a href="#stack">Stack</a>
           <a href="#workflow">Cómo funciona</a>
+          <router-link to="/analisis">Análisis de mercado</router-link>
           <router-link to="/register">Registro</router-link>
         </nav>
         <nav aria-label="Legal">
