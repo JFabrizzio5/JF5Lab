@@ -7,11 +7,11 @@ export default defineConfig({
     host: '0.0.0.0',
     port: 3050,
     proxy: {
-      '/notas':      { target: 'http://localhost:8110', changeOrigin: true },
-      '/billing':    { target: 'http://localhost:8110', changeOrigin: true, rewrite: p => p.replace(/^\/billing/, '/notas/v1/billing') },
-      '/health':     { target: 'http://localhost:8110', changeOrigin: true },
-      '/docs':       { target: 'http://localhost:8110', changeOrigin: true },
-      '/openapi.json': { target: 'http://localhost:8110', changeOrigin: true },
+      '/notas':      { target: 'http://api:8000', changeOrigin: true },
+      '/billing':    { target: 'http://api:8000', changeOrigin: true, rewrite: p => p.replace(/^\/billing/, '/notas/v1/billing') },
+      '/health':     { target: 'http://api:8000', changeOrigin: true },
+      '/docs':       { target: 'http://api:8000', changeOrigin: true },
+      '/openapi.json': { target: 'http://api:8000', changeOrigin: true },
     }
   }
 })
