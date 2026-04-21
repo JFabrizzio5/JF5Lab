@@ -1,0 +1,22 @@
+{
+  "name": "porcobrar-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3060",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 3060"
+  },
+  "dependencies": {
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "pinia": "^2.2.6",
+    "axios": "^1.7.9",
+    "@mdi/font": "^7.4.47"
+  },
+  "devDependencies": {
+    "vite": "^6.0.5",
+    "@vitejs/plugin-vue": "^5.2.1"
+  }
+}

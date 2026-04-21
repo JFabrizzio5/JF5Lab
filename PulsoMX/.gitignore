@@ -1,0 +1,34 @@
+# Secretos y Entorno
+.env
+.env.*
+!.env.*.example
+
+# Python y Virtualenv
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+dist/
+build/
+.venv/
+.pytest_cache/
+storage/*.xlsx
+storage/*.xls
+storage/*.xlsm
+!storage/.gitkeep
+
+# IDEs
+.vscode/
+.idea/
+
+# Sistema y Otros
+.DS_Store
+Thumbs.db
+.docker/
+
+# CometaX security (RSA Keys)
+*.pem
+private_key.pem
+public_key.pem
