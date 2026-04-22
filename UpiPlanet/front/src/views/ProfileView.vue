@@ -1,35 +1,39 @@
 <template>
   <TopNav />
-  <main v-if="data" class="mx-auto max-w-2xl space-y-4 px-6 py-8">
-    <header class="upi-card p-6">
-      <div class="flex items-start gap-5">
-        <span class="upi-avatar h-16 w-16 text-[28px]">
+  <main v-if="data" class="mx-auto max-w-2xl space-y-4 px-6 py-6">
+    <header class="upi-card relative overflow-hidden p-6 upi-fade-up">
+      <div class="absolute inset-x-0 -top-24 h-48 bg-gradient-to-b from-upi-500/25 to-transparent pointer-events-none"></div>
+      <div class="relative flex items-start gap-5">
+        <span class="upi-avatar h-20 w-20 text-[38px] ring-4 ring-white/10">
           <i :class="`mdi mdi-${data.user.avatar_icon}`"></i>
         </span>
         <div class="min-w-0 flex-1">
-          <h2 class="truncate text-[20px] font-semibold tracking-tight text-ink-900">{{ data.user.display_name }}</h2>
-          <p class="text-[13px] text-ink-400">@{{ data.user.username }}</p>
-          <p v-if="data.user.bio" class="mt-2 text-[14px] leading-relaxed text-ink-700">{{ data.user.bio }}</p>
-          <div class="mt-4 flex flex-wrap gap-5 text-[13px] text-ink-500">
-            <span><strong class="text-ink-900">{{ data.posts.length }}</strong> posts</span>
-            <span><strong class="text-ink-900">{{ data.followers }}</strong> seguidores</span>
-            <span><strong class="text-ink-900">{{ data.following }}</strong> seguidos</span>
+          <h2 class="truncate text-[22px] font-semibold tracking-tight text-white">{{ data.user.display_name }}</h2>
+          <p class="text-[13px] text-ink-300">@{{ data.user.username }}</p>
+          <p class="mt-2 text-[14.5px] leading-relaxed text-ink-100">{{ data.user.bio || 'Sin bio todavía.' }}</p>
+          <div class="mt-3 flex flex-wrap gap-4 text-[13px] text-ink-200">
+            <span><strong class="text-white">{{ data.posts.length }}</strong> posts</span>
+            <span><strong class="text-white">{{ data.followers }}</strong> seguidores</span>
+            <span><strong class="text-white">{{ data.following }}</strong> seguidos</span>
           </div>
         </div>
       </div>
     </header>
 
     <section class="space-y-3">
-      <article v-for="p in data.posts" :key="p.id" class="upi-card p-5">
-        <p class="whitespace-pre-wrap text-[14.5px] leading-relaxed text-ink-900">{{ p.content }}</p>
-        <span class="mt-3 block text-[11.5px] text-ink-400">{{ fmt(p.created_at) }}</span>
+      <article v-for="p in data.posts" :key="p.id" class="upi-card upi-card-lift p-5">
+        <p class="whitespace-pre-wrap text-[15px] leading-relaxed text-ink-50">{{ p.content }}</p>
+        <span class="mt-3 flex items-center gap-1.5 text-[12px] text-ink-300">
+          <i v-if="p.mood_icon" :class="`mdi mdi-${p.mood_icon} text-upi-300`"></i>
+          {{ fmt(p.created_at) }}
+        </span>
       </article>
-      <p v-if="!data.posts.length" class="py-12 text-center text-[13px] text-ink-400">
-        Sin publicaciones.
+      <p v-if="!data.posts.length" class="py-10 text-center text-[13px] text-ink-300">
+        Aún no ha posteado nada.
       </p>
     </section>
   </main>
-  <main v-else class="py-20 text-center text-[13px] text-ink-400">
+  <main v-else class="py-20 text-center text-[13px] text-ink-300">
     <i class="mdi mdi-loading mdi-spin"></i> cargando
   </main>
 </template>
