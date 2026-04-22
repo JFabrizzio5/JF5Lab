@@ -1,0 +1,97 @@
+networks:
+  saas_net:
+    driver: bridge
+
+services:
+  api:
+    build: .
+    container_name: stocklink_api
+    networks: [saas_net]
+    ports: ["${API_PORT:-8000}:8000"]
+    env_file: [.env, .env.docker]
+    volumes: [.:/app]
+    command: >
+      sh -c "uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+
+  worker:
+    build: .
+    container_name: stocklink_worker
+    networks: [saas_net]
+    env_file: [.env.docker]
+    volumes: [.:/app]
+    command: arq worker.WorkerSettings
+    depends_on:
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+
+  redis:
+    image: redis:alpine
+    container_name: stocklink_redis
+    networks: [saas_net]
+    ports: ["${REDIS_PORT:-6379}:6379"]
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: stocklink_postgres
+    networks: [saas_net]
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: saas_db
+    ports: ["${POSTGRES_PORT:-5432}:5432"]
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d saas_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: stocklink_pgbouncer
+    networks: [saas_net]
+    environment:
+      DB_USER: admin
+      DB_PASSWORD: password123
+      DB_HOST: postgres
+      DB_NAME: saas_db
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 500
+      DEFAULT_POOL_SIZE: 20
+    ports: ["${PGBOUNCER_PORT:-6432}:5432"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus
+    container_name: stocklink_prometheus
+    networks: [saas_net]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    volumes: [./prometheus.yml:/etc/prometheus/prometheus.yml]
+    ports: ["${PROMETHEUS_PORT:-9090}:9090"]
+
+  grafana:
+    image: grafana/grafana
+    container_name: stocklink_grafana
+    networks: [saas_net]
+    ports: ["${GRAFANA_PORT:-3000}:3000"]
+    volumes: [./provisioning:/etc/grafana/provisioning]
+    environment: [GF_SECURITY_ADMIN_PASSWORD=admin]
+    depends_on: [prometheus]
+
+volumes:
+  postgres_data:
