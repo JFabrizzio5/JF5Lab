@@ -5,12 +5,14 @@ import { useCarouselStore } from '../stores/carousel'
 import SlideCanvas from '../components/SlideCanvas.vue'
 import SlideStrip from '../components/SlideStrip.vue'
 import TemplatePicker from '../components/TemplatePicker.vue'
+import PresetGallery from '../components/PresetGallery.vue'
 import BrandPanel from '../components/BrandPanel.vue'
 import LayerEditor from '../components/LayerEditor.vue'
 import ExportModal from '../components/ExportModal.vue'
 
 const store = useCarouselStore()
 const showPicker = ref(false)
+const showPresets = ref(false)
 const showExport = ref(false)
 const sidebarTab = ref('layers')
 
@@ -35,6 +37,10 @@ onMounted(() => {
         <span>CometaX Carousel</span>
       </RouterLink>
       <div class="actions">
+        <button class="btn" @click="showPresets = true" title="Cargar carrusel pre-armado">
+          <i class="mdi mdi-view-dashboard"></i>
+          Plantillas
+        </button>
         <button class="btn" @click="store.reset(); store.init()" title="Reiniciar">
           <i class="mdi mdi-refresh"></i>
         </button>
@@ -93,6 +99,19 @@ onMounted(() => {
             <button class="icon-btn" @click="showPicker = false"><i class="mdi mdi-close"></i></button>
           </div>
           <TemplatePicker @picked="showPicker = false" />
+        </div>
+      </div>
+    </Transition>
+
+    <Transition name="fade">
+      <div v-if="showPresets" class="overlay" @click.self="showPresets = false">
+        <div class="modal big">
+          <div class="modal-head">
+            <h3>Cargar carrusel pre-armado</h3>
+            <button class="icon-btn" @click="showPresets = false"><i class="mdi mdi-close"></i></button>
+          </div>
+          <p style="color: var(--muted); margin: -10px 0 16px; font-size: 13px;">Reemplaza los slides actuales con un carrusel listo. Después editas los textos.</p>
+          <PresetGallery @picked="showPresets = false" />
         </div>
       </div>
     </Transition>

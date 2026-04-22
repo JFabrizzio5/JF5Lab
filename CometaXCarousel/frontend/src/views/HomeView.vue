@@ -1,5 +1,6 @@
 <script setup>
 import { RouterLink } from 'vue-router'
+import PresetGallery from '../components/PresetGallery.vue'
 </script>
 
 <template>
@@ -19,6 +20,7 @@ import { RouterLink } from 'vue-router'
         </div>
       </div>
       <nav>
+        <RouterLink to="/presets" class="link">Plantillas</RouterLink>
         <RouterLink to="/pricing" class="link">Planes</RouterLink>
         <RouterLink to="/editor" class="btn btn-primary">
           <i class="mdi mdi-rocket-launch"></i>
@@ -32,12 +34,13 @@ import { RouterLink } from 'vue-router'
       <h2>Diseña carruseles que <span class="grad">brillan</span> como un cometa</h2>
       <p>10 plantillas SVG editables, 5 paletas listas, export PNG/ZIP en un clic. Sin watermarks, sin cuentas, sin pagar para empezar.</p>
       <div class="cta-row">
-        <RouterLink to="/editor" class="btn btn-primary big">
-          <i class="mdi mdi-pencil-ruler"></i>
-          Abrir editor
+        <RouterLink to="/presets" class="btn btn-primary big">
+          <i class="mdi mdi-view-dashboard"></i>
+          Ver carruseles listos
         </RouterLink>
-        <RouterLink to="/pricing" class="btn big">
-          Ver planes
+        <RouterLink to="/editor" class="btn big">
+          <i class="mdi mdi-pencil-ruler"></i>
+          Editor en blanco
         </RouterLink>
       </div>
       <div class="stat-row">
@@ -46,6 +49,17 @@ import { RouterLink } from 'vue-router'
         <div><strong>3</strong> tamaños IG</div>
         <div><strong>0</strong> watermarks</div>
       </div>
+    </section>
+
+    <section class="presets-section">
+      <div class="section-head">
+        <div>
+          <h2>Carruseles <span class="grad">listos para editar</span></h2>
+          <p>12 plantillas con copy real y paleta sugerida. Edita los textos y exporta PNG.</p>
+        </div>
+        <RouterLink to="/presets" class="btn">Ver todos</RouterLink>
+      </div>
+      <PresetGallery @picked="$router.push('/editor')" />
     </section>
 
     <section class="features">
@@ -111,6 +125,14 @@ nav { display: flex; align-items: center; gap: 14px; }
   flex-wrap: wrap; color: var(--muted); font-size: 14px;
 }
 .stat-row strong { color: var(--text); font-size: 28px; display: block; }
+
+.presets-section { margin: 80px 0; }
+.section-head {
+  display: flex; justify-content: space-between; align-items: end;
+  margin-bottom: 28px; gap: 20px; flex-wrap: wrap;
+}
+.section-head h2 { margin: 0; font-size: 36px; line-height: 1.1; }
+.section-head p { margin: 8px 0 0; color: var(--muted); font-size: 16px; }
 
 .features {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));

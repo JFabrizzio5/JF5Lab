@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { TEMPLATES, PRESETS, SIZES, findTemplate } from '../templates'
+import { findPreset } from '../presets'
 
 const clone = (o) => JSON.parse(JSON.stringify(o))
 
@@ -71,6 +72,15 @@ export const useCarouselStore = defineStore('carousel', {
     reset() {
       this.slides = []
       this.activeIndex = 0
+      this.customPreset = null
+    },
+    loadPreset(presetId) {
+      const p = findPreset(presetId)
+      if (!p) return
+      this.slides = clone(p.slides).map(s => ({ ...s, uid: crypto.randomUUID() }))
+      this.activeIndex = 0
+      this.presetKey = p.presetKey
+      this.sizeKey = p.sizeKey
       this.customPreset = null
     }
   }
