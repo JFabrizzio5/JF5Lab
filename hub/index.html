@@ -108,6 +108,24 @@
     .ports { font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); }
     .ports strong { color: var(--text); }
 
+    .ctl-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding-top: 4px; }
+    .ctl-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 999px; background: var(--bad); }
+    .dot.up { background: var(--ok); }
+    .dot.partial { background: var(--warn); }
+    .toggle {
+      position: relative; width: 42px; height: 22px; border-radius: 999px;
+      background: #334155; border: none; cursor: pointer; transition: background 0.2s;
+      flex-shrink: 0;
+    }
+    .toggle::after {
+      content: ""; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px;
+      background: white; border-radius: 999px; transition: transform 0.2s;
+    }
+    .toggle.on { background: var(--ok); }
+    .toggle.on::after { transform: translateX(20px); }
+    .toggle.busy { opacity: 0.5; cursor: wait; }
+
     footer {
       text-align: center; padding: 32px 24px; color: var(--muted);
       border-top: 1px solid var(--border); font-size: 13px;
@@ -161,12 +179,20 @@
 
   const projects = [
     {
+      emoji: "👋", name: "HolaClaude", cat: "app",
+      desc: "Rostro + gestos + voz para hablar con Claude CLI sandboxed. Primer rostro queda dueño. PIN 23052005 deshabilita.",
+      stack: ["FastAPI", "Vue 3", "Claude CLI", "MediaPipe"],
+      color: "#6ca0ff",
+      frontend: 3065, backend: 8140, public: 8139,
+      path: "/HolaClaude", compose: "holaclaude"
+    },
+    {
       emoji: "🛎️", name: "ServiLink", cat: "app",
       desc: "Marketplace de servicios profesionales (tipo Rappi de freelancers). Chat, reservas, suscripciones.",
       stack: ["FastAPI", "Vue 3", "PostgreSQL"],
       color: "#6366f1",
       frontend: 3005, backend: 8020,
-      path: "/ServiLink"
+      path: "/ServiLink", compose: "servilink"
     },
     {
       emoji: "🎓", name: "EduLink", cat: "app",
@@ -174,7 +200,7 @@
       stack: ["FastAPI", "Vue 3", "PostgreSQL"],
       color: "#10b981",
       frontend: 3010, backend: 8030,
-      path: "/EduLink"
+      path: "/EduLink", compose: "edulink"
     },
     {
       emoji: "🏪", name: "NegocioOS", cat: "app",
@@ -182,7 +208,7 @@
       stack: ["FastAPI", "Vue 3", "PostgreSQL"],
       color: "#f59e0b",
       frontend: 3015, backend: 8041,
-      path: "/NegocioOS"
+      path: "/NegocioOS", compose: "negocioos"
     },
     {
       emoji: "💅", name: "SalonOS", cat: "app",
@@ -190,7 +216,7 @@
       stack: ["FastAPI", "Vue 3", "PostgreSQL"],
       color: "#ec4899",
       frontend: 3020, backend: 8050,
-      path: "/SalonOS"
+      path: "/SalonOS", compose: "salonos"
     },
     {
       emoji: "🎤", name: "ConventionOS", cat: "app",
@@ -198,7 +224,7 @@
       stack: ["FastAPI", "Vue 3", "PostgreSQL"],
       color: "#8b5cf6",
       frontend: 3025, backend: 8060,
-      path: "/ConventionOS"
+      path: "/ConventionOS", compose: "conventionos"
     },
     {
       emoji: "🏠", name: "RentaMe", cat: "app",
@@ -206,7 +232,7 @@
       stack: ["FastAPI", "Vue 3", "PostgreSQL"],
       color: "#06b6d4",
       frontend: 3030, backend: 8070,
-      path: "/RentaMe"
+      path: "/RentaMe", compose: "rentame"
     },
     {
       emoji: "🏘️", name: "RentaFacil", cat: "app",
@@ -214,7 +240,55 @@
       stack: ["FastAPI", "Vue 3", "PostgreSQL"],
       color: "#84cc16",
       frontend: 3002, backend: 8000,
-      path: "/RentaFacil"
+      path: "/RentaFacil", compose: "rentafacil"
+    },
+    {
+      emoji: "💪", name: "PulsoMX", cat: "app",
+      desc: "SaaS membresías + clases + cobros para gyms, yoga, coworkings, dojos. Stripe + Conekta integrados, check-in QR, dashboard con MRR/churn.",
+      stack: ["FastAPI", "Vue 3", "Stripe", "Conekta", "Postgres+RLS"],
+      color: "#ec4899",
+      frontend: 3045, backend: 8100,
+      path: "/PulsoMX", compose: "pulsomx"
+    },
+    {
+      emoji: "💸", name: "PorCobrar", cat: "app",
+      desc: "Cobranza automática cartera vencida. Upload CFDI, dunning flows, link de pago Stripe/Conekta. Para CFOs y contadores MX.",
+      stack: ["FastAPI", "Vue 3", "Stripe", "Conekta", "CFDI XML"],
+      color: "#f59e0b",
+      frontend: 3060, backend: 8130,
+      path: "/PorCobrar", compose: "porcobrar"
+    },
+    {
+      emoji: "📅", name: "AgendaPro", cat: "app",
+      desc: "Reservas B2C con pago anticipado. Barberos, dentistas, vets, coaches. WhatsApp reminders + Google Reviews.",
+      stack: ["FastAPI", "Vue 3", "Stripe", "Conekta"],
+      color: "#1e40af",
+      frontend: 3055, backend: 8120,
+      path: "/AgendaPro", compose: "agendapro"
+    },
+    {
+      emoji: "🧾", name: "NotaMX", cat: "app",
+      desc: "WhatsApp + Cobros Stripe/Conekta + CFDI 4.0 automático. Para freelancers y PYMEs MX.",
+      stack: ["FastAPI", "Vue 3", "Stripe", "Conekta", "CFDI"],
+      color: "#10b981",
+      frontend: 3050, backend: 8110,
+      path: "/NotaMX", compose: "notamx"
+    },
+    {
+      emoji: "🌠", name: "CometaX Carousel", cat: "app",
+      desc: "Generador de carruseles para Instagram. 10 plantillas SVG editables, 5 paletas, export PNG/ZIP. 100% client-side, sin login, sin watermark forzado.",
+      stack: ["Vue 3", "Vite", "Pinia", "html-to-image", "JSZip"],
+      color: "#a855f7",
+      frontend: 3070,
+      path: "/CometaXCarousel", compose: "cometaxcarousel"
+    },
+    {
+      emoji: "📦", name: "StockLink", cat: "app",
+      desc: "Inventario SaaS multi-tenant con QR, código de barras, NFC y asistencias. Landing con precios MXN y demos por vertical (tiendita, restaurante, paquetería, constructora).",
+      stack: ["FastAPI", "Vue 3", "Postgres+RLS", "Sentry"],
+      color: "#6366f1",
+      frontend: 3040, backend: 8090,
+      path: "/StockLink", compose: "stocklink"
     },
     {
       emoji: "📚", name: "Tokenizate (Editorial)", cat: "app",
@@ -222,7 +296,7 @@
       stack: ["FastAPI", "React", "MySQL"],
       color: "#a855f7",
       frontend: 3001, backend: 8012,
-      path: "/Tokenizate"
+      path: "/Tokenizate", compose: "tokenizate"
     },
     {
       emoji: "📈", name: "Rankit Visibility (Py)", cat: "api",
@@ -238,7 +312,7 @@
       stack: [".NET", "C#"],
       color: "#0ea5e9",
       frontend: null, backend: 5138,
-      path: "/Rankit-.Net-"
+      path: "/Rankit-.Net-", compose: "fortnitereplayapi"
     },
     {
       emoji: "🧩", name: "CometaX Framework", cat: "tool",
@@ -257,6 +331,14 @@
       frontend: null, backend: null,
       path: "/Extensiones/awesome-design-md",
       docs: true
+    },
+    {
+      emoji: "🪐", name: "UpiPlanet", cat: "app",
+      desc: "Red social temática planetaria morado/blanco. Feed, posts, todo social.",
+      stack: ["FastAPI", "Vue 3", "Postgres"],
+      color: "#a855f7",
+      frontend: 8169, backend: 8160,
+      path: "/UpiPlanet", compose: "upiplanet"
     },
     {
       emoji: "🗄️", name: "PostgreSQL / MySQL / Mongo", cat: "infra",
@@ -285,6 +367,15 @@
       p.backend  ? `API <strong>:${p.backend}</strong>` : null,
     ].filter(Boolean).join(" · ");
 
+    const ctlBlock = p.compose ? `
+      <div class="ctl-row" data-compose="${p.compose}">
+        <div class="ctl-status">
+          <span class="dot" data-dot></span>
+          <span data-lbl>—</span>
+        </div>
+        <button class="toggle" data-toggle title="Encender / apagar"></button>
+      </div>` : '';
+
     return `
       <article class="card" data-cat="${p.cat}" style="--cat-color: ${p.color}">
         <div class="card-head">
@@ -294,6 +385,7 @@
         <p class="desc">${p.desc}</p>
         <div class="stack">${p.stack.map(s => `<span class="tag">${s}</span>`).join("")}</div>
         ${portsLine ? `<div class="ports">${portsLine}</div>` : ''}
+        ${ctlBlock}
         <div class="actions">${actions.join("")}</div>
       </article>
     `;
@@ -301,6 +393,66 @@
 
   const grid = document.getElementById('grid');
   grid.innerHTML = projects.map(buildCard).join("");
+
+  // ===== Control: status + toggle =====
+  const CTL = location.origin + '/api';
+  function getPin() {
+    let pin = sessionStorage.getItem('hub_pin');
+    if (!pin) {
+      pin = prompt('PIN de administrador');
+      if (pin) sessionStorage.setItem('hub_pin', pin);
+    }
+    return pin;
+  }
+
+  async function refreshStatus() {
+    try {
+      const r = await fetch(`${CTL}/status`);
+      if (!r.ok) return;
+      const data = await r.json();
+      document.querySelectorAll('.ctl-row').forEach(row => {
+        const key = row.dataset.compose;
+        const s = data[key];
+        const dot = row.querySelector('[data-dot]');
+        const lbl = row.querySelector('[data-lbl]');
+        const tgl = row.querySelector('[data-toggle]');
+        if (!s || s.total === 0) { lbl.textContent = 'sin contenedores'; dot.className = 'dot'; tgl.classList.remove('on'); return; }
+        lbl.textContent = `${s.up}/${s.total} ${s.state === 'partial' ? 'parcial' : s.state === 'up' ? 'activo' : 'apagado'}`;
+        dot.className = 'dot' + (s.state === 'up' ? ' up' : s.state === 'partial' ? ' partial' : '');
+        tgl.classList.toggle('on', s.state === 'up' || s.state === 'partial');
+      });
+    } catch (e) { console.warn(e); }
+  }
+
+  grid.addEventListener('click', async ev => {
+    const btn = ev.target.closest('[data-toggle]');
+    if (!btn) return;
+    const row = btn.closest('.ctl-row');
+    const key = row.dataset.compose;
+    const turningOff = btn.classList.contains('on');
+    const pin = getPin();
+    if (!pin) return;
+    btn.classList.add('busy');
+    try {
+      const action = turningOff ? 'stop' : 'start';
+      const r = await fetch(`${CTL}/project/${key}/${action}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ pin }),
+      });
+      if (r.status === 401) {
+        sessionStorage.removeItem('hub_pin');
+        alert('PIN incorrecto');
+      } else if (!r.ok) {
+        const err = await r.json().catch(() => ({ detail: 'error' }));
+        alert(`Error: ${err.detail}`);
+      }
+      await refreshStatus();
+    } finally { btn.classList.remove('busy'); }
+  });
+
+  refreshStatus();
+  setInterval(refreshStatus, 5000);
 
   document.querySelectorAll('.chip').forEach(chip => {
     chip.addEventListener('click', () => {

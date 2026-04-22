@@ -1,0 +1,9 @@
+services:
+  cometaxcarousel_front:
+    build: .
+    container_name: cometaxcarousel_front
+    restart: unless-stopped
+    ports:
+      - "3070:80"
+    environment:
+      - TZ=America/Mexico_City
