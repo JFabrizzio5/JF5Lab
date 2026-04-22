@@ -1,0 +1,26 @@
+{
+  "name": "holaclaude-front",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 0.0.0.0 --port 3065",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0 --port 3065"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "axios": "^1.7.9",
+    "face-api.js": "^0.22.2",
+    "pinia": "^2.3.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0",
+    "@mediapipe/hands": "^0.4.1675469240",
+    "@mediapipe/camera_utils": "^0.3.1675466862",
+    "@mediapipe/drawing_utils": "^0.3.1675466124"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "vite": "^6.0.5"
+  }
+}

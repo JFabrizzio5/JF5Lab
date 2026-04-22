@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  /* Cool neutral gray scale, no purple tint */
+  --color-ink-50: #f7f8fa;
+  --color-ink-100: #eef0f3;
+  --color-ink-200: #e2e5ea;
+  --color-ink-300: #c8ccd4;
+  --color-ink-400: #9aa0ad;
+  --color-ink-500: #6b7280;
+  --color-ink-700: #2d3240;
+  --color-ink-900: #0f1115;
+
+  /* Single restrained indigo accent (less saturated than before) */
+  --color-upi-50: #eef0ff;
+  --color-upi-100: #dfe2ff;
+  --color-upi-200: #c3c8ff;
+  --color-upi-300: #9aa1ff;
+  --color-upi-400: #6f78f5;
+  --color-upi-500: #525ce0;
+  --color-upi-600: #3d45c2;
+  --color-upi-700: #2e349a;
+  --color-upi-800: #1f2470;
+
+  --font-sans: "Inter", "SF Pro Text", ui-sans-serif, system-ui, sans-serif;
+  --radius-2xl: 14px;
+}
+
+@layer base {
+  html, body, #app { min-height: 100%; }
+  body {
+    background: #fbfbfc;
+    color: var(--color-ink-900);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "ss01", "cv11";
+    letter-spacing: -0.005em;
+  }
+  button { cursor: pointer; }
+  ::selection { background: var(--color-upi-100); color: var(--color-upi-800); }
+}
+
+@layer components {
+  .upi-card {
+    @apply bg-white border border-ink-100 rounded-2xl;
+  }
+  .upi-btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors;
+    @apply bg-ink-900 text-white hover:bg-ink-700;
+  }
+  .upi-btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors;
+    @apply bg-ink-900 text-white hover:bg-ink-700;
+  }
+  .upi-btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-medium transition-colors;
+    @apply bg-white text-ink-700 border border-ink-200 hover:border-ink-300 hover:bg-ink-50;
+  }
+  .upi-chip {
+    @apply inline-flex items-center gap-1.5 rounded-full bg-ink-50 text-ink-700 px-3 py-1 text-xs font-medium border border-ink-100;
+  }
+  .upi-input {
+    @apply w-full rounded-xl bg-white border border-ink-200 px-4 py-2.5 text-[15px] text-ink-900 placeholder:text-ink-400;
+    @apply focus:outline-none focus:border-ink-900;
+  }
+  .upi-avatar {
+    @apply inline-flex items-center justify-center rounded-full bg-ink-900 text-white shrink-0;
+  }
+}

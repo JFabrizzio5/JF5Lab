@@ -1,0 +1,157 @@
+networks:
+  saas_net:
+    driver: bridge
+  sandbox_net:
+    driver: bridge
+
+services:
+  api:
+    build: .
+    container_name: holaclaude_api
+    networks: [saas_net, sandbox_net]
+    ports: ["127.0.0.1:${API_PORT:-8140}:8000"]
+    env_file: [.env, .env.docker]
+    environment:
+      CLAUDE_RUNNER_URL: "http://claude_runner:7788"
+    volumes:
+      - .:/app
+      - ./artifacts:/app/artifacts
+      - ../CometaXMicroservices/TemplateMicroservices:/framework/TemplateMicroservices:ro
+    command: >
+      sh -c "alembic upgrade head || true; uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+      claude_runner:
+        condition: service_started
+
+  worker:
+    build: .
+    container_name: holaclaude_worker
+    networks: [saas_net]
+    env_file: [.env.docker]
+    volumes: [.:/app]
+    command: arq worker.WorkerSettings
+    depends_on:
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+
+  claude_runner:
+    build: ./claude-sandbox
+    container_name: holaclaude_claude_runner
+    networks: [sandbox_net]
+    read_only: false
+    cap_drop: ["ALL"]
+    security_opt: ["no-new-privileges:true"]
+    volumes:
+      - ./artifacts:/workspace:rw
+      - /root/.claude/.credentials.json:/sandbox/.claude/.credentials.json:ro
+      - ./claude-sandbox/runner.js:/runner.js:ro
+      - ../CometaXMicroservices/TemplateMicroservices:/framework/TemplateMicroservices:ro
+    environment:
+      BACKEND_URL: "http://api:8000"
+      COMETAX_BRIDGE_TOKEN: "${COMETAX_BRIDGE_TOKEN:-}"
+    tmpfs:
+      - /tmp:size=64m
+      - /home/claudeuser/.cache:size=128m
+    restart: unless-stopped
+
+  front:
+    image: node:20-alpine
+    container_name: holaclaude_front
+    networks: [saas_net]
+    working_dir: /app
+    ports: ["127.0.0.1:3065:3065"]
+    volumes:
+      - ./front:/app
+    command: sh -c "npm install --no-fund --no-audit && npm run dev"
+    environment:
+      HOST: "0.0.0.0"
+    depends_on: [api]
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: holaclaude_caddy
+    networks: [saas_net]
+    ports:
+      - "${PUBLIC_PORT:-8139}:8443"
+      - "${PUBLIC_HTTP_PORT:-8138}:80"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/cert.pem:/etc/caddy/cert.pem:ro
+      - ./caddy/key.pem:/etc/caddy/key.pem:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [api, front]
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: holaclaude_redis
+    networks: [saas_net]
+    ports: ["127.0.0.1:${REDIS_PORT:-8143}:6379"]
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: holaclaude_postgres
+    networks: [saas_net]
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: saas_db
+    ports: ["127.0.0.1:${POSTGRES_PORT:-8141}:5432"]
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d saas_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: holaclaude_pgbouncer
+    networks: [saas_net]
+    environment:
+      DB_USER: admin
+      DB_PASSWORD: password123
+      DB_HOST: postgres
+      DB_NAME: saas_db
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 500
+      DEFAULT_POOL_SIZE: 20
+    ports: ["127.0.0.1:${PGBOUNCER_PORT:-8142}:5432"]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus
+    container_name: holaclaude_prometheus
+    networks: [saas_net]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    volumes: [./prometheus.yml:/etc/prometheus/prometheus.yml]
+    ports: ["127.0.0.1:${PROMETHEUS_PORT:-8145}:9090"]
+
+  grafana:
+    image: grafana/grafana
+    container_name: holaclaude_grafana
+    networks: [saas_net]
+    ports: ["127.0.0.1:${GRAFANA_PORT:-8146}:3000"]
+    volumes: [./provisioning:/etc/grafana/provisioning]
+    environment: [GF_SECURITY_ADMIN_PASSWORD=admin]
+    depends_on: [prometheus]
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

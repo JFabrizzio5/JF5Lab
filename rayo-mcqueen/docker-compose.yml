@@ -1,0 +1,8 @@
+services:
+  rayo:
+    build: .
+    image: rayo-mcqueen-hola:latest
+    container_name: rayo_mcqueen
+    restart: unless-stopped
+    ports:
+      - "8150:80"

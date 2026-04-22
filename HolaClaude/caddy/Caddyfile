@@ -1,0 +1,32 @@
+{
+	auto_https off
+}
+
+:8443 {
+	tls /etc/caddy/cert.pem /etc/caddy/key.pem
+
+	header {
+		X-Frame-Options "DENY"
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(self), microphone=(self), geolocation=()"
+	}
+
+	handle_path /api/* {
+		reverse_proxy api:8000 {
+			header_up X-Real-IP {remote_host}
+			header_up Host {host}
+		}
+	}
+
+	handle {
+		reverse_proxy front:3065 {
+			header_up X-Real-IP {remote_host}
+			header_up Host {host}
+		}
+	}
+}
+
+:80 {
+	redir https://{host}:8443{uri} permanent
+}

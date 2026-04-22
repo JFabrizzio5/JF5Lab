@@ -1,0 +1,130 @@
+networks:
+  saas_net:
+    driver: bridge
+
+services:
+  api:
+    build: .
+    container_name: upiplanet_api
+    networks: [saas_net]
+    ports: ["127.0.0.1:${API_PORT:-8160}:8000"]
+    env_file: [.env, .env.docker]
+    environment:
+      UPIPLANET_JWT_SECRET: "${UPIPLANET_JWT_SECRET}"
+    volumes: [.:/app]
+    command: >
+      sh -c "alembic upgrade head || true; uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+    mem_limit: 768m
+    cpus: 1.0
+    restart: unless-stopped
+
+  worker:
+    build: .
+    container_name: upiplanet_worker
+    networks: [saas_net]
+    env_file: [.env.docker]
+    volumes: [.:/app]
+    command: arq worker.WorkerSettings
+    depends_on:
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+    mem_limit: 256m
+    cpus: 0.5
+
+  front:
+    image: node:20-alpine
+    container_name: upiplanet_front
+    networks: [saas_net]
+    working_dir: /app
+    ports: ["${PUBLIC_PORT:-8169}:3075"]
+    volumes:
+      - ./front:/app
+    command: sh -c "npm install --no-fund --no-audit && npm run dev"
+    environment:
+      HOST: "0.0.0.0"
+    depends_on: [api]
+    mem_limit: 512m
+    cpus: 1.0
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: upiplanet_redis
+    networks: [saas_net]
+    ports: ["127.0.0.1:${REDIS_PORT:-8163}:6379"]
+    restart: always
+    mem_limit: 128m
+    cpus: 0.3
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: upiplanet_postgres
+    networks: [saas_net]
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: saas_db
+    ports: ["127.0.0.1:${POSTGRES_PORT:-8161}:5432"]
+    volumes: [postgres_data:/var/lib/postgresql/data]
+    mem_limit: 512m
+    cpus: 0.8
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d saas_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: upiplanet_pgbouncer
+    networks: [saas_net]
+    environment:
+      DB_USER: admin
+      DB_PASSWORD: password123
+      DB_HOST: postgres
+      DB_NAME: saas_db
+      POOL_MODE: transaction
+      MAX_CLIENT_CONN: 300
+      DEFAULT_POOL_SIZE: 15
+    ports: ["127.0.0.1:${PGBOUNCER_PORT:-8162}:5432"]
+    mem_limit: 128m
+    cpus: 0.3
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  prometheus:
+    image: prom/prometheus
+    container_name: upiplanet_prometheus
+    networks: [saas_net]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+    volumes: [./prometheus.yml:/etc/prometheus/prometheus.yml]
+    ports: ["127.0.0.1:${PROMETHEUS_PORT:-8165}:9090"]
+    mem_limit: 256m
+    cpus: 0.3
+
+  grafana:
+    image: grafana/grafana
+    container_name: upiplanet_grafana
+    networks: [saas_net]
+    ports: ["127.0.0.1:${GRAFANA_PORT:-8166}:3000"]
+    volumes: [./provisioning:/etc/grafana/provisioning]
+    environment: [GF_SECURITY_ADMIN_PASSWORD=admin]
+    mem_limit: 256m
+    cpus: 0.3
+    depends_on: [prometheus]
+
+volumes:
+  postgres_data:
