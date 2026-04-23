@@ -1311,6 +1311,188 @@ CAROUSEL_PRESETS.push(
   }
 )
 
+// ════════════════════════════════════════════════════════════════
+// Designer-grade — fotos reales Unsplash + pravatar + 3D iso shapes
+// ════════════════════════════════════════════════════════════════
+
+CAROUSEL_PRESETS.push(
+  {
+    id: 'photo-business',
+    name: 'Foto · Negocio premium',
+    description: 'Fotos reales Unsplash, tipografía bold, layout asimétrico tipo editorial.',
+    thumbColor: '#0f172a',
+    presetKey: 'midnight',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'photo-bg', query: 'office,laptop,workspace', seed: 11, overlayAngle: 0, overlayOpacity: 0.55 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Edición #042 · Mensual' },
+          { type: 'text', x: 8, y: 38, w: 84, size: 96, weight: 900, color: 'text', text: 'El estado\ndel SaaS\nen México.' },
+          { type: 'text', x: 8, y: 70, w: 80, size: 26, weight: 500, color: 'muted', text: 'Datos, fundadores y números reales del último trimestre.' },
+          { type: 'shine-line', y: 86, opacity: 0.7 },
+          { type: 'text', x: 8, y: 92, size: 20, weight: 700, color: 'accent', text: 'COMETAX · INSIGHTS' }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'photo-bg', query: 'minimal,abstract,gradient', seed: 22, overlayAngle: 135, overlayOpacity: 0.7 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Dato del trimestre' },
+          { type: 'big-number', x: 50, y: 50, align: 'center', size: 320, text: '847' },
+          { type: 'text', x: 50, y: 70, align: 'center', size: 28, weight: 500, color: 'muted', text: 'SaaS mexicanos lanzados en Q1 2026' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 18, weight: 700, color: 'accent', text: 'FUENTE · COMETAX RESEARCH' }
+        ]
+      },
+      {
+        templateId: 'testimonial',
+        layers: [
+          { type: 'photo-bg', query: 'portrait,professional,woman', seed: 33, overlayAngle: 0, overlayOpacity: 0.6, overlayGrad: 'linear-gradient(0deg, #020617 0%, transparent 60%)' },
+          { type: 'text', x: 8, y: 75, w: 84, size: 38, weight: 600, color: 'text', text: '"En 6 meses pasé de idea a $80,000 MXN/mes. Sin levantar capital."' },
+          { type: 'text', x: 8, y: 90, size: 24, weight: 800, color: 'text', text: 'Andrea M.' },
+          { type: 'text', x: 8, y: 95, size: 18, weight: 500, color: 'accent', text: 'Founder · Fintech CDMX' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'half-split', angle: 90, opacity: 0.3 },
+          { type: 'iso-cube', x: 78, y: 30, size: 220 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Lo que aprendimos' },
+          { type: 'text', x: 8, y: 26, size: 56, weight: 900, color: 'text', text: '3 patrones\nrepetidos.' },
+          { type: 'icon-list', x: 8, y: 55, w: 60, gap: 8, size: 24, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-numeric-1-circle', text: 'Empezaron solos, no en equipo' },
+            { icon: 'mdi-numeric-2-circle', text: 'Cobraron antes de pulir' },
+            { icon: 'mdi-numeric-3-circle', text: 'Distribuyeron 10x más de lo que crearon' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'photo-bg', query: 'mountain,sunset,horizon', seed: 44, overlayAngle: 0, overlayOpacity: 0.5 },
+          { type: 'glossy-ball', x: 80, y: 25, size: 140 },
+          { type: 'text', x: 8, y: 50, w: 80, size: 80, weight: 900, color: 'text', text: 'Tu turno\nde aparecer\nen la lista.' },
+          { type: 'text', x: 8, y: 80, size: 24, weight: 500, color: 'muted', text: 'Lee el reporte completo' },
+          { type: 'text', x: 8, y: 88, size: 32, weight: 800, color: 'accent', text: 'cometax.mx/insights →' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'photo-product',
+    name: 'Foto · Producto premium',
+    description: 'Foto producto con iso-card 3D, half-split, tag glassmorphism. Estilo Apple.',
+    thumbColor: '#a855f7',
+    presetKey: 'cosmic',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'product-launch',
+        layers: [
+          { type: 'photo-bg', query: 'minimal,light,studio', seed: 55, overlayAngle: 180, overlayOpacity: 0.7 },
+          { type: 'iso-card', x: 50, y: 45, size: 320, icon: 'mdi-rocket-launch', rotateY: -16, rotateX: 6 },
+          { type: 'tag-pill', x: 50, y: 78, align: 'center', text: 'Disponible en MX' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 64, weight: 900, color: 'text', text: 'Gen 2.' },
+          { type: 'text', x: 50, y: 95, align: 'center', size: 18, weight: 600, color: 'muted', text: 'Más rápido. Más simple. Más tuyo.' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'photo-bg', query: 'gradient,colorful,abstract', seed: 66, overlayOpacity: 0.85, overlayAngle: 90 },
+          { type: 'iso-cube', x: 80, y: 25, size: 180 },
+          { type: 'glossy-ball', x: 20, y: 75, size: 100 },
+          { type: 'text', x: 8, y: 14, size: 22, weight: 700, color: 'accent', text: '— LO QUE CAMBIA' },
+          { type: 'text', x: 8, y: 28, w: 70, size: 60, weight: 900, color: 'text', text: 'Velocidad,\ndiseño,\ndetalle.' },
+          { type: 'icon-list', x: 8, y: 60, w: 80, gap: 8, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-flash', text: '4× más rápido en exportar' },
+            { icon: 'mdi-palette', text: '12 paletas premium nuevas' },
+            { icon: 'mdi-cube-outline', text: 'Formas 3D editables' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'testimonial',
+        layers: [
+          { type: 'photo-bg', query: 'portrait,man,beard,creative', seed: 77, overlayAngle: 0, overlayOpacity: 0.7, overlayGrad: 'linear-gradient(0deg, #0a0e1a 0%, transparent 50%)' },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Tester · Beta gen 2' },
+          { type: 'text', x: 8, y: 70, w: 84, size: 36, weight: 500, color: 'text', text: '"Lo probé 30 minutos y borré mi suscripción de Canva."' },
+          { type: 'text', x: 8, y: 88, size: 26, weight: 800, color: 'text', text: 'Diego R.' },
+          { type: 'text', x: 8, y: 93, size: 18, weight: 500, color: 'accent', text: 'Diseñador · Studio Monterrey' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'photo-bg', query: 'aurora,northern,lights,purple', seed: 88, overlayOpacity: 0.6 },
+          { type: 'glossy-ball', x: 50, y: 30, size: 180 },
+          { type: 'text', x: 50, y: 60, align: 'center', size: 72, weight: 900, color: 'text', text: 'Pruébalo' },
+          { type: 'text', x: 50, y: 75, w: 80, align: 'center', size: 24, weight: 500, color: 'muted', text: 'Sin tarjeta. Sin login. 100% en tu navegador.' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 800, color: 'accent', text: 'cometax.mx/carousel' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'photo-team',
+    name: 'Foto · Equipo / Vacante',
+    description: 'Reclutamiento con fotos reales, glossy ball, layout asimétrico premium.',
+    thumbColor: '#06b6d4',
+    presetKey: 'midnight',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'product-launch',
+        layers: [
+          { type: 'photo-bg', query: 'team,office,collaboration', seed: 91, overlayOpacity: 0.65 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Buscamos talento' },
+          { type: 'text', x: 8, y: 38, w: 84, size: 110, weight: 900, color: 'text', text: 'Únete\nal equipo.' },
+          { type: 'text', x: 8, y: 75, w: 80, size: 26, weight: 500, color: 'muted', text: 'Posiciones abiertas en ingeniería, diseño y producto.' },
+          { type: 'text', x: 8, y: 92, size: 22, weight: 800, color: 'accent', text: 'COMETAX · CAREERS' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'photo-bg', query: 'workspace,laptop,cafe,minimal', seed: 92, overlayOpacity: 0.85, overlayAngle: 135 },
+          { type: 'iso-card', x: 78, y: 32, size: 200, icon: 'mdi-laptop' },
+          { type: 'tag-pill', x: 8, y: 14, text: 'Por qué unirte' },
+          { type: 'text', x: 8, y: 28, w: 60, size: 54, weight: 900, color: 'text', text: 'Trabajo\ncomo debe ser.' },
+          { type: 'icon-list', x: 8, y: 56, w: 60, gap: 7, size: 24, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-home', text: '100% remoto, async' },
+            { icon: 'mdi-currency-usd', text: 'Sueldo USD competitivo' },
+            { icon: 'mdi-beach', text: '30 días vacaciones' },
+            { icon: 'mdi-medical-bag', text: 'Seguro gastos médicos' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'testimonial',
+        layers: [
+          { type: 'photo-bg', query: 'portrait,professional,smiling', seed: 93, overlayOpacity: 0.55 },
+          { type: 'avatar', x: 50, y: 28, size: 160, align: 'center', src: 'https://i.pravatar.cc/300?img=15' },
+          { type: 'text', x: 50, y: 12, align: 'center', size: 20, weight: 800, color: 'accent', text: 'TEAM · CTO' },
+          { type: 'text', x: 50, y: 56, w: 84, align: 'center', size: 32, weight: 500, color: 'text', text: '"Es el lugar donde finalmente puedo trabajar como ingeniero senior, sin reuniones inútiles."' },
+          { type: 'text', x: 50, y: 84, align: 'center', size: 26, weight: 800, color: 'text', text: 'Roberto K.' },
+          { type: 'text', x: 50, y: 90, align: 'center', size: 18, weight: 500, color: 'accent', text: 'CTO · 4 años en CometaX' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'photo-bg', query: 'sunrise,window,morning,light', seed: 94, overlayOpacity: 0.5 },
+          { type: 'glossy-ball', x: 70, y: 30, size: 160 },
+          { type: 'text', x: 8, y: 50, w: 80, size: 60, weight: 900, color: 'text', text: 'Aplica\nantes del 30.' },
+          { type: 'text', x: 8, y: 80, size: 22, weight: 500, color: 'muted', text: 'Mandamos respuesta a todos. Promesa.' },
+          { type: 'text', x: 8, y: 90, size: 28, weight: 800, color: 'accent', text: 'cometax.mx/jobs →' }
+        ]
+      }
+    ]
+  }
+)
+
 export function findPreset(id) {
   return CAROUSEL_PRESETS.find(p => p.id === id)
 }

@@ -3,6 +3,12 @@ import { TEMPLATES, PRESETS, SIZES, findTemplate } from '../templates'
 import { findPreset } from '../presets'
 
 const clone = (o) => JSON.parse(JSON.stringify(o))
+const safeUuid = () => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    try { return crypto.randomUUID() } catch (e) { /* fallthrough */ }
+  }
+  return 'uid-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 10)
+}
 
 export const useCarouselStore = defineStore('carousel', {
   state: () => ({
@@ -32,7 +38,7 @@ export const useCarouselStore = defineStore('carousel', {
       const tpl = findTemplate(templateId)
       if (!tpl) return
       this.slides.push({
-        uid: crypto.randomUUID(),
+        uid: safeUuid(),
         templateId,
         layers: clone(tpl.layers)
       })
@@ -41,7 +47,7 @@ export const useCarouselStore = defineStore('carousel', {
     duplicate(index) {
       const s = this.slides[index]
       if (!s) return
-      this.slides.splice(index + 1, 0, { ...clone(s), uid: crypto.randomUUID() })
+      this.slides.splice(index + 1, 0, { ...clone(s), uid: safeUuid() })
       this.activeIndex = index + 1
     },
     remove(index) {
@@ -77,7 +83,7 @@ export const useCarouselStore = defineStore('carousel', {
     loadPreset(presetId) {
       const p = findPreset(presetId)
       if (!p) return
-      this.slides = clone(p.slides).map(s => ({ ...s, uid: crypto.randomUUID() }))
+      this.slides = clone(p.slides).map(s => ({ ...s, uid: safeUuid() }))
       this.activeIndex = 0
       this.presetKey = p.presetKey
       this.sizeKey = p.sizeKey

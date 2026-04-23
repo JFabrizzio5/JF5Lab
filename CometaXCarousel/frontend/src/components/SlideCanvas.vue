@@ -45,6 +45,14 @@ function pos(layer) {
   return style
 }
 
+function photoSrc(layer) {
+  if (layer.src) return layer.src
+  if (layer.unsplashId) return `https://images.unsplash.com/photo-${layer.unsplashId}?w=1080&h=1350&fit=crop&q=80`
+  if (layer.query) return `https://source.unsplash.com/1080x1350/?${encodeURIComponent(layer.query)}&sig=${layer.seed || 1}`
+  if (layer.pravatar) return `https://i.pravatar.cc/600?img=${layer.pravatar}`
+  return `https://picsum.photos/seed/${layer.seed || 'cometax'}/1080/1350`
+}
+
 function placeholderIcon(p) {
   const map = {
     phone: 'mdi-cellphone',
@@ -185,6 +193,36 @@ function fontStack(font) {
         </div>
 
         <div v-else-if="layer.type === 'shine-line'" :style="{ position: 'absolute', left: 0, right: 0, top: (layer.y || 50) + '%', height: '2px', background: `linear-gradient(90deg, transparent, ${preset.accent}, ${preset.accent2}, transparent)`, opacity: layer.opacity || 0.7, pointerEvents: 'none' }"></div>
+
+        <div v-else-if="layer.type === 'photo-bg'" :style="{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }">
+          <img :src="photoSrc(layer)" :style="{ width: '100%', height: '100%', objectFit: 'cover', filter: layer.grayscale ? 'grayscale(1)' : 'none' }" referrerpolicy="no-referrer" crossorigin="anonymous" />
+          <div v-if="layer.overlay !== false" :style="{ position: 'absolute', inset: 0, background: layer.overlayGrad || `linear-gradient(${layer.overlayAngle || 180}deg, ${preset.accent}cc 0%, ${preset.bg} 100%)`, opacity: layer.overlayOpacity ?? 0.75 }"></div>
+        </div>
+
+        <div v-else-if="layer.type === 'iso-card'" :style="{ ...pos(layer), width: (layer.size || 280) + 'px', height: (layer.size || 280) * 1.2 + 'px', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, borderRadius: '24px', transform: `translate(-50%,-50%) perspective(800px) rotateY(${layer.rotateY ?? -18}deg) rotateX(${layer.rotateX ?? 8}deg)`, boxShadow: `0 30px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1) inset`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }">
+          <i v-if="layer.icon" :class="['mdi', layer.icon]" :style="{ fontSize: (layer.size || 280) * 0.4 + 'px', color: '#fff', opacity: 0.95, filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.3))' }"></i>
+          <img v-else-if="layer.src" :src="layer.src" :style="{ width: '100%', height: '100%', objectFit: 'cover' }" />
+        </div>
+
+        <svg v-else-if="layer.type === 'iso-cube'" :style="{ ...pos(layer), width: (layer.size || 200) + 'px', height: (layer.size || 200) + 'px', overflow: 'visible' }" viewBox="0 0 100 100">
+          <defs>
+            <linearGradient :id="`ic-top-${i}`" x1="0" x2="1" y1="0" y2="0"><stop offset="0" :stop-color="preset.accent2"/><stop offset="1" :stop-color="preset.accent"/></linearGradient>
+            <linearGradient :id="`ic-left-${i}`" x1="0" x2="0" y1="0" y2="1"><stop offset="0" :stop-color="preset.accent"/><stop offset="1" stop-color="#000" stop-opacity="0.4"/></linearGradient>
+            <linearGradient :id="`ic-right-${i}`" x1="0" x2="0" y1="0" y2="1"><stop offset="0" :stop-color="preset.accent2"/><stop offset="1" stop-color="#000" stop-opacity="0.5"/></linearGradient>
+          </defs>
+          <polygon points="50,10 90,30 50,50 10,30" :fill="`url(#ic-top-${i})`" />
+          <polygon points="10,30 50,50 50,90 10,70" :fill="`url(#ic-left-${i})`" />
+          <polygon points="90,30 50,50 50,90 90,70" :fill="`url(#ic-right-${i})`" />
+        </svg>
+
+        <div v-else-if="layer.type === 'glossy-ball'" :style="{ ...pos(layer), width: (layer.size || 120) + 'px', height: (layer.size || 120) + 'px', borderRadius: '50%', background: `radial-gradient(circle at 30% 25%, #fff 0%, ${preset.accent} 35%, ${preset.accent2} 80%, #1a0a3a 100%)`, transform: 'translate(-50%, -50%)', boxShadow: `0 20px 40px ${preset.accent}66, inset -8px -12px 30px rgba(0,0,0,0.3)` }"></div>
+
+        <div v-else-if="layer.type === 'tag-pill'" :style="{ ...pos(layer), display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 18px', background: 'rgba(255,255,255,0.1)', border: `1px solid ${preset.accent}40`, borderRadius: '999px', backdropFilter: 'blur(10px)' }">
+          <span :style="{ width: '8px', height: '8px', borderRadius: '50%', background: preset.accent, boxShadow: `0 0 12px ${preset.accent}` }"></span>
+          <span :style="{ fontSize: (layer.size || 18) + 'px', fontWeight: 600, color: colorToken('text'), letterSpacing: '0.5px' }">{{ layer.text }}</span>
+        </div>
+
+        <div v-else-if="layer.type === 'big-number'" :style="{ ...pos(layer), fontSize: (layer.size || 280) + 'px', fontWeight: 900, lineHeight: 0.85, background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '-0.04em', fontFamily: 'system-ui' }">{{ layer.text }}</div>
       </template>
     </div>
   </div>
