@@ -23,8 +23,28 @@ function clearSrc(i) { update(i, 'src', null) }
 function toggle(i) { expanded.value[i] = !expanded.value[i] }
 
 const placeholderOpts = ['photo', 'phone', 'laptop', 'card', 'product', 'food', 'chart']
-const peopleOpts = ['/people/01.svg', '/people/02.svg', '/people/03.svg']
+const peopleOpts = [
+  '/people/01.svg', '/people/02.svg', '/people/03.svg',
+  ...Array.from({ length: 20 }, (_, i) => `https://i.pravatar.cc/200?img=${i + 1}`)
+]
 const brandOpts = ['cometax', 'stocklink', 'notamx', 'porcobrar', 'pulsomx', 'agendapro', 'rentafacil', 'rankit', 'consultoria']
+
+const photoLib = [
+  { q: 'office', src: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=250&fit=crop' },
+  { q: 'workspace', src: 'https://images.unsplash.com/photo-1499750310107-5fef28a66643?w=200&h=250&fit=crop' },
+  { q: 'team', src: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=200&h=250&fit=crop' },
+  { q: 'portrait', src: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=250&fit=crop' },
+  { q: 'man', src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=250&fit=crop' },
+  { q: 'product', src: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=200&h=250&fit=crop' },
+  { q: 'abstract', src: 'https://images.unsplash.com/photo-1557672172-298e090bd0f1?w=200&h=250&fit=crop' },
+  { q: 'gradient', src: 'https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=200&h=250&fit=crop' },
+  { q: 'mountain', src: 'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=200&h=250&fit=crop' },
+  { q: 'sunset', src: 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=200&h=250&fit=crop' },
+  { q: 'food', src: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=200&h=250&fit=crop' },
+  { q: 'laptop', src: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=200&h=250&fit=crop' }
+]
+const galleryOpen = ref({})
+function toggleGallery(i) { galleryOpen.value[i] = !galleryOpen.value[i] }
 </script>
 
 <template>
@@ -71,21 +91,44 @@ const brandOpts = ['cometax', 'stocklink', 'notamx', 'porcobrar', 'pulsomx', 'ag
         <div class="row">
           <label class="btn" style="flex:1;">
             <i class="mdi mdi-upload"></i>
-            <span>{{ layer.src ? 'Cambiar' : 'Subir imagen' }}</span>
+            <span>{{ layer.src ? 'Cambiar' : 'Subir' }}</span>
             <input type="file" accept="image/*" @change="onImageUpload(i, $event)" hidden />
           </label>
+          <button class="btn" @click="toggleGallery(i)" title="Galería">
+            <i class="mdi mdi-image-multiple"></i>
+            <span>Galería</span>
+          </button>
           <button v-if="layer.src" class="btn" @click="clearSrc(i)" title="Quitar"><i class="mdi mdi-close"></i></button>
         </div>
-        <div v-if="layer.type === 'avatar' && !layer.src" class="people-row">
-          <div class="mini">Persona placeholder:</div>
-          <div class="thumbs">
-            <button v-for="p in peopleOpts" :key="p" class="person-thumb" @click="update(i, 'src', p)">
-              <img :src="p" />
-            </button>
+
+        <div v-if="galleryOpen[i]" class="gallery">
+          <div v-if="layer.type === 'avatar'" class="gallery-section">
+            <div class="mini">Personas (click para usar)</div>
+            <div class="thumbs">
+              <button v-for="p in peopleOpts" :key="p" class="person-thumb" @click="update(i, 'src', p); galleryOpen[i] = false">
+                <img :src="p" loading="lazy" />
+              </button>
+            </div>
+          </div>
+          <div v-else class="gallery-section">
+            <div class="mini">Fotos sin copyright (click para usar)</div>
+            <div class="photo-grid">
+              <button v-for="ph in photoLib" :key="ph.q" class="photo-thumb" @click="update(i, 'src', ph.src.replace('w=200&h=250', 'w=1080&h=1350')); galleryOpen[i] = false" :title="ph.q">
+                <img :src="ph.src" loading="lazy" />
+                <span>{{ ph.q }}</span>
+              </button>
+            </div>
+            <div class="mini" style="margin-top:8px;">O personas/avatares</div>
+            <div class="thumbs">
+              <button v-for="p in peopleOpts.slice(0, 12)" :key="p" class="person-thumb" @click="update(i, 'src', p); galleryOpen[i] = false">
+                <img :src="p" loading="lazy" />
+              </button>
+            </div>
           </div>
         </div>
-        <div v-if="layer.type === 'image' && !layer.src" class="placeholder-options">
-          <div class="mini">Placeholder icon:</div>
+
+        <div v-if="layer.type === 'image' && !layer.src && !galleryOpen[i]" class="placeholder-options">
+          <div class="mini">O placeholder icon:</div>
           <div class="row wrap">
             <button v-for="opt in placeholderOpts" :key="opt" class="chip" :class="{ active: layer.placeholder === opt }" @click="update(i, 'placeholder', opt)">{{ opt }}</button>
           </div>
@@ -259,13 +302,34 @@ function hasColor(l) {
 .mini { display: block; font-size: 11px; color: var(--muted); margin-bottom: 4px; }
 
 .placeholder-options, .people-row { display: flex; flex-direction: column; gap: 6px; }
+.gallery {
+  background: var(--card); border-radius: 8px; padding: 10px;
+  border: 1px solid var(--border); margin-top: 6px;
+  max-height: 320px; overflow-y: auto;
+}
+.gallery-section { display: flex; flex-direction: column; gap: 6px; }
 .thumbs { display: flex; gap: 6px; flex-wrap: wrap; }
 .person-thumb {
-  width: 48px; height: 48px; border-radius: 50%; overflow: hidden;
-  padding: 0; border: 2px solid transparent; background: var(--card);
+  width: 44px; height: 44px; border-radius: 50%; overflow: hidden;
+  padding: 0; border: 2px solid transparent; background: var(--bg-2);
 }
 .person-thumb:hover { border-color: var(--accent); }
 .person-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.photo-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+}
+.photo-thumb {
+  position: relative; aspect-ratio: 4/5; border-radius: 8px;
+  overflow: hidden; padding: 0; border: 2px solid transparent;
+  background: var(--bg-2); cursor: pointer;
+}
+.photo-thumb:hover { border-color: var(--accent); }
+.photo-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.photo-thumb span {
+  position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%);
+  font-size: 9px; font-weight: 700; color: #fff; background: rgba(0,0,0,0.6);
+  padding: 2px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+}
 
 .brand-grid {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;

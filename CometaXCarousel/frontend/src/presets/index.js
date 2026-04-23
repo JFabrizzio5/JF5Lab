@@ -20,7 +20,7 @@ export const CAROUSEL_PRESETS = [
           { type: 'text', x: 8, y: 35, size: 110, weight: 900, color: 'text', text: 'Llegó\nNombreApp' },
           { type: 'text', x: 8, y: 55, w: 80, size: 30, weight: 500, color: 'muted', text: 'La forma más rápida de hacer X sin complicarte.' },
           { type: 'gradient-blob', x: 75, y: 75, size: 60, opacity: 0.6 },
-          { type: 'logo', x: 92, y: 92, size: 40, align: 'right' }
+          { type: 'logo', x: 92, y: 92, size: 40, align: 'right', brand: 'cometax' }
         ]
       },
       {
@@ -42,7 +42,7 @@ export const CAROUSEL_PRESETS = [
             { icon: 'mdi-shield-check', text: 'Sin cuenta requerida' },
             { icon: 'mdi-currency-usd', text: 'Free tier generoso' }
           ] },
-          { type: 'logo', x: 92, y: 92, size: 36, align: 'right' }
+          { type: 'logo', x: 92, y: 92, size: 36, align: 'right', brand: 'cometax' }
         ]
       },
       {
@@ -52,7 +52,7 @@ export const CAROUSEL_PRESETS = [
           { type: 'text', x: 50, y: 32, align: 'center', size: 26, weight: 600, color: 'muted', text: 'TIEMPO AHORRADO' },
           { type: 'text', x: 50, y: 50, align: 'center', size: 200, weight: 900, color: 'accent', text: '8h' },
           { type: 'text', x: 50, y: 67, align: 'center', size: 28, weight: 500, color: 'text', text: 'cada semana, en promedio' },
-          { type: 'logo', x: 50, y: 90, size: 40, align: 'center' }
+          { type: 'logo', x: 50, y: 90, size: 40, align: 'center', brand: 'cometax' }
         ]
       },
       {
@@ -62,7 +62,7 @@ export const CAROUSEL_PRESETS = [
           { type: 'text', x: 50, y: 30, align: 'center', size: 36, weight: 700, color: 'muted', text: 'Empieza' },
           { type: 'text', x: 50, y: 48, align: 'center', size: 200, weight: 900, color: 'text', text: 'Gratis' },
           { type: 'text', x: 50, y: 70, align: 'center', size: 28, weight: 500, color: 'accent', text: 'Plan Pro desde $199 MXN/mes' },
-          { type: 'logo', x: 50, y: 90, size: 40, align: 'center' }
+          { type: 'logo', x: 50, y: 90, size: 40, align: 'center', brand: 'cometax' }
         ]
       },
       {
@@ -285,7 +285,7 @@ export const CAROUSEL_PRESETS = [
           { type: 'text', x: 8, y: 38, size: 100, weight: 900, color: 'text', text: 'Carrusel\nWizard 2.0' },
           { type: 'text', x: 8, y: 58, w: 80, size: 30, weight: 500, color: 'muted', text: 'Genera 10 slides en menos de un minuto.' },
           { type: 'gradient-blob', x: 80, y: 80, size: 55, opacity: 0.55 },
-          { type: 'logo', x: 92, y: 92, size: 36, align: 'right' }
+          { type: 'logo', x: 92, y: 92, size: 36, align: 'right', brand: 'cometax' }
         ]
       },
       {
