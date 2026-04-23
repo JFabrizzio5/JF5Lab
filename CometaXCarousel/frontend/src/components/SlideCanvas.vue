@@ -45,10 +45,41 @@ function pos(layer) {
   return style
 }
 
+// Curated Unsplash photo IDs (CORS-friendly via images.unsplash.com)
+const CURATED_PHOTOS = {
+  office: ['1497366216548-37526070297c', '1521737711867-e3b97375f902', '1556761175-5973dc0f32e7', '1497032628192-86f99bcd76bc'],
+  workspace: ['1499750310107-5fef28a66643', '1517245386807-bb43f82c33c4', '1531403009284-440f080d1e12'],
+  team: ['1522071820081-009f0129c71c', '1542744173-8e7e53415bb0', '1552664730-d307ca884978'],
+  portrait: ['1494790108377-be9c29b29330', '1500648767791-00dcc994a43e', '1506794778202-cad84cf45f1d', '1573496359142-b8d87734a5a2'],
+  woman: ['1494790108377-be9c29b29330', '1438761681033-6461ffad8d80', '1517841905240-472988babdf9'],
+  man: ['1500648767791-00dcc994a43e', '1506794778202-cad84cf45f1d', '1472099645785-5658abf4ff4e'],
+  product: ['1505740420928-5e560c06d30e', '1572569511254-d8f925fe2cbb', '1523275335684-37898b6baf30'],
+  abstract: ['1557672172-298e090bd0f1', '1558591710-4b4a1ae0f04d', '1614851099175-e5b30eb6f696'],
+  gradient: ['1557682250-33bd709cbe85', '1557682224-5b8590cd9ec5', '1557682268-edc7d68d8d9d'],
+  mountain: ['1469474968028-56623f02e42e', '1464822759023-fed622ff2c3b', '1486870591958-9b9d0d1dda99'],
+  sunset: ['1502082553048-f009c37129b9', '1495567720989-cebdbdd97913', '1506905925346-21bda4d32df4'],
+  food: ['1565299624946-b28f40a0ae38', '1567620905732-2d1ec7ab7445', '1546069901-ba9599a7e63c'],
+  laptop: ['1496181133206-80ce9b88a853', '1517694712202-14dd9538aa97', '1498050108023-c5249f4df085']
+}
+
+function pickCurated(query, seed) {
+  const keys = (query || '').split(/[\s,]+/).filter(Boolean)
+  for (const k of keys) {
+    const list = CURATED_PHOTOS[k.toLowerCase()]
+    if (list) return list[(seed || 0) % list.length]
+  }
+  // fallback first key
+  const flat = Object.values(CURATED_PHOTOS).flat()
+  return flat[(seed || 1) % flat.length]
+}
+
 function photoSrc(layer) {
   if (layer.src) return layer.src
   if (layer.unsplashId) return `https://images.unsplash.com/photo-${layer.unsplashId}?w=1080&h=1350&fit=crop&q=80`
-  if (layer.query) return `https://source.unsplash.com/1080x1350/?${encodeURIComponent(layer.query)}&sig=${layer.seed || 1}`
+  if (layer.query) {
+    const id = pickCurated(layer.query, layer.seed)
+    return `https://images.unsplash.com/photo-${id}?w=1080&h=1350&fit=crop&q=80`
+  }
   if (layer.pravatar) return `https://i.pravatar.cc/600?img=${layer.pravatar}`
   return `https://picsum.photos/seed/${layer.seed || 'cometax'}/1080/1350`
 }
@@ -85,7 +116,7 @@ function fontStack(font) {
   >
     <div class="slide-inner" :style="{ width: size.w + 'px', height: size.h + 'px', transform: `scale(${scale})` }">
       <template v-for="(layer, i) in slide.layers" :key="i">
-        <div v-if="layer.type === 'text'" :style="{ ...pos(layer), fontSize: layer.size + 'px', fontWeight: layer.weight, color: colorToken(layer.color), fontFamily: fontStack(layer.font), lineHeight: 1.15, whiteSpace: 'pre-line', letterSpacing: layer.tracking || 'normal' }">{{ layer.text }}</div>
+        <div v-if="layer.type === 'text'" :style="{ ...pos(layer), fontSize: layer.size + 'px', fontWeight: layer.weight, color: colorToken(layer.color), fontFamily: fontStack(layer.font), lineHeight: layer.lineHeight || 1.15, whiteSpace: 'pre-line', letterSpacing: layer.tracking || 'normal', wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: layer.w ? layer.w + '%' : (layer.align === 'center' ? '90%' : '92%') }">{{ layer.text }}</div>
 
         <div v-else-if="layer.type === 'icon'" :style="{ ...pos(layer), color: colorToken(layer.color), fontSize: layer.size + 'px', lineHeight: 1 }">
           <i :class="['mdi', layer.icon]"></i>
@@ -100,7 +131,14 @@ function fontStack(font) {
           </div>
         </div>
 
-        <div v-else-if="layer.type === 'code-block'" :style="{ ...pos(layer), background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', padding: '36px 40px', fontFamily: fontStack('mono'), fontSize: layer.size + 'px', color: '#e2e8f0', lineHeight: 1.5, whiteSpace: 'pre' }">{{ layer.code }}</div>
+        <div v-else-if="layer.type === 'code-block'" :style="{ ...pos(layer), background: 'rgba(0,0,0,0.6)', border: `1px solid ${preset.accent}30`, borderRadius: '20px', padding: '36px 40px', fontFamily: fontStack('mono'), fontSize: layer.size + 'px', color: '#e2e8f0', lineHeight: 1.5, whiteSpace: 'pre-wrap', wordBreak: 'break-word', overflow: 'hidden', maxWidth: (layer.w || 84) + '%', boxShadow: `0 12px 40px ${preset.accent}20` }">
+          <div :style="{ display: 'flex', gap: '8px', marginBottom: '20px' }">
+            <span :style="{ width: '14px', height: '14px', borderRadius: '50%', background: '#ff5f57' }"></span>
+            <span :style="{ width: '14px', height: '14px', borderRadius: '50%', background: '#febc2e' }"></span>
+            <span :style="{ width: '14px', height: '14px', borderRadius: '50%', background: '#28c840' }"></span>
+          </div>
+          <div>{{ layer.code }}</div>
+        </div>
 
         <div v-else-if="layer.type === 'progress-dots'" :style="{ ...pos(layer), display: 'flex', gap: '14px' }">
           <span v-for="i in layer.count" :key="i" :style="{ width: '24px', height: '8px', borderRadius: '4px', background: i - 1 <= layer.active ? colorToken('accent') : colorToken('muted'), opacity: i - 1 <= layer.active ? 1 : 0.3 }"></span>
@@ -121,14 +159,14 @@ function fontStack(font) {
           <path d="M58 26 L16 60" :stroke="preset.accent" stroke-width="2" stroke-linecap="round" opacity="0.3" />
         </svg>
 
-        <div v-else-if="layer.type === 'split'" :style="{ ...pos(layer), width: '90%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '40px' }">
-          <div style="background:rgba(0,0,0,0.3); border-radius:20px; padding:40px;">
-            <div :style="{ color: colorToken('muted'), fontSize: '24px', fontWeight: 800, letterSpacing: '3px', marginBottom: '24px' }">{{ layer.leftLabel }}</div>
-            <div v-for="(it, j) in layer.leftItems" :key="j" :style="{ color: colorToken('text'), fontSize: '32px', marginBottom: '16px', opacity: 0.8 }">— {{ it }}</div>
+        <div v-else-if="layer.type === 'split'" :style="{ ...pos(layer), width: '88%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }">
+          <div :style="{ background: 'rgba(0,0,0,0.35)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '20px', padding: '32px 24px', minHeight: '280px' }">
+            <div :style="{ color: colorToken('muted'), fontSize: '20px', fontWeight: 800, letterSpacing: '3px', marginBottom: '20px' }">{{ layer.leftLabel }}</div>
+            <div v-for="(it, j) in layer.leftItems" :key="j" :style="{ color: colorToken('text'), fontSize: (layer.itemSize || 26) + 'px', marginBottom: '14px', opacity: 0.75, lineHeight: 1.3, wordBreak: 'break-word' }">— {{ it }}</div>
           </div>
-          <div :style="{ background: `linear-gradient(135deg, ${preset.accent}30, ${preset.accent2}30)`, border: `2px solid ${preset.accent}`, borderRadius: '20px', padding: '40px' }">
-            <div :style="{ color: colorToken('accent'), fontSize: '24px', fontWeight: 800, letterSpacing: '3px', marginBottom: '24px' }">{{ layer.rightLabel }}</div>
-            <div v-for="(it, j) in layer.rightItems" :key="j" :style="{ color: colorToken('text'), fontSize: '32px', marginBottom: '16px', fontWeight: 600 }">+ {{ it }}</div>
+          <div :style="{ background: `linear-gradient(135deg, ${preset.accent}20, ${preset.accent2}20)`, border: `2px solid ${preset.accent}`, borderRadius: '20px', padding: '32px 24px', minHeight: '280px', boxShadow: `0 12px 40px ${preset.accent}30` }">
+            <div :style="{ color: colorToken('accent'), fontSize: '20px', fontWeight: 800, letterSpacing: '3px', marginBottom: '20px' }">{{ layer.rightLabel }}</div>
+            <div v-for="(it, j) in layer.rightItems" :key="j" :style="{ color: colorToken('text'), fontSize: (layer.itemSize || 26) + 'px', marginBottom: '14px', fontWeight: 600, lineHeight: 1.3, wordBreak: 'break-word' }">+ {{ it }}</div>
           </div>
         </div>
 

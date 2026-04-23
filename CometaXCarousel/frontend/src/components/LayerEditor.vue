@@ -30,10 +30,9 @@ const brandOpts = ['cometax', 'stocklink', 'notamx', 'porcobrar', 'pulsomx', 'ag
 <template>
   <div v-if="slide" class="layers">
     <div v-for="(layer, i) in slide.layers" :key="i" class="layer-card">
-      <div class="layer-head" @click="toggle(i)">
+      <div class="layer-head">
         <i :class="['mdi', iconFor(layer.type)]"></i>
         <span>{{ labelFor(layer.type) }}</span>
-        <i class="mdi" :class="expanded[i] ? 'mdi-chevron-up' : 'mdi-chevron-down'" style="margin-left:auto;"></i>
       </div>
 
       <!-- Editable content -->
@@ -111,10 +110,10 @@ const brandOpts = ['cometax', 'stocklink', 'notamx', 'porcobrar', 'pulsomx', 'ag
         </label>
       </div>
 
-      <div v-else class="muted-note">Decorativo · ajusta posición/tamaño abajo</div>
+      <div v-else class="muted-note">Decorativo</div>
 
-      <!-- Position/size controls (advanced, expandible) -->
-      <div v-if="expanded[i]" class="advanced">
+      <!-- Position/size controls — siempre visibles -->
+      <div class="advanced">
         <div v-if="hasXY(layer)" class="grid-2">
           <label>
             <span class="mini">X · {{ Math.round(layer.x || 0) }}%</span>
@@ -127,8 +126,8 @@ const brandOpts = ['cometax', 'stocklink', 'notamx', 'porcobrar', 'pulsomx', 'ag
         </div>
 
         <label v-if="hasSize(layer)">
-          <span class="mini">Tamaño · {{ layer.size || 'auto' }}</span>
-          <input type="range" :min="layer.type === 'text' ? 12 : 20" :max="layer.type === 'text' ? 240 : 400" step="2" :value="layer.size || 50" @input="update(i, 'size', Number($event.target.value))" />
+          <span class="mini">Tamaño · {{ layer.size || (layer.type === 'text' ? 32 : 50) }}px</span>
+          <input type="range" :min="sizeRange(layer).min" :max="sizeRange(layer).max" :step="sizeRange(layer).step" :value="layer.size || (layer.type === 'text' ? 32 : 50)" @input="update(i, 'size', Number($event.target.value))" />
         </label>
 
         <label v-if="layer.type === 'image' || layer.type === 'icon-list'">
@@ -216,7 +215,14 @@ function hasXY(l) {
   return !['half-split', 'gradient-overlay', 'dots-pattern', 'grid-pattern', 'blur-image', 'wave-top', 'wave-bottom', 'shine-line'].includes(l.type)
 }
 function hasSize(l) {
-  return ['icon', 'avatar', 'logo', 'sparkle', 'corner-shape'].includes(l.type)
+  return ['text', 'icon', 'avatar', 'logo', 'sparkle', 'corner-shape', 'iso-card', 'iso-cube', 'glossy-ball', 'big-number', 'tag-pill'].includes(l.type)
+}
+function sizeRange(l) {
+  if (l.type === 'text' || l.type === 'big-number') return { min: 14, max: 360, step: 2 }
+  if (l.type === 'icon' || l.type === 'avatar' || l.type === 'glossy-ball') return { min: 30, max: 360, step: 4 }
+  if (l.type === 'iso-card' || l.type === 'iso-cube') return { min: 80, max: 500, step: 10 }
+  if (l.type === 'logo') return { min: 24, max: 120, step: 2 }
+  return { min: 20, max: 400, step: 4 }
 }
 function hasAlign(l) {
   return ['text', 'logo', 'badge', 'icon', 'avatar'].includes(l.type)
