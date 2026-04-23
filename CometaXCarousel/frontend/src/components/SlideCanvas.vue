@@ -45,6 +45,20 @@ function pos(layer) {
   return style
 }
 
+function placeholderIcon(p) {
+  const map = {
+    phone: 'mdi-cellphone',
+    laptop: 'mdi-laptop',
+    card: 'mdi-credit-card',
+    avatar: 'mdi-account-circle',
+    photo: 'mdi-image',
+    food: 'mdi-food',
+    product: 'mdi-package-variant',
+    chart: 'mdi-chart-line'
+  }
+  return map[p] || 'mdi-image-outline'
+}
+
 function fontStack(font) {
   if (font === 'mono') return '"SF Mono", "JetBrains Mono", Consolas, monospace'
   if (font === 'serif') return 'Georgia, "Times New Roman", serif'
@@ -110,22 +124,67 @@ function fontStack(font) {
           </div>
         </div>
 
-        <div v-else-if="layer.type === 'avatar'" :style="{ ...pos(layer), width: layer.size + 'px', height: layer.size + 'px', borderRadius: '50%', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: layer.size * 0.5 + 'px', color: '#fff', fontWeight: 700 }">M</div>
+        <div v-else-if="layer.type === 'avatar'" :style="{ ...pos(layer), width: layer.size + 'px', height: layer.size + 'px', borderRadius: '50%', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: layer.size * 0.5 + 'px', color: '#fff', fontWeight: 700, overflow: 'hidden' }">
+          <img v-if="layer.src" :src="layer.src" style="width:100%; height:100%; object-fit:cover;" />
+          <span v-else>{{ layer.initial || 'M' }}</span>
+        </div>
+
+        <div v-else-if="layer.type === 'image'" :style="{ ...pos(layer), width: (layer.w || 50) + '%', aspectRatio: layer.aspect || '1 / 1', borderRadius: (layer.radius ?? 16) + 'px', overflow: 'hidden', background: 'rgba(255,255,255,0.05)', border: layer.bordered ? `2px solid ${preset.accent}40` : 'none' }">
+          <img v-if="layer.src" :src="layer.src" :style="{ width: '100%', height: '100%', objectFit: layer.fit || 'cover', display: 'block' }" />
+          <div v-else :style="{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, position: 'relative' }">
+            <i :class="['mdi', placeholderIcon(layer.placeholder)]" :style="{ fontSize: '120px', color: '#fff', opacity: 0.85 }"></i>
+            <span :style="{ position: 'absolute', bottom: '12px', left: '50%', transform: 'translateX(-50%)', fontSize: '14px', fontWeight: 700, color: '#fff', opacity: 0.7, letterSpacing: '1px', textTransform: 'uppercase' }">{{ layer.label || 'Imagen' }}</span>
+          </div>
+        </div>
+
+        <svg v-else-if="layer.type === 'sparkle'" :style="{ ...pos(layer), width: (layer.size || 60) + 'px', height: (layer.size || 60) + 'px', overflow: 'visible' }" viewBox="0 0 100 100">
+          <path d="M50 0 L55 45 L100 50 L55 55 L50 100 L45 55 L0 50 L45 45 Z" :fill="colorToken(layer.color || 'accent')" />
+        </svg>
+
+        <div v-else-if="layer.type === 'corner-shape'" :style="{ ...pos(layer), width: (layer.size || 200) + 'px', height: (layer.size || 200) + 'px', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, borderRadius: layer.shape === 'circle' ? '50%' : '24px', opacity: layer.opacity || 0.15, transform: 'translate(-50%,-50%) rotate(' + (layer.rotate || 0) + 'deg)' }"></div>
 
         <div v-else-if="layer.type === 'logo'" :style="pos(layer)">
-          <div v-if="store.logoDataUrl" :style="{ display: 'flex', alignItems: 'center', gap: '14px' }">
-            <img :src="store.logoDataUrl" :style="{ height: layer.size + 'px', width: 'auto' }" />
-          </div>
-          <div v-else :style="{ display: 'flex', alignItems: 'center', gap: '14px' }">
-            <div :style="{ width: layer.size + 'px', height: layer.size + 'px', borderRadius: layer.size * 0.25 + 'px', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }">
+          <div :style="{ display: 'flex', alignItems: 'center', gap: '14px' }">
+            <img v-if="layer.brand" :src="`/logos/${layer.brand}.svg`" :style="{ height: layer.size + 'px', width: layer.size + 'px' }" />
+            <img v-else-if="store.logoDataUrl" :src="store.logoDataUrl" :style="{ height: layer.size + 'px', width: 'auto' }" />
+            <div v-else :style="{ width: layer.size + 'px', height: layer.size + 'px', borderRadius: layer.size * 0.25 + 'px', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }">
               <svg :width="layer.size * 0.6" :height="layer.size * 0.6" viewBox="0 0 32 32">
                 <circle cx="22" cy="10" r="3.2" fill="#fff" />
                 <path d="M19.6 12.4 L8 24" stroke="#fff" stroke-width="2.6" stroke-linecap="round" opacity="0.9" />
               </svg>
             </div>
-            <span :style="{ fontSize: layer.size * 0.6 + 'px', fontWeight: 700, color: colorToken('text') }">{{ store.logoText }}</span>
+            <span v-if="!layer.hideText" :style="{ fontSize: layer.size * 0.6 + 'px', fontWeight: 700, color: colorToken(layer.color || 'text') }">{{ layer.text || store.logoText }}</span>
           </div>
         </div>
+
+        <svg v-else-if="layer.type === 'wave-bottom'" :style="{ position: 'absolute', left: 0, right: 0, bottom: 0, width: '100%', height: (layer.h || 30) + '%', pointerEvents: 'none' }" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <defs><linearGradient :id="`wb-${i}`" x1="0" x2="0" y1="0" y2="1"><stop offset="0" :stop-color="preset.accent" :stop-opacity="layer.opacity || 0.7"/><stop offset="1" :stop-color="preset.accent2" :stop-opacity="(layer.opacity || 0.7) * 0.8"/></linearGradient></defs>
+          <path :d="layer.variant === 'soft' ? 'M0,60 Q25,30 50,55 T100,50 L100,100 L0,100 Z' : 'M0,40 Q25,80 50,40 T100,40 L100,100 L0,100 Z'" :fill="`url(#wb-${i})`" />
+        </svg>
+
+        <svg v-else-if="layer.type === 'wave-top'" :style="{ position: 'absolute', left: 0, right: 0, top: 0, width: '100%', height: (layer.h || 30) + '%', pointerEvents: 'none' }" preserveAspectRatio="none" viewBox="0 0 100 100">
+          <defs><linearGradient :id="`wt-${i}`" x1="0" x2="0" y1="0" y2="1"><stop offset="0" :stop-color="preset.accent2" :stop-opacity="layer.opacity || 0.7"/><stop offset="1" :stop-color="preset.accent" :stop-opacity="0"/></linearGradient></defs>
+          <path d="M0,0 L100,0 L100,60 Q75,20 50,50 T0,40 Z" :fill="`url(#wt-${i})`" />
+        </svg>
+
+        <div v-else-if="layer.type === 'half-split'" :style="{ position: 'absolute', inset: 0, background: `linear-gradient(${layer.angle || 90}deg, ${layer.colorA || preset.accent} 50%, ${layer.colorB || preset.accent2} 50%)`, opacity: layer.opacity || 1, pointerEvents: 'none' }"></div>
+
+        <div v-else-if="layer.type === 'gradient-overlay'" :style="{ position: 'absolute', inset: 0, background: `linear-gradient(${layer.angle || 180}deg, ${preset.accent}cc 0%, transparent 60%)`, pointerEvents: 'none' }"></div>
+
+        <div v-else-if="layer.type === 'diagonal-band'" :style="{ position: 'absolute', left: '-10%', right: '-10%', top: (layer.y || 50) + '%', height: (layer.h || 12) + '%', background: `linear-gradient(90deg, ${preset.accent}, ${preset.accent2})`, transform: `translateY(-50%) rotate(${layer.angle || -8}deg)`, opacity: layer.opacity || 0.9, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', pointerEvents: 'none' }">
+          <span v-if="layer.text" :style="{ color: '#fff', fontSize: (layer.fontSize || 28) + 'px', fontWeight: 800, letterSpacing: '4px', textTransform: 'uppercase', whiteSpace: 'nowrap' }">{{ layer.text }} · {{ layer.text }} · {{ layer.text }}</span>
+        </div>
+
+        <div v-else-if="layer.type === 'dots-pattern'" :style="{ position: 'absolute', inset: 0, opacity: layer.opacity || 0.18, pointerEvents: 'none', backgroundImage: `radial-gradient(${preset.accent} 1.5px, transparent 1.5px)`, backgroundSize: (layer.gap || 24) + 'px ' + (layer.gap || 24) + 'px' }"></div>
+
+        <div v-else-if="layer.type === 'grid-pattern'" :style="{ position: 'absolute', inset: 0, opacity: layer.opacity || 0.12, pointerEvents: 'none', backgroundImage: `linear-gradient(${preset.accent} 1px, transparent 1px), linear-gradient(90deg, ${preset.accent} 1px, transparent 1px)`, backgroundSize: (layer.gap || 40) + 'px ' + (layer.gap || 40) + 'px' }"></div>
+
+        <div v-else-if="layer.type === 'blur-image'" :style="{ position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' }">
+          <img v-if="layer.src" :src="layer.src" :style="{ width: '100%', height: '100%', objectFit: 'cover', filter: `blur(${layer.blur || 60}px) saturate(1.4)`, opacity: layer.opacity || 0.5, transform: 'scale(1.2)' }" />
+          <div v-else :style="{ width: '100%', height: '100%', background: `radial-gradient(ellipse at ${layer.x || 30}% ${layer.y || 30}%, ${preset.accent2}, transparent 60%), radial-gradient(ellipse at ${layer.x2 || 70}% ${layer.y2 || 70}%, ${preset.accent}, transparent 60%)`, filter: `blur(${layer.blur || 80}px)`, opacity: layer.opacity || 0.7 }"></div>
+        </div>
+
+        <div v-else-if="layer.type === 'shine-line'" :style="{ position: 'absolute', left: 0, right: 0, top: (layer.y || 50) + '%', height: '2px', background: `linear-gradient(90deg, transparent, ${preset.accent}, ${preset.accent2}, transparent)`, opacity: layer.opacity || 0.7, pointerEvents: 'none' }"></div>
       </template>
     </div>
   </div>

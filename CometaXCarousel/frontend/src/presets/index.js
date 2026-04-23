@@ -721,7 +721,7 @@ CAROUSEL_PRESETS.push(
           { type: 'text', x: 8, y: 36, size: 90, weight: 900, color: 'text', text: 'Tu inventario\nse te escapa\nde las manos.' },
           { type: 'text', x: 8, y: 62, w: 80, size: 28, weight: 500, color: 'muted', text: 'Excel ya no aguanta. Y los sistemas grandes cuestan $5,000 al mes.' },
           { type: 'gradient-blob', x: 80, y: 80, size: 55, opacity: 0.55 },
-          { type: 'logo', x: 92, y: 92, size: 36, align: 'right' }
+          { type: 'logo', x: 92, y: 92, size: 36, align: 'right', brand: 'stocklink' }
         ]
       },
       {
@@ -896,7 +896,7 @@ CAROUSEL_PRESETS.push(
           { type: 'badge', x: 8, y: 10, text: 'PULSOMX', color: 'accent' },
           { type: 'text', x: 8, y: 38, size: 80, weight: 900, color: 'text', text: 'Mindbody\ncuesta\n$3,500/mes.\nPulsoMX no.' },
           { type: 'text', x: 8, y: 75, w: 80, size: 28, weight: 500, color: 'muted', text: 'Para gyms, yoga studios, coworkings y dojos en MX.' },
-          { type: 'logo', x: 92, y: 92, size: 36, align: 'right' }
+          { type: 'logo', x: 92, y: 92, size: 36, align: 'right', brand: 'pulsomx' }
         ]
       },
       {
@@ -1153,6 +1153,158 @@ CAROUSEL_PRESETS.push(
           { type: 'text', x: 50, y: 50, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: '3 sesiones gratis. Después $99/mes ilimitado.' },
           { type: 'icon', x: 50, y: 70, size: 100, align: 'center', icon: 'mdi-robot-happy', color: 'accent' },
           { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 700, color: 'accent', text: 'consultor.cometax.mx' }
+        ]
+      }
+    ]
+  }
+)
+
+// ════════════════════════════════════════════════════════════════
+// Showcase visual — demuestran waves, half-split, blur, brand logos
+// ════════════════════════════════════════════════════════════════
+
+CAROUSEL_PRESETS.push(
+  {
+    id: 'showcase-waves',
+    name: 'Showcase · Olas + brand',
+    description: 'Estilo cinematográfico con ondas inferiores degradadas, dots-pattern y logo CometaX real.',
+    thumbColor: '#a855f7',
+    presetKey: 'cosmic',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'dots-pattern', gap: 32, opacity: 0.15 },
+          { type: 'gradient-overlay', angle: 180, opacityStart: 0.4 },
+          { type: 'sparkle', x: 80, y: 18, size: 50, color: 'accent2' },
+          { type: 'sparkle', x: 18, y: 75, size: 30, color: 'accent' },
+          { type: 'text', x: 8, y: 18, size: 22, weight: 700, color: 'muted', text: 'PARA CREADORES' },
+          { type: 'text', x: 8, y: 38, w: 84, size: 88, weight: 900, color: 'text', text: 'Diseña posts\nque parecen\nde agencia' },
+          { type: 'text', x: 8, y: 70, w: 80, size: 26, weight: 500, color: 'muted', text: 'Sin Photoshop. Sin Canva Pro. Sin login.' },
+          { type: 'wave-bottom', h: 28, opacity: 0.7 },
+          { type: 'logo', x: 8, y: 92, size: 44, brand: 'cometax', text: 'CometaX' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'half-split', angle: 135, opacity: 0.3 },
+          { type: 'shine-line', y: 25, opacity: 0.6 },
+          { type: 'text', x: 8, y: 12, size: 22, weight: 700, color: 'accent', text: 'INCLUYE' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'text', text: 'Estilos\nde verdad' },
+          { type: 'icon-list', x: 8, y: 50, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-wave', text: 'Ondas decorativas top/bottom' },
+            { icon: 'mdi-format-color-fill', text: 'Mitad-y-mitad de color' },
+            { icon: 'mdi-blur', text: 'Imágenes difuminadas de fondo' },
+            { icon: 'mdi-dots-grid', text: 'Patrones de puntos / cuadrícula' },
+            { icon: 'mdi-rotate-3d-variant', text: 'Bandas diagonales' }
+          ] },
+          { type: 'logo', x: 92, y: 92, size: 36, align: 'right', brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'blur-image', opacity: 0.8, blur: 100 },
+          { type: 'gradient-overlay', angle: 0, opacityStart: 0.6 },
+          { type: 'sparkle', x: 50, y: 18, size: 40, color: 'accent2' },
+          { type: 'text', x: 50, y: 35, align: 'center', size: 64, weight: 900, color: 'text', text: 'Tu turno' },
+          { type: 'text', x: 50, y: 52, w: 80, align: 'center', size: 28, weight: 500, color: 'muted', text: 'Abre el editor. Cambia el texto. Exporta. 2 minutos.' },
+          { type: 'icon', x: 50, y: 72, size: 110, align: 'center', icon: 'mdi-rocket-launch', color: 'accent' },
+          { type: 'logo', x: 50, y: 92, size: 40, align: 'center', brand: 'cometax' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'showcase-blur-people',
+    name: 'Showcase · Persona + blur',
+    description: 'Testimonio con persona placeholder y fondo difuminado. Para portadas humanas.',
+    thumbColor: '#ec4899',
+    presetKey: 'sunset',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'testimonial',
+        layers: [
+          { type: 'blur-image', opacity: 0.5, blur: 80, x: 30, y: 30, x2: 70, y2: 70 },
+          { type: 'gradient-overlay', angle: 0, opacityStart: 0.5 },
+          { type: 'avatar', x: 50, y: 30, size: 180, align: 'center', src: '/people/02.svg' },
+          { type: 'text', x: 50, y: 12, align: 'center', size: 22, weight: 700, color: 'muted', text: 'TESTIMONIO REAL' },
+          { type: 'text', x: 50, y: 58, w: 84, align: 'center', size: 32, weight: 500, color: 'text', text: '"En 90 días pasé de cero a $50k/mes. Solo cambié los carruseles que publicaba."' },
+          { type: 'text', x: 50, y: 82, align: 'center', size: 28, weight: 800, color: 'text', text: 'María R.' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 20, weight: 500, color: 'accent', text: 'Founder · Agencia digital MX' },
+          { type: 'wave-bottom', h: 12, opacity: 0.5 }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'half-split', angle: 90, opacity: 0.25 },
+          { type: 'dots-pattern', gap: 28, opacity: 0.15 },
+          { type: 'text', x: 50, y: 25, align: 'center', size: 26, weight: 700, color: 'muted', text: 'CRECIMIENTO REAL' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 220, weight: 900, color: 'accent', text: '+847%' },
+          { type: 'text', x: 50, y: 70, align: 'center', size: 28, weight: 500, color: 'text', text: 'engagement promedio en 30 días' },
+          { type: 'wave-bottom', h: 18, opacity: 0.6, variant: 'soft' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'diagonal-band', y: 50, h: 14, angle: -8, text: 'Empieza gratis' },
+          { type: 'text', x: 50, y: 25, align: 'center', size: 60, weight: 900, color: 'text', text: 'Sin agencia.\nSin diseñador.' },
+          { type: 'avatar', x: 35, y: 75, size: 80, align: 'center', src: '/people/01.svg' },
+          { type: 'avatar', x: 50, y: 75, size: 80, align: 'center', src: '/people/02.svg' },
+          { type: 'avatar', x: 65, y: 75, size: 80, align: 'center', src: '/people/03.svg' },
+          { type: 'text', x: 50, y: 90, align: 'center', size: 24, weight: 700, color: 'accent', text: '+2,400 creadores ya lo usan' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'showcase-half-split',
+    name: 'Showcase · Mitad y mitad',
+    description: 'Diseño geométrico con mitad-y-mitad y bandas diagonales. Estilo Stripe/Linear.',
+    thumbColor: '#22d3ee',
+    presetKey: 'midnight',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'half-split', angle: 135, opacity: 0.4 },
+          { type: 'grid-pattern', gap: 50, opacity: 0.15 },
+          { type: 'text', x: 8, y: 18, size: 22, weight: 700, color: 'accent', text: 'EDICIÓN PRO' },
+          { type: 'text', x: 8, y: 42, w: 84, size: 90, weight: 900, color: 'text', text: 'Geometría\nlimpia.\nIdeas claras.' },
+          { type: 'text', x: 8, y: 80, w: 80, size: 26, weight: 500, color: 'muted', text: 'Plantillas con jerarquía visual de verdad.' },
+          { type: 'shine-line', y: 88, opacity: 0.7 }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'diagonal-band', y: 18, h: 10, angle: -6, text: 'Disponible ya', fontSize: 22 },
+          { type: 'text', x: 8, y: 38, size: 50, weight: 800, color: 'text', text: 'Para todo tipo\nde marca' },
+          { type: 'icon-list', x: 8, y: 58, w: 84, gap: 6, size: 24, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-store', text: 'Tienda física / e-commerce' },
+            { icon: 'mdi-school', text: 'Educadores / coaches' },
+            { icon: 'mdi-laptop', text: 'SaaS / software' },
+            { icon: 'mdi-food', text: 'Restaurantes / food' }
+          ] },
+          { type: 'wave-bottom', h: 14, opacity: 0.5, variant: 'soft' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'blur-image', blur: 70, opacity: 0.6 },
+          { type: 'sparkle', x: 25, y: 25, size: 40, color: 'accent' },
+          { type: 'sparkle', x: 75, y: 75, size: 35, color: 'accent2' },
+          { type: 'text', x: 50, y: 32, align: 'center', size: 64, weight: 900, color: 'text', text: 'Hazlo\ndiferente' },
+          { type: 'text', x: 50, y: 56, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: 'Tu marca merece más que una plantilla genérica.' },
+          { type: 'icon', x: 50, y: 76, size: 100, align: 'center', icon: 'mdi-creation', color: 'accent2' },
+          { type: 'wave-bottom', h: 14, opacity: 0.6 }
         ]
       }
     ]

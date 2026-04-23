@@ -28,7 +28,7 @@ function thumbScale(p) {
 <template>
   <div class="gallery">
     <div class="gallery-grid">
-      <button v-for="p in CAROUSEL_PRESETS" :key="p.id" class="preset-card" @click="pick(p.id)">
+      <button type="button" v-for="p in CAROUSEL_PRESETS" :key="p.id" class="preset-card" @click="pick(p.id)">
         <div class="thumb-wrap">
           <div class="mini-render">
             <SlideCanvas
