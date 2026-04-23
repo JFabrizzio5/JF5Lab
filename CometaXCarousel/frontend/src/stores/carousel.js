@@ -19,7 +19,11 @@ export const useCarouselStore = defineStore('carousel', {
     logoText: 'CometaX',
     handle: '@cometax',
     slides: [],
-    activeIndex: 0
+    activeIndex: 0,
+    selectedLayerIdx: null,
+    customBg: null,
+    customBgImage: null,
+    customBgBlur: 0
   }),
   getters: {
     size: (s) => SIZES[s.sizeKey],
@@ -88,6 +92,12 @@ export const useCarouselStore = defineStore('carousel', {
       this.presetKey = p.presetKey
       this.sizeKey = p.sizeKey
       this.customPreset = null
-    }
+      this.selectedLayerIdx = null
+    },
+    selectLayer(idx) { this.selectedLayerIdx = idx },
+    deselectLayer() { this.selectedLayerIdx = null },
+    setCustomBg(val) { this.customBg = val },
+    setCustomBgImage(val) { this.customBgImage = val },
+    setCustomBgBlur(val) { this.customBgBlur = val }
   }
 })

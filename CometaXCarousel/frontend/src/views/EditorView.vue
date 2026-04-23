@@ -66,7 +66,7 @@ onMounted(() => {
 
       <main class="canvas-area">
         <div v-if="store.activeSlide" class="canvas-wrap">
-          <SlideCanvas :slide="store.activeSlide" :scale="previewScale" />
+          <SlideCanvas :slide="store.activeSlide" :scale="previewScale" interactive />
         </div>
         <div v-else class="empty">
           <i class="mdi mdi-image-plus"></i>

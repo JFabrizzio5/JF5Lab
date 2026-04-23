@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useCarouselStore } from '../stores/carousel'
 
 const props = defineProps({
@@ -7,12 +7,109 @@ const props = defineProps({
   scale: { type: Number, default: 1 },
   exportMode: { type: Boolean, default: false },
   presetOverride: { type: Object, default: null },
-  sizeOverride: { type: Object, default: null }
+  sizeOverride: { type: Object, default: null },
+  interactive: { type: Boolean, default: false }
 })
 
 const store = useCarouselStore()
 const size = computed(() => props.sizeOverride || store.size)
 const preset = computed(() => props.presetOverride || store.preset)
+
+const slideBg = computed(() => {
+  if (!props.interactive) return preset.value.bg
+  if (store.customBgImage) {
+    return `url("${store.customBgImage}") center/cover no-repeat`
+  }
+  return store.customBg || preset.value.bg
+})
+
+// Drag state
+const dragState = ref(null)
+
+function onLayerClick(e, layerIdx) {
+  if (!props.interactive) return
+  e.stopPropagation()
+  store.selectLayer(layerIdx)
+}
+
+function onLayerDown(e, layerIdx) {
+  if (!props.interactive) return
+  if (e.button !== 0) return
+  e.stopPropagation()
+  store.selectLayer(layerIdx)
+  const layer = props.slide.layers[layerIdx]
+  if (!hasMovableXY(layer)) return
+  const startX = e.clientX
+  const startY = e.clientY
+  const startLX = layer.x ?? 50
+  const startLY = layer.y ?? 50
+  const slideEl = e.currentTarget.closest('.slide-canvas')
+  const rect = slideEl.getBoundingClientRect()
+  dragState.value = { layerIdx, startX, startY, startLX, startLY, rectW: rect.width, rectH: rect.height }
+  window.addEventListener('mousemove', onDragMove)
+  window.addEventListener('mouseup', onDragEnd, { once: true })
+}
+
+function onDragMove(e) {
+  if (!dragState.value) return
+  const d = dragState.value
+  const dx = ((e.clientX - d.startX) / d.rectW) * 100
+  const dy = ((e.clientY - d.startY) / d.rectH) * 100
+  const nx = Math.max(0, Math.min(100, d.startLX + dx))
+  const ny = Math.max(0, Math.min(100, d.startLY + dy))
+  store.updateLayer(store.activeIndex, d.layerIdx, { x: nx, y: ny })
+}
+
+function onDragEnd() {
+  dragState.value = null
+  window.removeEventListener('mousemove', onDragMove)
+}
+
+function hasMovableXY(l) {
+  return !['half-split', 'gradient-overlay', 'dots-pattern', 'grid-pattern', 'blur-image', 'wave-top', 'wave-bottom', 'shine-line', 'photo-bg'].includes(l.type)
+}
+
+function onCanvasClick() {
+  if (!props.interactive) return
+  store.deselectLayer()
+}
+
+function isSelected(idx) {
+  return props.interactive && store.selectedLayerIdx === idx
+}
+
+function selectionRect(layer) {
+  const align = layer.align || 'left'
+  const style = {
+    position: 'absolute',
+    border: '2px dashed var(--accent)',
+    borderRadius: '6px',
+    padding: '6px',
+    pointerEvents: 'none',
+    transition: 'all 0.05s'
+  }
+  if (align === 'center') {
+    style.top = `${layer.y || 50}%`
+    style.left = `${layer.x || 50}%`
+    style.transform = 'translate(-50%, -50%)'
+  } else if (align === 'right') {
+    style.top = `${layer.y || 50}%`
+    style.right = `${100 - (layer.x || 50)}%`
+    style.transform = 'translateY(-50%)'
+  } else {
+    style.top = `${layer.y || 50}%`
+    style.left = `${layer.x || 50}%`
+    style.transform = 'translateY(-50%)'
+  }
+  if (layer.size) {
+    style.minWidth = layer.size + 'px'
+    style.minHeight = layer.size + 'px'
+  } else {
+    style.minWidth = '40px'
+    style.minHeight = '40px'
+  }
+  return style
+}
 
 function colorToken(c) {
   if (!c) return 'inherit'
@@ -108,23 +205,27 @@ function fontStack(font) {
 <template>
   <div
     class="slide-canvas"
+    :class="{ interactive }"
     :style="{
       width: size.w * scale + 'px',
       height: size.h * scale + 'px',
-      background: preset.bg
+      background: slideBg
     }"
+    @click="onCanvasClick"
   >
+    <div v-if="interactive && store.customBgImage && store.customBgBlur" :style="{ position: 'absolute', inset: 0, background: `url('${store.customBgImage}') center/cover no-repeat`, filter: `blur(${store.customBgBlur}px)`, transform: 'scale(1.1)', pointerEvents: 'none' }"></div>
     <div class="slide-inner" :style="{ width: size.w + 'px', height: size.h + 'px', transform: `scale(${scale})` }">
       <template v-for="(layer, i) in slide.layers" :key="i">
-        <div v-if="layer.type === 'text'" :style="{ ...pos(layer), fontSize: layer.size + 'px', fontWeight: layer.weight, color: colorToken(layer.color), fontFamily: fontStack(layer.font), lineHeight: layer.lineHeight || 1.15, whiteSpace: 'pre-line', letterSpacing: layer.tracking || 'normal', wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: layer.w ? layer.w + '%' : (layer.align === 'center' ? '90%' : '92%') }">{{ layer.text }}</div>
+        <div v-if="isSelected(i)" :style="{ ...selectionRect(layer), pointerEvents: 'none' }" class="selection-outline"></div>
+        <div v-if="layer.type === 'text'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), fontSize: layer.size + 'px', fontWeight: layer.weight, color: colorToken(layer.color), fontFamily: fontStack(layer.font), lineHeight: layer.lineHeight || 1.15, whiteSpace: 'pre-line', letterSpacing: layer.tracking || 'normal', wordBreak: 'break-word', overflowWrap: 'break-word', maxWidth: layer.w ? layer.w + '%' : (layer.align === 'center' ? '90%' : '92%') }">{{ layer.text }}</div>
 
-        <div v-else-if="layer.type === 'icon'" :style="{ ...pos(layer), color: colorToken(layer.color), fontSize: layer.size + 'px', lineHeight: 1 }">
+        <div v-else-if="layer.type === 'icon'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), color: colorToken(layer.color), fontSize: layer.size + 'px', lineHeight: 1 }">
           <i :class="['mdi', layer.icon]"></i>
         </div>
 
-        <div v-else-if="layer.type === 'badge'" :style="{ ...pos(layer), background: colorToken(layer.color), color: '#fff', padding: '8px 18px', borderRadius: '999px', fontSize: '22px', fontWeight: 800, letterSpacing: '2px', display: 'inline-block' }">{{ layer.text }}</div>
+        <div v-else-if="layer.type === 'badge'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), background: colorToken(layer.color), color: '#fff', padding: '8px 18px', borderRadius: '999px', fontSize: '22px', fontWeight: 800, letterSpacing: '2px', display: 'inline-block' }">{{ layer.text }}</div>
 
-        <div v-else-if="layer.type === 'icon-list'" :style="{ ...pos(layer), display: 'flex', flexDirection: 'column', gap: layer.gap + '%' }">
+        <div v-else-if="layer.type === 'icon-list'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), display: 'flex', flexDirection: 'column', gap: (layer.gap || 7) + '%' }">
           <div v-for="(it, j) in layer.items" :key="j" style="display:flex; align-items:center; gap:24px;">
             <i :class="['mdi', it.icon]" :style="{ fontSize: layer.size * 1.6 + 'px', color: colorToken(layer.accent) }"></i>
             <span :style="{ fontSize: layer.size + 'px', color: colorToken(layer.color), fontWeight: 600 }">{{ it.text }}</span>
@@ -170,12 +271,12 @@ function fontStack(font) {
           </div>
         </div>
 
-        <div v-else-if="layer.type === 'avatar'" :style="{ ...pos(layer), width: layer.size + 'px', height: layer.size + 'px', borderRadius: '50%', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: layer.size * 0.5 + 'px', color: '#fff', fontWeight: 700, overflow: 'hidden' }">
+        <div v-else-if="layer.type === 'avatar'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), width: layer.size + 'px', height: layer.size + 'px', borderRadius: '50%', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: layer.size * 0.5 + 'px', color: '#fff', fontWeight: 700, overflow: 'hidden' }">
           <img v-if="layer.src" :src="layer.src" style="width:100%; height:100%; object-fit:cover;" />
           <span v-else>{{ layer.initial || 'M' }}</span>
         </div>
 
-        <div v-else-if="layer.type === 'image'" :style="{ ...pos(layer), width: (layer.w || 50) + '%', aspectRatio: layer.aspect || '1 / 1', borderRadius: (layer.radius ?? 16) + 'px', overflow: 'hidden', background: 'rgba(255,255,255,0.05)', border: layer.bordered ? `2px solid ${preset.accent}40` : 'none' }">
+        <div v-else-if="layer.type === 'image'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), width: (layer.w || 50) + '%', aspectRatio: layer.aspect || '1 / 1', borderRadius: (layer.radius ?? 16) + 'px', overflow: 'hidden', background: 'rgba(255,255,255,0.05)', border: layer.bordered ? `2px solid ${preset.accent}40` : 'none' }">
           <img v-if="layer.src" :src="layer.src" :style="{ width: '100%', height: '100%', objectFit: layer.fit || 'cover', display: 'block' }" />
           <div v-else :style="{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, position: 'relative' }">
             <i :class="['mdi', placeholderIcon(layer.placeholder)]" :style="{ fontSize: '120px', color: '#fff', opacity: 0.85 }"></i>
@@ -189,7 +290,7 @@ function fontStack(font) {
 
         <div v-else-if="layer.type === 'corner-shape'" :style="{ ...pos(layer), width: (layer.size || 200) + 'px', height: (layer.size || 200) + 'px', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, borderRadius: layer.shape === 'circle' ? '50%' : '24px', opacity: layer.opacity || 0.15, transform: 'translate(-50%,-50%) rotate(' + (layer.rotate || 0) + 'deg)' }"></div>
 
-        <div v-else-if="layer.type === 'logo'" :style="pos(layer)">
+        <div v-else-if="layer.type === 'logo'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="pos(layer)">
           <div :style="{ display: 'flex', alignItems: 'center', gap: '14px' }">
             <img v-if="layer.brand" :src="`/logos/${layer.brand}.svg`" :style="{ height: layer.size + 'px', width: layer.size + 'px' }" />
             <img v-else-if="store.logoDataUrl" :src="store.logoDataUrl" :style="{ height: layer.size + 'px', width: 'auto' }" />
@@ -260,7 +361,7 @@ function fontStack(font) {
           <span :style="{ fontSize: (layer.size || 18) + 'px', fontWeight: 600, color: colorToken('text'), letterSpacing: '0.5px' }">{{ layer.text }}</span>
         </div>
 
-        <div v-else-if="layer.type === 'big-number'" :style="{ ...pos(layer), fontSize: (layer.size || 280) + 'px', fontWeight: 900, lineHeight: 0.85, background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '-0.04em', fontFamily: 'system-ui' }">{{ layer.text }}</div>
+        <div v-else-if="layer.type === 'big-number'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), fontSize: (layer.size || 280) + 'px', fontWeight: 900, lineHeight: 0.85, background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '-0.04em', fontFamily: 'system-ui' }">{{ layer.text }}</div>
       </template>
     </div>
   </div>
@@ -273,10 +374,25 @@ function fontStack(font) {
   border-radius: 16px;
   box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
 }
+.slide-canvas.interactive { cursor: default; }
 .slide-inner {
   position: absolute;
   top: 0;
   left: 0;
   transform-origin: top left;
+}
+.l-int {
+  cursor: move;
+  user-select: none;
+  transition: outline 0.05s;
+}
+.l-int:hover {
+  outline: 2px solid rgba(129,140,248,0.5);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.selection-outline {
+  z-index: 999;
+  box-shadow: 0 0 0 2px rgba(129, 140, 248, 0.3);
 }
 </style>

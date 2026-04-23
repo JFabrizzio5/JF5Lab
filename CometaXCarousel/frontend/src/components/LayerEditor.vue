@@ -215,13 +215,15 @@ function hasXY(l) {
   return !['half-split', 'gradient-overlay', 'dots-pattern', 'grid-pattern', 'blur-image', 'wave-top', 'wave-bottom', 'shine-line'].includes(l.type)
 }
 function hasSize(l) {
-  return ['text', 'icon', 'avatar', 'logo', 'sparkle', 'corner-shape', 'iso-card', 'iso-cube', 'glossy-ball', 'big-number', 'tag-pill'].includes(l.type)
+  return ['text', 'icon', 'icon-list', 'avatar', 'logo', 'sparkle', 'corner-shape', 'iso-card', 'iso-cube', 'glossy-ball', 'big-number', 'tag-pill', 'badge', 'progress-dots'].includes(l.type)
 }
 function sizeRange(l) {
   if (l.type === 'text' || l.type === 'big-number') return { min: 14, max: 360, step: 2 }
   if (l.type === 'icon' || l.type === 'avatar' || l.type === 'glossy-ball') return { min: 30, max: 360, step: 4 }
   if (l.type === 'iso-card' || l.type === 'iso-cube') return { min: 80, max: 500, step: 10 }
-  if (l.type === 'logo') return { min: 24, max: 120, step: 2 }
+  if (l.type === 'logo' || l.type === 'badge' || l.type === 'tag-pill') return { min: 16, max: 80, step: 2 }
+  if (l.type === 'icon-list') return { min: 16, max: 60, step: 2 }
+  if (l.type === 'sparkle' || l.type === 'progress-dots') return { min: 20, max: 200, step: 4 }
   return { min: 20, max: 400, step: 4 }
 }
 function hasAlign(l) {
