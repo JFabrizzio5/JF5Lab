@@ -5,12 +5,14 @@ import { useCarouselStore } from '../stores/carousel'
 const props = defineProps({
   slide: { type: Object, required: true },
   scale: { type: Number, default: 1 },
-  exportMode: { type: Boolean, default: false }
+  exportMode: { type: Boolean, default: false },
+  presetOverride: { type: Object, default: null },
+  sizeOverride: { type: Object, default: null }
 })
 
 const store = useCarouselStore()
-const size = computed(() => store.size)
-const preset = computed(() => store.preset)
+const size = computed(() => props.sizeOverride || store.size)
+const preset = computed(() => props.presetOverride || store.preset)
 
 function colorToken(c) {
   if (!c) return 'inherit'

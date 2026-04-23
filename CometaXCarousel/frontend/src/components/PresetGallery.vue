@@ -1,7 +1,8 @@
 <script setup>
 import { CAROUSEL_PRESETS } from '../presets'
-import { PRESETS as PALETTES } from '../templates'
+import { PRESETS as PALETTES, SIZES } from '../templates'
 import { useCarouselStore } from '../stores/carousel'
+import SlideCanvas from './SlideCanvas.vue'
 
 const store = useCarouselStore()
 const emit = defineEmits(['picked'])
@@ -11,8 +12,16 @@ function pick(id) {
   emit('picked', id)
 }
 
-function paletteBg(presetKey) {
-  return PALETTES[presetKey]?.bg || 'var(--grad)'
+function presetData(p) {
+  return PALETTES[p.presetKey]
+}
+function sizeData(p) {
+  return SIZES[p.sizeKey]
+}
+
+// Escala miniatura: cabe ~240px de ancho
+function thumbScale(p) {
+  return 240 / sizeData(p).w
 }
 </script>
 
@@ -20,17 +29,27 @@ function paletteBg(presetKey) {
   <div class="gallery">
     <div class="gallery-grid">
       <button v-for="p in CAROUSEL_PRESETS" :key="p.id" class="preset-card" @click="pick(p.id)">
-        <div class="thumb" :style="{ background: paletteBg(p.presetKey) }">
+        <div class="thumb-wrap">
+          <div class="mini-render">
+            <SlideCanvas
+              :slide="p.slides[0]"
+              :scale="thumbScale(p)"
+              :preset-override="presetData(p)"
+              :size-override="sizeData(p)"
+            />
+          </div>
           <div class="slides-count">
             <i class="mdi mdi-image-multiple"></i>
-            {{ p.slides.length }} slides
+            {{ p.slides.length }}
           </div>
-          <div class="thumb-deco" :style="{ background: `radial-gradient(circle at 70% 30%, ${p.thumbColor}80, transparent 60%)` }"></div>
-          <div class="thumb-title">{{ p.name }}</div>
         </div>
         <div class="meta">
           <div class="name">{{ p.name }}</div>
           <div class="desc">{{ p.description }}</div>
+          <div class="cta">
+            <i class="mdi mdi-cursor-default-click"></i>
+            Click para cargar
+          </div>
         </div>
       </button>
     </div>
@@ -53,33 +72,32 @@ function paletteBg(presetKey) {
   border-radius: 14px;
   overflow: hidden;
   transition: all 0.18s;
+  cursor: pointer;
 }
 .preset-card:hover {
   border-color: var(--accent);
   transform: translateY(-3px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.4);
 }
-.thumb {
+.thumb-wrap {
   position: relative;
   aspect-ratio: 4 / 5;
   overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-  padding: 18px;
+  background: var(--bg-2);
+  display: grid;
+  place-items: center;
+  padding: 8px;
 }
-.thumb-deco {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
+.mini-render {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
 }
-.thumb-title {
-  position: relative;
-  font-size: 26px;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: -0.5px;
-  line-height: 1.1;
-  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+.mini-render :deep(.slide-canvas) {
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
 }
 .slides-count {
   position: absolute;
@@ -88,7 +106,7 @@ function paletteBg(presetKey) {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.7);
   color: #fff;
   font-size: 11px;
   font-weight: 700;
@@ -106,8 +124,19 @@ function paletteBg(presetKey) {
   margin-bottom: 4px;
 }
 .desc {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--muted);
   line-height: 1.4;
+  margin-bottom: 10px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
+.cta {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700;
+  color: var(--accent);
+}
+.preset-card:hover .cta { color: var(--accent-2); }
 </style>

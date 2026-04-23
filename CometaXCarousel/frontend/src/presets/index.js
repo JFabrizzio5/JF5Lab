@@ -701,6 +701,464 @@ export const CAROUSEL_PRESETS = [
   }
 ]
 
+// ════════════════════════════════════════════════════════════════
+// CometaX SaaS — un carrusel por producto explicando qué resuelve
+// ════════════════════════════════════════════════════════════════
+
+CAROUSEL_PRESETS.push(
+  {
+    id: 'cometax-stocklink',
+    name: 'StockLink — pitch',
+    description: 'Inventario multi-tenant MX para tiendita, restaurante, paquetería, constructora. 5 slides.',
+    thumbColor: '#6366f1',
+    presetKey: 'cosmic',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'product-launch',
+        layers: [
+          { type: 'badge', x: 8, y: 10, text: 'STOCKLINK', color: 'accent' },
+          { type: 'text', x: 8, y: 36, size: 90, weight: 900, color: 'text', text: 'Tu inventario\nse te escapa\nde las manos.' },
+          { type: 'text', x: 8, y: 62, w: 80, size: 28, weight: 500, color: 'muted', text: 'Excel ya no aguanta. Y los sistemas grandes cuestan $5,000 al mes.' },
+          { type: 'gradient-blob', x: 80, y: 80, size: 55, opacity: 0.55 },
+          { type: 'logo', x: 92, y: 92, size: 36, align: 'right' }
+        ]
+      },
+      {
+        templateId: 'before-after',
+        layers: [
+          { type: 'text', x: 50, y: 8, align: 'center', size: 38, weight: 800, color: 'text', text: 'StockLink vs Excel' },
+          { type: 'split', x: 50, y: 50, w: 100, h: 70, leftLabel: 'EXCEL', rightLabel: 'STOCKLINK', leftItems: ['Sin alertas', 'No multi-sucursal', 'No QR/barcode', 'Pierdes stock'], rightItems: ['Alertas auto', 'Multi-tenant + RLS', 'QR + NFC + barcode', 'Movimientos atómicos'] }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'PARA QUIÉN' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'accent', text: 'Una sola app\n4 industrias' },
+          { type: 'icon-list', x: 8, y: 45, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-store', text: 'Tiendita / Abarrotes' },
+            { icon: 'mdi-silverware-fork-knife', text: 'Restaurante (decuento auto por venta)' },
+            { icon: 'mdi-truck-delivery', text: 'Paquetería / Bodega' },
+            { icon: 'mdi-hammer-wrench', text: 'Construcción / Taller' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-blob', x: 80, y: 25, size: 55, opacity: 0.5 },
+          { type: 'text', x: 50, y: 30, align: 'center', size: 26, weight: 700, color: 'muted', text: 'PRECIO MENOR' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 200, weight: 900, color: 'accent', text: '$499' },
+          { type: 'text', x: 50, y: 68, align: 'center', size: 28, weight: 500, color: 'text', text: 'MXN/mes · Plan Starter' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'gradient-blob', x: 50, y: 50, size: 80, opacity: 0.5 },
+          { type: 'text', x: 50, y: 28, align: 'center', size: 56, weight: 900, color: 'text', text: 'Demo gratis\ncon datos reales' },
+          { type: 'text', x: 50, y: 52, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: 'Carga tu industria, vemos cómo se ve con tus SKUs.' },
+          { type: 'icon', x: 50, y: 70, size: 100, align: 'center', icon: 'mdi-package-variant', color: 'accent' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 700, color: 'accent', text: 'stocklink.mx' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cometax-notamx',
+    name: 'NotaMX — pitch',
+    description: 'POS + notas de venta + WhatsApp + CFDI 4.0 para freelancers y PYME MX. 5 slides.',
+    thumbColor: '#10b981',
+    presetKey: 'forest',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'text', x: 8, y: 18, size: 22, weight: 700, color: 'muted', text: 'NOTAMX' },
+          { type: 'text', x: 8, y: 45, w: 84, size: 70, weight: 900, color: 'text', text: '¿Cobras\npor WhatsApp\ny olvidas la factura?' },
+          { type: 'text', x: 8, y: 88, size: 24, weight: 600, color: 'accent', text: 'Hay solución →' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'TODO EN UNO' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'text', text: 'Cobra y factura\ndesde un solo lugar' },
+          { type: 'icon-list', x: 8, y: 45, w: 84, gap: 8, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-whatsapp', text: 'Mandas link de pago por WhatsApp' },
+            { icon: 'mdi-credit-card', text: 'Stripe + Conekta (OXXO/SPEI/tarjeta)' },
+            { icon: 'mdi-receipt-text', text: 'CFDI 4.0 timbrado automático' },
+            { icon: 'mdi-file-pdf-box', text: 'PDF + XML al cliente, sin tocar nada' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'tip-tutorial',
+        layers: [
+          { type: 'text', x: 8, y: 8, size: 22, weight: 700, color: 'accent', text: 'CÓMO' },
+          { type: 'text', x: 8, y: 22, size: 56, weight: 800, color: 'text', text: 'En 30 segundos' },
+          { type: 'icon-list', x: 8, y: 42, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-numeric-1-circle', text: 'Capturas el monto y cliente' },
+            { icon: 'mdi-numeric-2-circle', text: 'Mandas link por WhatsApp' },
+            { icon: 'mdi-numeric-3-circle', text: 'Cliente paga, factura sale sola' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-blob', x: 80, y: 25, size: 55, opacity: 0.5 },
+          { type: 'text', x: 50, y: 30, align: 'center', size: 26, weight: 700, color: 'muted', text: 'EMPIEZA EN' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 220, weight: 900, color: 'accent', text: '$0' },
+          { type: 'text', x: 50, y: 68, align: 'center', size: 28, weight: 500, color: 'text', text: '5 facturas/mes gratis. Después $1.50 c/u.' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'text', x: 50, y: 28, align: 'center', size: 56, weight: 900, color: 'text', text: 'Sin contador.\nSin sistema caro.' },
+          { type: 'text', x: 50, y: 50, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: 'NotaMX. Para freelancers, talleres, consultorios y PYMEs MX.' },
+          { type: 'icon', x: 50, y: 70, size: 100, align: 'center', icon: 'mdi-receipt', color: 'accent' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 700, color: 'accent', text: 'notamx.com' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cometax-porcobrar',
+    name: 'PorCobrar — pitch',
+    description: 'Cobranza automática + scoring deudores + dunning. Para CFOs y contadores MX. 5 slides.',
+    thumbColor: '#f59e0b',
+    presetKey: 'sunset',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'text', x: 8, y: 18, size: 22, weight: 700, color: 'muted', text: 'PORCOBRAR' },
+          { type: 'text', x: 8, y: 45, w: 84, size: 64, weight: 900, color: 'text', text: '¿Tu cartera\nvencida\nya pasa los\n$200,000?' },
+          { type: 'text', x: 8, y: 88, size: 24, weight: 600, color: 'accent', text: 'Hay forma de cobrarla →' }
+        ]
+      },
+      {
+        templateId: 'before-after',
+        layers: [
+          { type: 'text', x: 50, y: 8, align: 'center', size: 38, weight: 800, color: 'text', text: 'Antes vs Con PorCobrar' },
+          { type: 'split', x: 50, y: 50, w: 100, h: 70, leftLabel: 'AHORA', rightLabel: 'CON PORCOBRAR', leftItems: ['Persigues por WA', 'Excel de vencimientos', 'Olvidas seguimientos', '0 score de deudor'], rightItems: ['Dunning auto', 'Subes CFDI XML', 'Recordatorios 1/3/7/15d', 'Score IA por deudor'] }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'CÓMO FUNCIONA' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'accent', text: '4 pasos' },
+          { type: 'icon-list', x: 8, y: 45, w: 84, gap: 8, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-numeric-1-circle', text: 'Subes tus CFDI XML (parser auto)' },
+            { icon: 'mdi-numeric-2-circle', text: 'Eliges flow de cobranza' },
+            { icon: 'mdi-numeric-3-circle', text: 'Mandamos WA/email + link Stripe' },
+            { icon: 'mdi-numeric-4-circle', text: 'Cobras. Score se actualiza solo' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-blob', x: 80, y: 25, size: 55, opacity: 0.5 },
+          { type: 'text', x: 50, y: 30, align: 'center', size: 26, weight: 700, color: 'muted', text: 'RECUPERAS EN PROMEDIO' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 200, weight: 900, color: 'accent', text: '67%' },
+          { type: 'text', x: 50, y: 68, align: 'center', size: 28, weight: 500, color: 'text', text: 'de tu cartera vencida en 30 días' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'text', x: 50, y: 28, align: 'center', size: 56, weight: 900, color: 'text', text: 'Para CFOs\ny contadores MX' },
+          { type: 'text', x: 50, y: 50, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: 'Demo con tus XMLs. Si no recuperamos, no pagas.' },
+          { type: 'icon', x: 50, y: 70, size: 100, align: 'center', icon: 'mdi-cash-fast', color: 'accent' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 700, color: 'accent', text: 'porcobrar.mx' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cometax-pulsomx',
+    name: 'PulsoMX — pitch',
+    description: 'Software para gym, yoga, coworking, dojos. Sin pagar Mindbody. 5 slides.',
+    thumbColor: '#ec4899',
+    presetKey: 'sunset',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'product-launch',
+        layers: [
+          { type: 'badge', x: 8, y: 10, text: 'PULSOMX', color: 'accent' },
+          { type: 'text', x: 8, y: 38, size: 80, weight: 900, color: 'text', text: 'Mindbody\ncuesta\n$3,500/mes.\nPulsoMX no.' },
+          { type: 'text', x: 8, y: 75, w: 80, size: 28, weight: 500, color: 'muted', text: 'Para gyms, yoga studios, coworkings y dojos en MX.' },
+          { type: 'logo', x: 92, y: 92, size: 36, align: 'right' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'INCLUYE' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'text', text: 'Todo lo que necesitas' },
+          { type: 'icon-list', x: 8, y: 42, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-account-group', text: 'Membresías + planes recurrentes' },
+            { icon: 'mdi-calendar-clock', text: 'Reservas de clases + cupos' },
+            { icon: 'mdi-qrcode-scan', text: 'Check-in con QR en la puerta' },
+            { icon: 'mdi-credit-card', text: 'Stripe + Conekta (OXXO/SPEI)' },
+            { icon: 'mdi-chart-line', text: 'Dashboard MRR + churn' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-blob', x: 80, y: 25, size: 55, opacity: 0.5 },
+          { type: 'text', x: 50, y: 30, align: 'center', size: 26, weight: 700, color: 'muted', text: 'AHORRO ANUAL VS MINDBODY' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 180, weight: 900, color: 'accent', text: '$36,000' },
+          { type: 'text', x: 50, y: 68, align: 'center', size: 28, weight: 500, color: 'text', text: 'MXN/año en software' }
+        ]
+      },
+      {
+        templateId: 'tip-tutorial',
+        layers: [
+          { type: 'text', x: 8, y: 8, size: 22, weight: 700, color: 'accent', text: 'SETUP' },
+          { type: 'text', x: 8, y: 22, size: 56, weight: 800, color: 'text', text: 'Listo en 1 día' },
+          { type: 'icon-list', x: 8, y: 42, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-numeric-1-circle', text: 'Cargas tus clases y horarios' },
+            { icon: 'mdi-numeric-2-circle', text: 'Cargas planes (mensual, paquete 10)' },
+            { icon: 'mdi-numeric-3-circle', text: 'Compartes link a tus alumnos' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'text', x: 50, y: 28, align: 'center', size: 56, weight: 900, color: 'text', text: 'Demo gratis\n14 días' },
+          { type: 'text', x: 50, y: 50, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: 'Sin tarjeta. Migración asistida si vienes de Mindbody.' },
+          { type: 'icon', x: 50, y: 70, size: 100, align: 'center', icon: 'mdi-dumbbell', color: 'accent' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 700, color: 'accent', text: 'pulsomx.com' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cometax-agendapro',
+    name: 'AgendaPro — pitch',
+    description: 'Reservas con pago anticipado para barberos, dentistas, vets, coaches. 5 slides.',
+    thumbColor: '#1e40af',
+    presetKey: 'midnight',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'comet-trail', x: 70, y: 18, size: 50, opacity: 0.7 },
+          { type: 'text', x: 8, y: 18, size: 22, weight: 700, color: 'muted', text: 'AGENDAPRO' },
+          { type: 'text', x: 8, y: 48, w: 84, size: 64, weight: 900, color: 'text', text: '40% de tus citas\nno llegan.\nY no avisan.' },
+          { type: 'text', x: 8, y: 88, size: 24, weight: 600, color: 'accent', text: 'Solución: pago anticipado →' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'CÓMO' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'text', text: 'Solo paga, solo asiste' },
+          { type: 'icon-list', x: 8, y: 42, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-calendar-check', text: 'Cliente reserva en tu link' },
+            { icon: 'mdi-credit-card', text: 'Paga el 100% o un anticipo' },
+            { icon: 'mdi-whatsapp', text: 'Recordatorio WA 24h y 1h antes' },
+            { icon: 'mdi-star-outline', text: 'Pide review en Google al terminar' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'PARA QUIÉN' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'accent', text: 'Tú, si tu chamba\nes con cita' },
+          { type: 'icon-list', x: 8, y: 45, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-content-cut', text: 'Barbería / estética' },
+            { icon: 'mdi-tooth', text: 'Dentista / médico' },
+            { icon: 'mdi-paw', text: 'Veterinaria' },
+            { icon: 'mdi-meditation', text: 'Coach / terapeuta' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-blob', x: 80, y: 25, size: 55, opacity: 0.5 },
+          { type: 'text', x: 50, y: 30, align: 'center', size: 26, weight: 700, color: 'muted', text: 'BAJA NO-SHOWS' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 200, weight: 900, color: 'accent', text: '-87%' },
+          { type: 'text', x: 50, y: 68, align: 'center', size: 28, weight: 500, color: 'text', text: 'cuando cobras anticipo' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'text', x: 50, y: 28, align: 'center', size: 56, weight: 900, color: 'text', text: 'Tu agenda,\ncon dinero\nadelantado' },
+          { type: 'text', x: 50, y: 60, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: 'AgendaPro. Reservas que sí pagan.' },
+          { type: 'icon', x: 50, y: 78, size: 80, align: 'center', icon: 'mdi-calendar-clock', color: 'accent' },
+          { type: 'text', x: 50, y: 92, align: 'center', size: 26, weight: 700, color: 'accent', text: 'agendapro.mx' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cometax-rentafacil',
+    name: 'RentaFacil — pitch',
+    description: 'Admin inmobiliario para arrendadores: contratos, pagos, inquilinos. 4 slides.',
+    thumbColor: '#84cc16',
+    presetKey: 'forest',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'text', x: 8, y: 18, size: 22, weight: 700, color: 'muted', text: 'RENTAFACIL' },
+          { type: 'text', x: 8, y: 45, w: 84, size: 70, weight: 900, color: 'text', text: 'Tienes 5 deptos.\nY un Excel\nque ya odias.' },
+          { type: 'text', x: 8, y: 88, size: 24, weight: 600, color: 'accent', text: 'Hay vida después de Excel →' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'INCLUYE' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'text', text: 'Renta sin pelearte' },
+          { type: 'icon-list', x: 8, y: 42, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-home-city', text: 'Multi-propiedad' },
+            { icon: 'mdi-file-document-edit', text: 'Contratos PDF/DOCX al instante' },
+            { icon: 'mdi-cash-multiple', text: 'Recordatorio de pago + recibo CFDI' },
+            { icon: 'mdi-account-multiple', text: 'Histórico de inquilinos' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-blob', x: 80, y: 25, size: 55, opacity: 0.5 },
+          { type: 'text', x: 50, y: 30, align: 'center', size: 26, weight: 700, color: 'muted', text: 'AHORRAS' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 200, weight: 900, color: 'accent', text: '12h' },
+          { type: 'text', x: 50, y: 68, align: 'center', size: 28, weight: 500, color: 'text', text: 'al mes en cobranza y papeleo' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'text', x: 50, y: 28, align: 'center', size: 56, weight: 900, color: 'text', text: '$199/mes\npor 5 deptos' },
+          { type: 'text', x: 50, y: 50, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: 'Sin permanencia. Cancela cuando quieras.' },
+          { type: 'icon', x: 50, y: 70, size: 100, align: 'center', icon: 'mdi-home', color: 'accent' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 700, color: 'accent', text: 'rentafacil.mx' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cometax-rankit',
+    name: 'RanKiT — pitch',
+    description: 'Tracker de visibilidad SEO. Pega tu dominio y ve dónde apareces. 4 slides.',
+    thumbColor: '#22d3ee',
+    presetKey: 'midnight',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'comet-trail', x: 75, y: 20, size: 50, opacity: 0.7 },
+          { type: 'text', x: 8, y: 18, size: 22, weight: 700, color: 'muted', text: 'RANKIT' },
+          { type: 'text', x: 8, y: 50, w: 84, size: 64, weight: 900, color: 'text', text: '¿En qué keywords\napareces realmente\nen Google?' },
+          { type: 'text', x: 8, y: 88, size: 24, weight: 600, color: 'accent', text: 'Lo sabrás en 30 seg →' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'TE DA' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'text', text: 'Score SEO real' },
+          { type: 'icon-list', x: 8, y: 42, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-google', text: 'Posiciones de tus keywords' },
+            { icon: 'mdi-trending-up', text: 'Cambios diarios + alertas' },
+            { icon: 'mdi-eye', text: 'Quién te roba tráfico' },
+            { icon: 'mdi-file-export', text: 'Reportes PDF para el cliente' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-blob', x: 80, y: 25, size: 55, opacity: 0.5 },
+          { type: 'text', x: 50, y: 30, align: 'center', size: 26, weight: 700, color: 'muted', text: 'VS SEMRUSH' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 180, weight: 900, color: 'accent', text: '1/10' },
+          { type: 'text', x: 50, y: 68, align: 'center', size: 28, weight: 500, color: 'text', text: 'del precio. Mismas métricas core.' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'text', x: 50, y: 28, align: 'center', size: 56, weight: 900, color: 'text', text: 'Pega\ntu dominio' },
+          { type: 'text', x: 50, y: 50, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: '5 keywords gratis. Sin cuenta. Sin tarjeta.' },
+          { type: 'icon', x: 50, y: 70, size: 100, align: 'center', icon: 'mdi-magnify', color: 'accent' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 700, color: 'accent', text: 'rankit.mx' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'cometax-consultoria',
+    name: 'ConsultorIA — pitch',
+    description: 'Consultor IA: pídele estrategia de negocio MX y te responde con plan accionable. 4 slides.',
+    thumbColor: '#a855f7',
+    presetKey: 'cosmic',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'comet-trail', x: 70, y: 18, size: 60, opacity: 0.8 },
+          { type: 'text', x: 8, y: 18, size: 22, weight: 700, color: 'muted', text: 'CONSULTORIA · IA' },
+          { type: 'text', x: 8, y: 48, w: 84, size: 64, weight: 900, color: 'text', text: 'Un consultor de\nnegocios IA\nentrenado en MX' },
+          { type: 'text', x: 8, y: 88, size: 24, weight: 600, color: 'accent', text: 'Disponible 24/7 →' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'text', x: 8, y: 10, size: 22, weight: 700, color: 'muted', text: 'TE RESUELVE' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 800, color: 'text', text: 'Lo que un consultor\ncobra en $50,000' },
+          { type: 'icon-list', x: 8, y: 45, w: 84, gap: 7, size: 26, color: 'text', accent: 'accent', items: [
+            { icon: 'mdi-bullseye-arrow', text: 'Define tu nicho y buyer persona' },
+            { icon: 'mdi-chart-bar', text: 'Sugiere precios MX por benchmark' },
+            { icon: 'mdi-rocket-launch', text: 'Plan 90 días con KPIs' },
+            { icon: 'mdi-file-tree', text: 'Estructura legal/fiscal MX recomendada' }
+          ] }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-blob', x: 80, y: 25, size: 55, opacity: 0.5 },
+          { type: 'text', x: 50, y: 30, align: 'center', size: 26, weight: 700, color: 'muted', text: 'VS CONSULTOR HUMANO' },
+          { type: 'text', x: 50, y: 50, align: 'center', size: 200, weight: 900, color: 'accent', text: '99%' },
+          { type: 'text', x: 50, y: 68, align: 'center', size: 28, weight: 500, color: 'text', text: 'más barato. Mismo framework.' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'text', x: 50, y: 28, align: 'center', size: 56, weight: 900, color: 'text', text: 'Pregúntale\nahora' },
+          { type: 'text', x: 50, y: 50, w: 80, align: 'center', size: 26, weight: 500, color: 'muted', text: '3 sesiones gratis. Después $99/mes ilimitado.' },
+          { type: 'icon', x: 50, y: 70, size: 100, align: 'center', icon: 'mdi-robot-happy', color: 'accent' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 28, weight: 700, color: 'accent', text: 'consultor.cometax.mx' }
+        ]
+      }
+    ]
+  }
+)
+
 export function findPreset(id) {
   return CAROUSEL_PRESETS.find(p => p.id === id)
 }
