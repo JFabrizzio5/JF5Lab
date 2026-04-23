@@ -362,6 +362,61 @@ function fontStack(font) {
         </div>
 
         <div v-else-if="layer.type === 'big-number'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), fontSize: (layer.size || 280) + 'px', fontWeight: 900, lineHeight: 0.85, background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text', letterSpacing: '-0.04em', fontFamily: 'system-ui' }">{{ layer.text }}</div>
+
+        <div v-else-if="layer.type === 'laptop-mockup'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), width: (layer.size || 480) + 'px' }">
+          <div :style="{ background: '#1f2937', borderRadius: '12px 12px 4px 4px', padding: '10px 10px 6px', boxShadow: '0 30px 80px rgba(0,0,0,0.5)' }">
+            <div :style="{ background: '#000', borderRadius: '8px', overflow: 'hidden', aspectRatio: '16/10', display: 'flex', alignItems: 'center', justifyContent: 'center' }">
+              <img v-if="layer.src" :src="layer.src" :style="{ width: '100%', height: '100%', objectFit: 'cover' }" referrerpolicy="no-referrer" crossorigin="anonymous" />
+              <div v-else :style="{ width: '100%', height: '100%', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }">
+                <i class="mdi mdi-monitor" :style="{ fontSize: '64px', color: '#fff', opacity: 0.7 }"></i>
+              </div>
+            </div>
+          </div>
+          <div :style="{ height: '14px', background: 'linear-gradient(180deg, #374151, #1f2937)', borderRadius: '0 0 24px 24px', margin: '0 -8px', position: 'relative' }">
+            <div :style="{ position: 'absolute', top: '0', left: '50%', transform: 'translateX(-50%)', width: '60px', height: '6px', background: '#0f172a', borderRadius: '0 0 8px 8px' }"></div>
+          </div>
+        </div>
+
+        <div v-else-if="layer.type === 'phone-mockup'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), width: (layer.size || 220) + 'px' }">
+          <div :style="{ background: '#0f172a', borderRadius: '36px', padding: '12px', border: '2px solid #374151', boxShadow: '0 30px 80px rgba(0,0,0,0.5)' }">
+            <div :style="{ position: 'relative', background: '#000', borderRadius: '26px', overflow: 'hidden', aspectRatio: '9/19' }">
+              <img v-if="layer.src" :src="layer.src" :style="{ width: '100%', height: '100%', objectFit: 'cover' }" referrerpolicy="no-referrer" crossorigin="anonymous" />
+              <div v-else :style="{ width: '100%', height: '100%', background: `linear-gradient(180deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: '12px' }">
+                <i class="mdi mdi-cellphone" :style="{ fontSize: '52px', color: '#fff', opacity: 0.7 }"></i>
+                <span :style="{ color: '#fff', fontSize: '12px', opacity: 0.7, letterSpacing: '1px' }">YOUR APP</span>
+              </div>
+              <div :style="{ position: 'absolute', top: '12px', left: '50%', transform: 'translateX(-50%)', width: '90px', height: '24px', background: '#000', borderRadius: '12px' }"></div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="layer.type === 'browser-mockup'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), width: (layer.size || 520) + 'px' }">
+          <div :style="{ background: '#1f2937', borderRadius: '14px', overflow: 'hidden', boxShadow: '0 30px 80px rgba(0,0,0,0.5)' }">
+            <div :style="{ display: 'flex', alignItems: 'center', gap: '6px', padding: '12px 14px', background: '#111827' }">
+              <span :style="{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f57' }"></span>
+              <span :style="{ width: '12px', height: '12px', borderRadius: '50%', background: '#febc2e' }"></span>
+              <span :style="{ width: '12px', height: '12px', borderRadius: '50%', background: '#28c840' }"></span>
+              <div :style="{ flex: 1, marginLeft: '20px', background: '#0f172a', borderRadius: '6px', padding: '4px 12px', fontSize: '14px', color: '#94a3b8', fontFamily: 'monospace' }">{{ layer.url || 'cometax.mx' }}</div>
+            </div>
+            <div :style="{ aspectRatio: '16/10', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }">
+              <img v-if="layer.src" :src="layer.src" :style="{ width: '100%', height: '100%', objectFit: 'cover' }" referrerpolicy="no-referrer" crossorigin="anonymous" />
+              <div v-else :style="{ width: '100%', height: '100%', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center' }">
+                <i class="mdi mdi-web" :style="{ fontSize: '64px', color: '#fff', opacity: 0.7 }"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="layer.type === 'step-row'" :class="{ 'l-int': interactive }" @mousedown="onLayerDown($event, i)" @click="onLayerClick($event, i)" :style="{ ...pos(layer), width: (layer.w || 84) + '%', display: 'flex', flexDirection: 'column', gap: (layer.gap || 18) + 'px' }">
+          <div v-for="(step, j) in layer.steps" :key="j" :style="{ display: 'flex', alignItems: 'flex-start', gap: '20px', padding: '16px 20px', background: 'rgba(255,255,255,0.04)', border: `1px solid ${preset.accent}25`, borderRadius: '14px' }">
+            <div :style="{ flexShrink: 0, width: '52px', height: '52px', borderRadius: '12px', background: `linear-gradient(135deg, ${preset.accent}, ${preset.accent2})`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 900, color: '#fff', boxShadow: `0 8px 20px ${preset.accent}40` }">{{ j + 1 }}</div>
+            <div :style="{ flex: 1, minWidth: 0 }">
+              <div :style="{ fontSize: (layer.titleSize || 26) + 'px', fontWeight: 800, color: colorToken('text'), marginBottom: '4px', lineHeight: 1.2 }">{{ step.title }}</div>
+              <div :style="{ fontSize: (layer.descSize || 18) + 'px', fontWeight: 500, color: colorToken('muted'), lineHeight: 1.4 }">{{ step.desc }}</div>
+            </div>
+            <i v-if="step.icon" :class="['mdi', step.icon]" :style="{ fontSize: '32px', color: preset.accent, flexShrink: 0 }"></i>
+          </div>
+        </div>
       </template>
     </div>
   </div>

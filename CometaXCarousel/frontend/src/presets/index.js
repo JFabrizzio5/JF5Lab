@@ -1967,6 +1967,268 @@ CAROUSEL_PRESETS.push(
   }
 )
 
+// ════════════════════════════════════════════════════════════════
+// Mockups y pasos — laptop/celular/navegador + tutoriales numerados
+// ════════════════════════════════════════════════════════════════
+
+CAROUSEL_PRESETS.push(
+  {
+    id: 'mockup-saas-launch',
+    name: 'Mockup · Lanzamiento SaaS',
+    description: 'Producto en navegador con URL real + pasos numerados para empezar. 5 slides.',
+    thumbColor: '#6366f1',
+    presetKey: 'cosmic',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'product-launch',
+        layers: [
+          { type: 'photo-bg', query: 'workspace,office', seed: 1, overlayOpacity: 0.75 },
+          { type: 'tag-pill', x: 8, y: 10, text: 'Lanzamiento · 2026' },
+          { type: 'text', x: 8, y: 30, w: 60, size: 100, weight: 900, color: 'text', text: 'Tu SaaS\nen el navegador.' },
+          { type: 'text', x: 8, y: 60, w: 55, size: 26, weight: 500, color: 'muted', text: 'Sin instalar nada. Funciona en cualquier laptop.' },
+          { type: 'browser-mockup', x: 75, y: 50, align: 'center', size: 460, url: 'cometax.mx/dashboard' },
+          { type: 'logo', x: 8, y: 92, size: 36, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'half-split', angle: 90, opacity: 0.25 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Cómo funciona' },
+          { type: 'text', x: 8, y: 24, size: 56, weight: 900, color: 'text', text: 'En 3 pasos\nempiezas a cobrar.' },
+          { type: 'step-row', x: 8, y: 65, w: 84, gap: 14, titleSize: 24, descSize: 16, steps: [
+            { title: 'Crea tu cuenta', desc: 'Solo email. Sin tarjeta.', icon: 'mdi-email-outline' },
+            { title: 'Configura tus precios', desc: 'Stripe MX o Conekta. OXXO + SPEI.', icon: 'mdi-credit-card' },
+            { title: 'Comparte tu link', desc: 'Cobranza automática 24/7.', icon: 'mdi-link-variant' }
+          ] },
+          { type: 'logo', x: 92, y: 92, size: 32, align: 'right', brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'product-launch',
+        layers: [
+          { type: 'photo-bg', query: 'gradient,abstract', seed: 2, overlayOpacity: 0.6 },
+          { type: 'tag-pill', x: 50, y: 12, align: 'center', text: 'También en tu bolsillo' },
+          { type: 'phone-mockup', x: 50, y: 50, align: 'center', size: 280 },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 32, weight: 800, color: 'text', text: 'iOS · Android · PWA' },
+          { type: 'logo', x: 50, y: 95, align: 'center', size: 32, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'stat-card',
+        layers: [
+          { type: 'gradient-overlay', angle: 135, opacityStart: 0.4 },
+          { type: 'glossy-ball', x: 78, y: 22, size: 130 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Resultados reales' },
+          { type: 'big-number', x: 8, y: 45, size: 280, text: '24h' },
+          { type: 'text', x: 8, y: 70, w: 70, size: 32, weight: 700, color: 'text', text: 'es lo que tarda\nun cliente promedio\nen pagarte el primer cobro.' },
+          { type: 'logo', x: 92, y: 92, align: 'right', size: 32, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'photo-bg', query: 'sunset,mountain', seed: 3, overlayOpacity: 0.55 },
+          { type: 'glossy-ball', x: 50, y: 28, align: 'center', size: 170 },
+          { type: 'text', x: 50, y: 58, align: 'center', size: 70, weight: 900, color: 'text', text: 'Empieza\ngratis hoy.' },
+          { type: 'text', x: 50, y: 80, w: 80, align: 'center', size: 24, weight: 500, color: 'muted', text: 'Sin cuenta. Sin tarjeta. Solo prueba.' },
+          { type: 'text', x: 50, y: 90, align: 'center', size: 28, weight: 800, color: 'accent', text: 'cometax.mx →' },
+          { type: 'logo', x: 50, y: 96, align: 'center', size: 32, brand: 'cometax' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'mockup-app-feature',
+    name: 'Mockup · Feature en celular',
+    description: 'Pantalla nueva en mockup celular con descripción + step-row.',
+    thumbColor: '#a855f7',
+    presetKey: 'cosmic',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'product-launch',
+        layers: [
+          { type: 'photo-bg', query: 'gradient,abstract', seed: 4, overlayOpacity: 0.7 },
+          { type: 'tag-pill', x: 8, y: 10, text: 'Update · v2.4' },
+          { type: 'text', x: 8, y: 32, w: 55, size: 88, weight: 900, color: 'text', text: 'Notificaciones\nque sí avisan.' },
+          { type: 'text', x: 8, y: 60, w: 50, size: 24, weight: 500, color: 'muted', text: 'Push, email y WhatsApp en un solo lugar.' },
+          { type: 'phone-mockup', x: 78, y: 48, align: 'center', size: 260 },
+          { type: 'logo', x: 8, y: 92, size: 32, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'dots-pattern', gap: 28, opacity: 0.15 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Cómo activarlo' },
+          { type: 'text', x: 8, y: 22, size: 50, weight: 900, color: 'text', text: 'Tres clicks.\nNada más.' },
+          { type: 'step-row', x: 8, y: 60, w: 84, gap: 14, titleSize: 22, descSize: 15, steps: [
+            { title: 'Abre el panel', desc: 'Menú · Notificaciones', icon: 'mdi-cog' },
+            { title: 'Conecta canales', desc: 'WhatsApp Business o email', icon: 'mdi-message' },
+            { title: 'Define cuándo disparar', desc: 'Eventos personalizados', icon: 'mdi-bell-ring' }
+          ] },
+          { type: 'logo', x: 92, y: 92, align: 'right', size: 30, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'half-split', angle: 135, opacity: 0.3 },
+          { type: 'glossy-ball', x: 75, y: 30, size: 140 },
+          { type: 'text', x: 8, y: 35, w: 70, size: 60, weight: 900, color: 'text', text: 'Disponible\nahora mismo.' },
+          { type: 'text', x: 8, y: 65, w: 70, size: 24, weight: 500, color: 'muted', text: 'Si ya tienes cuenta, actualiza la app.' },
+          { type: 'text', x: 8, y: 80, size: 30, weight: 800, color: 'accent', text: 'cometax.mx/changelog' },
+          { type: 'logo', x: 8, y: 92, size: 32, brand: 'cometax' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'tutorial-steps-laptop',
+    name: 'Tutorial · 5 pasos con laptop',
+    description: 'Tutorial completo con mockup laptop por slide. Educativo profesional.',
+    thumbColor: '#22d3ee',
+    presetKey: 'midnight',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'photo-bg', query: 'laptop,workspace', seed: 5, overlayOpacity: 0.7 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Guía paso a paso' },
+          { type: 'text', x: 8, y: 35, w: 84, size: 78, weight: 900, color: 'text', text: 'Cómo lanzar\nun SaaS en\n5 pasos reales.' },
+          { type: 'text', x: 8, y: 78, size: 22, weight: 600, color: 'accent', text: 'GUARDA Y DESLIZA →' },
+          { type: 'logo', x: 92, y: 92, align: 'right', size: 32, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'tip-tutorial',
+        layers: [
+          { type: 'tag-pill', x: 8, y: 10, text: 'PASO 01 / 05' },
+          { type: 'progress-dots', x: 8, y: 18, count: 5, active: 0 },
+          { type: 'text', x: 8, y: 30, size: 56, weight: 900, color: 'text', text: 'Define el problema.' },
+          { type: 'text', x: 8, y: 46, w: 84, size: 22, weight: 500, color: 'muted', text: 'En una sola frase. Si necesitas párrafos, todavía no lo entiendes.' },
+          { type: 'browser-mockup', x: 50, y: 78, align: 'center', size: 440, url: 'notion.so/tu-doc' },
+          { type: 'logo', x: 92, y: 95, align: 'right', size: 26, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'tip-tutorial',
+        layers: [
+          { type: 'tag-pill', x: 8, y: 10, text: 'PASO 02 / 05' },
+          { type: 'progress-dots', x: 8, y: 18, count: 5, active: 1 },
+          { type: 'text', x: 8, y: 30, size: 56, weight: 900, color: 'text', text: 'Diseña la landing.' },
+          { type: 'text', x: 8, y: 46, w: 84, size: 22, weight: 500, color: 'muted', text: 'Hero + 3 features + CTA. Vercel deploy gratis.' },
+          { type: 'laptop-mockup', x: 50, y: 78, align: 'center', size: 480 },
+          { type: 'logo', x: 92, y: 95, align: 'right', size: 26, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'tip-tutorial',
+        layers: [
+          { type: 'tag-pill', x: 8, y: 10, text: 'PASO 03 / 05' },
+          { type: 'progress-dots', x: 8, y: 18, count: 5, active: 2 },
+          { type: 'text', x: 8, y: 30, size: 56, weight: 900, color: 'text', text: 'Conecta Stripe MX.' },
+          { type: 'text', x: 8, y: 46, w: 84, size: 22, weight: 500, color: 'muted', text: 'OXXO + SPEI + tarjeta. Webhook a /api/billing.' },
+          { type: 'browser-mockup', x: 50, y: 78, align: 'center', size: 440, url: 'dashboard.stripe.com' },
+          { type: 'logo', x: 92, y: 95, align: 'right', size: 26, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'tip-tutorial',
+        layers: [
+          { type: 'tag-pill', x: 8, y: 10, text: 'PASO 04 / 05' },
+          { type: 'progress-dots', x: 8, y: 18, count: 5, active: 3 },
+          { type: 'text', x: 8, y: 30, size: 56, weight: 900, color: 'text', text: 'Trae 10 usuarios beta.' },
+          { type: 'text', x: 8, y: 46, w: 84, size: 22, weight: 500, color: 'muted', text: 'Pídeles feedback brutal. Ajusta. Repite.' },
+          { type: 'phone-mockup', x: 50, y: 78, align: 'center', size: 240 },
+          { type: 'logo', x: 92, y: 95, align: 'right', size: 26, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'tip-tutorial',
+        layers: [
+          { type: 'tag-pill', x: 8, y: 10, text: 'PASO 05 / 05' },
+          { type: 'progress-dots', x: 8, y: 18, count: 5, active: 4 },
+          { type: 'text', x: 8, y: 30, size: 56, weight: 900, color: 'text', text: 'Lanza público.' },
+          { type: 'text', x: 8, y: 46, w: 84, size: 22, weight: 500, color: 'muted', text: 'Product Hunt, X, LinkedIn. Cobra desde día 1.' },
+          { type: 'glossy-ball', x: 50, y: 70, align: 'center', size: 200 },
+          { type: 'icon', x: 50, y: 70, align: 'center', size: 100, icon: 'mdi-rocket-launch', color: 'text' },
+          { type: 'logo', x: 92, y: 95, align: 'right', size: 26, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'photo-bg', query: 'sunrise,workspace', seed: 6, overlayOpacity: 0.55 },
+          { type: 'glossy-ball', x: 50, y: 30, align: 'center', size: 170 },
+          { type: 'text', x: 50, y: 58, align: 'center', size: 60, weight: 900, color: 'text', text: '¿Te sirvió?' },
+          { type: 'text', x: 50, y: 78, w: 80, align: 'center', size: 22, weight: 500, color: 'muted', text: 'Sigue para más guías de producto y SaaS MX.' },
+          { type: 'text', x: 50, y: 88, align: 'center', size: 26, weight: 800, color: 'accent', text: '@cometax' },
+          { type: 'logo', x: 50, y: 95, align: 'center', size: 30, brand: 'cometax' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 'tutorial-steps-quick',
+    name: 'Tutorial · 3 pasos rápidos',
+    description: 'Mini guía con step-row destacado en un solo slide. Para tips cortos.',
+    thumbColor: '#10b981',
+    presetKey: 'forest',
+    sizeKey: 'post',
+    slides: [
+      {
+        templateId: 'cosmic-quote',
+        layers: [
+          { type: 'photo-bg', query: 'food,product', seed: 7, overlayOpacity: 0.75 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Tip rápido' },
+          { type: 'text', x: 8, y: 38, w: 84, size: 80, weight: 900, color: 'text', text: 'Tu carta digital\nlista en 3 pasos.' },
+          { type: 'text', x: 8, y: 78, size: 22, weight: 600, color: 'accent', text: 'Para restaurantes y cafeterías' },
+          { type: 'logo', x: 92, y: 92, align: 'right', size: 32, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'feature-list',
+        layers: [
+          { type: 'half-split', angle: 90, opacity: 0.22 },
+          { type: 'tag-pill', x: 8, y: 12, text: 'Los 3 pasos' },
+          { type: 'text', x: 8, y: 22, size: 56, weight: 900, color: 'text', text: 'En 15 minutos\nya está al aire.' },
+          { type: 'step-row', x: 8, y: 60, w: 84, gap: 16, titleSize: 24, descSize: 16, steps: [
+            { title: 'Sube tu menú PDF o foto', desc: 'Lo extraemos y formateamos por ti', icon: 'mdi-upload' },
+            { title: 'Personaliza con tu logo', desc: 'Colores, tipografía, fotos de platillos', icon: 'mdi-palette' },
+            { title: 'Comparte el QR en mesa', desc: 'Imprime y pega. Ya pueden ordenar', icon: 'mdi-qrcode' }
+          ] },
+          { type: 'logo', x: 92, y: 95, align: 'right', size: 28, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'product-launch',
+        layers: [
+          { type: 'gradient-overlay', angle: 0, opacityStart: 0.4 },
+          { type: 'phone-mockup', x: 50, y: 45, align: 'center', size: 280 },
+          { type: 'tag-pill', x: 50, y: 12, align: 'center', text: 'Así lo ven tus clientes' },
+          { type: 'text', x: 50, y: 82, align: 'center', size: 28, weight: 700, color: 'text', text: 'Limpio. Rápido. Tuyo.' },
+          { type: 'logo', x: 50, y: 92, align: 'center', size: 32, brand: 'cometax' }
+        ]
+      },
+      {
+        templateId: 'cta-final',
+        layers: [
+          { type: 'photo-bg', query: 'food', seed: 8, overlayOpacity: 0.6 },
+          { type: 'glossy-ball', x: 75, y: 28, size: 140 },
+          { type: 'text', x: 8, y: 38, w: 70, size: 64, weight: 900, color: 'text', text: 'Empieza\ngratis hoy.' },
+          { type: 'text', x: 8, y: 72, w: 70, size: 22, weight: 500, color: 'muted', text: 'Hasta 50 platillos sin pagar nada.' },
+          { type: 'text', x: 8, y: 84, size: 28, weight: 800, color: 'accent', text: 'cometax.mx/cartas →' },
+          { type: 'logo', x: 8, y: 94, size: 32, brand: 'cometax' }
+        ]
+      }
+    ]
+  }
+)
+
 export function findPreset(id) {
   return CAROUSEL_PRESETS.find(p => p.id === id)
 }

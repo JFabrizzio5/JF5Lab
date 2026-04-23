@@ -79,6 +79,16 @@ function toggleGallery(i) { galleryOpen.value[i] = !galleryOpen.value[i] }
         </div>
       </div>
 
+      <div v-else-if="layer.type === 'step-row'" class="sublayers">
+        <div v-for="(s, j) in layer.steps" :key="j" class="step-edit">
+          <div class="step-num">{{ j + 1 }}</div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <input class="input" :value="s.title" @input="(ev) => { layer.steps[j].title = ev.target.value }" placeholder="Título del paso" />
+            <input class="input" :value="s.desc" @input="(ev) => { layer.steps[j].desc = ev.target.value }" placeholder="Descripción" style="font-size:12px;" />
+          </div>
+        </div>
+      </div>
+
       <div v-else-if="layer.type === 'split'" class="sublayers">
         <input class="input" :value="layer.leftLabel" @input="update(i, 'leftLabel', $event.target.value)" placeholder="Etiqueta izq" />
         <input v-for="(it, j) in layer.leftItems" :key="'l'+j" class="input" :value="it" @input="(ev) => { layer.leftItems[j] = ev.target.value }" />
@@ -87,7 +97,8 @@ function toggleGallery(i) { galleryOpen.value[i] = !galleryOpen.value[i] }
         <input v-for="(it, j) in layer.rightItems" :key="'r'+j" class="input" :value="it" @input="(ev) => { layer.rightItems[j] = ev.target.value }" />
       </div>
 
-      <div v-else-if="layer.type === 'image' || layer.type === 'avatar' || layer.type === 'blur-image'" class="image-controls">
+      <div v-else-if="layer.type === 'image' || layer.type === 'avatar' || layer.type === 'blur-image' || layer.type === 'laptop-mockup' || layer.type === 'phone-mockup' || layer.type === 'browser-mockup'" class="image-controls">
+        <input v-if="layer.type === 'browser-mockup'" class="input" :value="layer.url" @input="update(i, 'url', $event.target.value)" placeholder="URL (ej: cometax.mx)" style="margin-bottom:6px;" />
         <div class="row">
           <label class="btn" style="flex:1;">
             <i class="mdi mdi-upload"></i>
@@ -200,6 +211,10 @@ function toggleGallery(i) { galleryOpen.value[i] = !galleryOpen.value[i] }
 <script>
 function iconFor(type) {
   const m = {
+    'laptop-mockup': 'mdi-laptop',
+    'phone-mockup': 'mdi-cellphone',
+    'browser-mockup': 'mdi-web',
+    'step-row': 'mdi-format-list-numbered',
     text: 'mdi-format-text',
     badge: 'mdi-label',
     icon: 'mdi-shape',
@@ -228,6 +243,10 @@ function iconFor(type) {
 }
 function labelFor(type) {
   const m = {
+    'laptop-mockup': 'Mockup laptop',
+    'phone-mockup': 'Mockup celular',
+    'browser-mockup': 'Mockup navegador',
+    'step-row': 'Filas con pasos',
     text: 'Texto',
     badge: 'Badge',
     icon: 'Icono',
@@ -258,12 +277,14 @@ function hasXY(l) {
   return !['half-split', 'gradient-overlay', 'dots-pattern', 'grid-pattern', 'blur-image', 'wave-top', 'wave-bottom', 'shine-line'].includes(l.type)
 }
 function hasSize(l) {
-  return ['text', 'icon', 'icon-list', 'avatar', 'logo', 'sparkle', 'corner-shape', 'iso-card', 'iso-cube', 'glossy-ball', 'big-number', 'tag-pill', 'badge', 'progress-dots'].includes(l.type)
+  return ['text', 'icon', 'icon-list', 'avatar', 'logo', 'sparkle', 'corner-shape', 'iso-card', 'iso-cube', 'glossy-ball', 'big-number', 'tag-pill', 'badge', 'progress-dots', 'laptop-mockup', 'phone-mockup', 'browser-mockup'].includes(l.type)
 }
 function sizeRange(l) {
   if (l.type === 'text' || l.type === 'big-number') return { min: 14, max: 360, step: 2 }
   if (l.type === 'icon' || l.type === 'avatar' || l.type === 'glossy-ball') return { min: 30, max: 360, step: 4 }
   if (l.type === 'iso-card' || l.type === 'iso-cube') return { min: 80, max: 500, step: 10 }
+  if (l.type === 'laptop-mockup' || l.type === 'browser-mockup') return { min: 280, max: 800, step: 10 }
+  if (l.type === 'phone-mockup') return { min: 140, max: 400, step: 10 }
   if (l.type === 'logo' || l.type === 'badge' || l.type === 'tag-pill') return { min: 16, max: 80, step: 2 }
   if (l.type === 'icon-list') return { min: 16, max: 60, step: 2 }
   if (l.type === 'sparkle' || l.type === 'progress-dots') return { min: 20, max: 200, step: 4 }
@@ -295,6 +316,12 @@ function hasColor(l) {
 .sublayers { display: flex; flex-direction: column; gap: 6px; }
 .sub-row { display: flex; align-items: center; gap: 8px; }
 .sub-row .input { flex: 1; }
+.step-edit { display: flex; gap: 8px; align-items: flex-start; padding: 6px; background: var(--card); border-radius: 6px; }
+.step-num {
+  flex-shrink: 0; width: 28px; height: 28px; border-radius: 6px;
+  background: var(--grad); color: #fff; display: grid; place-items: center;
+  font-weight: 800; font-size: 13px;
+}
 .muted-note { color: var(--muted); font-size: 12px; font-style: italic; }
 .image-controls, .logo-controls { display: flex; flex-direction: column; gap: 8px; }
 .row { display: flex; gap: 6px; align-items: center; }
